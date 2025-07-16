@@ -349,8 +349,8 @@ pip install poetry
 ### 2. Create New Project
 ```bash
 # Create project directory
-mkdir my-star-cluster-project
-cd my-star-cluster-project
+mkdir my-nebula-project
+cd my-nebula-project
 
 # Initialize with poetry (optional)
 poetry init

@@ -1,5 +1,5 @@
 # Nebula Framework MCP Server Installation Script
-# Run this script from your Star Cluster directory
+# Run this script from your Nebula Framework directory
 
 Write-Host "Setting up Nebula Framework MCP Server..." -ForegroundColor Green
 

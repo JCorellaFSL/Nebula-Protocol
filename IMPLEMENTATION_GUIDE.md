@@ -1,16 +1,16 @@
-# Star Cluster Framework Implementation Guide
+# Nebula Framework Implementation Guide
 
 ## Quick Start
 
 ### 1. Choose Your Framework Version
 - **Generalized Version:** Use `Nebula_Protocol.md` for any technology stack
-- **Flutter Projects:** Use `FLUTTER_STAR_CLUSTER_ADAPTATION.md` for mobile/cross-platform apps
-- **Tauri Projects:** Use `TAURI_STAR_CLUSTER_ADAPTATION.md` for desktop applications
+- **Flutter Projects:** Use `FLUTTER_NEBULA_ADAPTATION.md` for mobile/cross-platform apps
+- **Tauri Projects:** Use `TAURI_NEBULA_ADAPTATION.md` for desktop applications
 
 ### 2. Setup Your Project Structure
 ```
 your-project/
-├── ROADMAP.md                          # Star-Cluster (main roadmap)
+├── ROADMAP.md                          # Nebula (main roadmap)
 ├── ROADMAP_PHASE_0_SETUP.md           # Setup constellation
 ├── ROADMAP_PHASE_1_CORE.md            # Core development constellation
 ├── ROADMAP_PHASE_2_FEATURES.md        # Feature development constellation
@@ -18,14 +18,14 @@ your-project/
 ├── ROADMAP_PHASE_4_DEPLOYMENT.md      # Deployment constellation
 └── docs/
     ├── Nebula_Protocol.md    # Framework reference
-    └── [FRAMEWORK]_STAR_CLUSTER_ADAPTATION.md
+    └── [FRAMEWORK]_NEBULA_ADAPTATION.md
 ```
 
-### 3. Create Your Star-Cluster (Main Roadmap)
+### 3. Create Your Nebula (Main Roadmap)
 Use this template for your `ROADMAP.md`:
 
 ```markdown
-# Project Name - Star-Cluster Roadmap
+# Project Name - Nebula Roadmap
 
 ## Project Overview
 Brief description of your project, objectives, and scope.
@@ -220,7 +220,7 @@ When tests fail:
 
 ## Conclusion
 
-The Star Cluster Framework provides a solid foundation for context engineering in software development. By starting with the generalized version and adapting it to specific frameworks like Flutter and Tauri, you can create powerful project management and documentation systems that scale with your team and project complexity.
+The Nebula Framework provides a solid foundation for context engineering in software development. By starting with the generalized version and adapting it to specific frameworks like Flutter and Tauri, you can create powerful project management and documentation systems that scale with your team and project complexity.
 
 The key to success is starting simple, iterating based on real usage, and gradually adding more sophisticated features as your needs evolve.
 

@@ -292,8 +292,8 @@ tauri --version
 ### 2. Create New Project
 ```bash
 # Create new Tauri project
-npm create tauri-app my-star-cluster-app
-cd my-star-cluster-app
+npm create tauri-app my-nebula-app
+cd my-nebula-app
 
 # Install dependencies
 npm install

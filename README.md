@@ -10,6 +10,26 @@ This guide shows you how to use the Nebula Framework to structure your projects 
 - **IMPLEMENTATION_GUIDE.md** - Detailed implementation instructions
 - **Nebula_readme.md** - Complete framework overview and philosophy
 
+## 📦 Getting Started: Clone the Repository
+
+**⚠️ Recommended First Step:** Clone this repository to your local machine for easy access to all framework files:
+
+```bash
+# Clone the repository
+git clone https://github.com/JCorellaFSL/Context-Engineering-Protocol.git
+cd Context-Engineering-Protocol
+
+# Or clone to a specific directory
+git clone https://github.com/JCorellaFSL/Context-Engineering-Protocol.git ~/nebula-framework
+```
+
+**Why clone the repository?**
+- ✅ **Easy File Access:** All framework files available locally
+- ✅ **Copy to Projects:** Simple to copy files to new projects
+- ✅ **Customization:** Modify and adapt for your specific needs
+- ✅ **Stay Updated:** Use `git pull` to get the latest improvements
+- ✅ **MCP Integration:** Required for local MCP server setup
+
 ## 🚀 Quick Start: 3 Steps to AI-Powered Development
 
 ### Step 1: Choose Your Framework Adaptation

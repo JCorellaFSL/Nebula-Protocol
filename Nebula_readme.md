@@ -175,11 +175,11 @@ your-project/
 
 ## 📖 Documentation
 
-- **[Context Engineering Protocol](Nebula_Protocol.md)** - Generic framework
-- **[Flutter Adaptation](FLUTTER_NEBULA_ADAPTATION.md)** - Flutter-specific implementation
-- **[Tauri Adaptation](TAURI_NEBULA_ADAPTATION.md)** - Tauri-specific implementation
-- **[Python Adaptation](PYTHON_NEBULA_ADAPTATION.md)** - Python-specific implementation
-- **[Implementation Guide](IMPLEMENTATION_GUIDE.md)** - Step-by-step implementation
+- [Context Engineering Protocol](Nebula_Protocol.md) - Generic framework
+- [Flutter Adaptation](FLUTTER_NEBULA_ADAPTATION.md) - Flutter-specific implementation
+- [Tauri Adaptation](TAURI_NEBULA_ADAPTATION.md) - Tauri-specific implementation
+- [Python Adaptation](PYTHON_NEBULA_ADAPTATION.md) - Python-specific implementation
+- [Implementation Guide](IMPLEMENTATION_GUIDE.md) - Step-by-step implementation
 
 ## 🤝 Contributing
 

@@ -6,8 +6,8 @@ import { z } from "zod";
 import fs from "fs";
 import path from "path";
 
-// Path to your Star Cluster framework files
-const FRAMEWORK_PATH = process.env.NEBULA_FRAMEWORK_PATH || "/c/Users/JohnC/Dev/Star Cluster";
+// Path to your Nebula Framework files
+const FRAMEWORK_PATH = process.env.NEBULA_FRAMEWORK_PATH || "/c/Users/JohnC/Dev/nebula-framework";
 
 const server = new McpServer({
   name: "Nebula Framework",

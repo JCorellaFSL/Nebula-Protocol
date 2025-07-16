@@ -18,6 +18,21 @@ Model Context Protocol (MCP) is an open standard that enables AI applications to
 - **Real-time updates** when framework files change
 - **Standardized integration** with AI development tools
 
+## 📦 Prerequisites: Clone the Repository
+
+**⚠️ Important:** Before setting up MCP integration, clone the Nebula Framework repository to your local machine:
+
+```bash
+# Clone the repository
+git clone https://github.com/JCorellaFSL/Context-Engineering-Protocol.git
+cd Context-Engineering-Protocol
+
+# Or clone to a specific directory
+git clone https://github.com/JCorellaFSL/Context-Engineering-Protocol.git ~/nebula-framework
+```
+
+This ensures you have local access to all framework files for Option 2 (Custom MCP Server) and provides a backup for Option 1.
+
 ## Option 1: GitMCP Service (Recommended)
 
 ### Overview
@@ -133,7 +148,7 @@ import fs from "fs";
 import path from "path";
 
 // Path to your Nebula Framework files
-const FRAMEWORK_PATH = process.env.NEBULA_FRAMEWORK_PATH || "/path/to/your/framework";
+const FRAMEWORK_PATH = process.env.NEBULA_FRAMEWORK_PATH || "/path/to/your/nebula-framework";
 
 const server = new McpServer({
   name: "Nebula Framework",
@@ -315,7 +330,7 @@ Add to `~/.cursor/mcp.json`:
       "command": "node",
       "args": ["/absolute/path/to/nebula-framework-mcp.js"],
       "env": {
-        "NEBULA_FRAMEWORK_PATH": "/absolute/path/to/your/framework/files"
+        "NEBULA_FRAMEWORK_PATH": "/absolute/path/to/your/nebula-framework/files"
       }
     }
   }
@@ -331,7 +346,7 @@ Add to configuration file:
       "command": "node",
       "args": ["/absolute/path/to/nebula-framework-mcp.js"],
       "env": {
-        "NEBULA_FRAMEWORK_PATH": "/absolute/path/to/your/framework/files"
+        "NEBULA_FRAMEWORK_PATH": "/absolute/path/to/your/nebula-framework/files"
       }
     }
   }

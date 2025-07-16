@@ -264,8 +264,8 @@ flutter build ios --analyze-size
 flutter doctor
 
 # Create new project
-flutter create my_star_cluster_project
-cd my_star_cluster_project
+flutter create my_nebula_project
+cd my_nebula_project
 ```
 
 ### 2. Initialize Nebula Structure

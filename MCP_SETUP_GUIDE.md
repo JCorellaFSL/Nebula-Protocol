@@ -3,17 +3,36 @@
 ## Overview
 This guide shows you how to set up MCP (Model Context Protocol) integration so your Nebula Framework files are accessible from any Cursor project without copying them.
 
+## 📦 First: Clone the Repository
+
+**⚠️ Important:** Before setting up MCP integration, we recommend cloning the Nebula Framework repository to your local machine for easy access to all files:
+
+```bash
+# Clone the repository
+git clone https://github.com/JCorellaFSL/Context-Engineering-Protocol.git
+cd Context-Engineering-Protocol
+
+# Or if you want to clone to a specific directory
+git clone https://github.com/JCorellaFSL/Context-Engineering-Protocol.git ~/nebula-framework
+```
+
+**Benefits of cloning:**
+- ✅ Access to all framework files locally
+- ✅ Easy to copy files to new projects
+- ✅ Can modify and customize for your needs
+- ✅ Always have the latest version with `git pull`
+
 ## Option 1: GitMCP Service (Easiest)
 
 ### Prerequisites
-- Your Star Cluster repository pushed to GitHub
+- Your Nebula Framework repository pushed to GitHub
 - Cursor IDE with MCP support
 
 ### Setup Steps
 
 1. **Push to GitHub** (if not already done):
    ```bash
-   git remote add origin https://github.com/your-username/Star-Cluster.git
+   git remote add origin https://github.com/your-username/your-nebula-repo.git
    git push -u origin main
    ```
 
@@ -22,7 +41,7 @@ This guide shows you how to set up MCP (Model Context Protocol) integration so y
    {
      "mcpServers": {
        "nebula-framework": {
-         "url": "https://gitmcp.io/_/your-username/Star-Cluster"
+         "url": "https://gitmcp.io/_/your-username/your-nebula-repo"
        }
      }
    }
@@ -45,7 +64,7 @@ This guide shows you how to set up MCP (Model Context Protocol) integration so y
 ### Prerequisites
 - Node.js (v18 or higher)
 - npm or yarn
-- Your Star Cluster framework files locally
+- Your Nebula Framework files locally
 
 ### Setup Steps
 
@@ -73,10 +92,10 @@ This guide shows you how to set up MCP (Model Context Protocol) integration so y
    Set the path to your framework files (optional - defaults to current path):
    ```bash
    # Windows (PowerShell)
-   $env:NEBULA_FRAMEWORK_PATH = "C:\Users\JohnC\Dev\Star Cluster"
+   $env:NEBULA_FRAMEWORK_PATH = "C:\Users\YourUser\Dev\nebula-framework"
    
    # Linux/Mac
-   export NEBULA_FRAMEWORK_PATH="/home/user/Dev/Star Cluster"
+   export NEBULA_FRAMEWORK_PATH="/home/user/Dev/nebula-framework"
    ```
 
 6. **Test the Server**:
@@ -92,7 +111,7 @@ This guide shows you how to set up MCP (Model Context Protocol) integration so y
          "command": "node",
          "args": ["/path/to/nebula-framework-mcp/nebula-framework-mcp.js"],
          "env": {
-           "NEBULA_FRAMEWORK_PATH": "C:\\Users\\JohnC\\Dev\\Star Cluster"
+           "NEBULA_FRAMEWORK_PATH": "C:\\Users\\YourUser\\Dev\\nebula-framework"
          }
        }
      }
@@ -136,7 +155,7 @@ The custom MCP server provides these tools:
          "command": "npx",
          "args": ["-y", "nebula-framework-mcp"],
          "env": {
-           "NEBULA_FRAMEWORK_PATH": "C:\\Users\\JohnC\\Dev\\Star Cluster"
+           "NEBULA_FRAMEWORK_PATH": "C:\\Users\\YourUser\\Dev\\nebula-framework"
          }
        }
      }
