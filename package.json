@@ -1,0 +1,26 @@
+{
+  "name": "nebula-framework-mcp",
+  "version": "1.0.0",
+  "description": "MCP server for Nebula Framework context engineering files",
+  "main": "nebula-framework-mcp.js",
+  "type": "module",
+  "bin": {
+    "nebula-framework-mcp": "./nebula-framework-mcp.js"
+  },
+  "scripts": {
+    "start": "node nebula-framework-mcp.js",
+    "inspector": "npx @modelcontextprotocol/inspector node nebula-framework-mcp.js"
+  },
+  "dependencies": {
+    "@modelcontextprotocol/sdk": "^1.0.0",
+    "zod": "^3.22.0"
+  },
+  "keywords": [
+    "mcp",
+    "nebula-framework",
+    "context-engineering",
+    "ai-development"
+  ],
+  "author": "Your Name",
+  "license": "MIT"
+} 
