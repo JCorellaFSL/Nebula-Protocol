@@ -1,11 +1,11 @@
-# Context Engineering Protocol: Star Cluster Framework
+# Context Engineering Protocol: Nebula Framework
 
 ## Overview
-The Star Cluster Framework is a hierarchical documentation and context management system designed to provide clear project structure, focused development phases, and effective knowledge transfer across development teams.
+The Nebula Framework is a hierarchical documentation and context management system designed to provide clear project structure, focused development phases, and effective knowledge transfer across development teams. Enhanced with cloud-based MCP (Model Context Protocol) integration for seamless AI-assisted development.
 
 ## Core Concepts
 
-### 1. Star-Cluster (Main Roadmap)
+### 1. Nebula (Main Roadmap)
 The central, high-level project roadmap that serves as the primary navigation document. This contains:
 - Project vision and objectives
 - High-level phase definitions
@@ -13,11 +13,11 @@ The central, high-level project roadmap that serves as the primary navigation do
 - Key stakeholders and responsibilities
 
 ### 2. Constellations (Phase-Specific Roadmaps)
-Detailed, phase-specific documents that expand upon each phase from the Star-Cluster. These provide granular implementation details and actionable tasks.
+Detailed, phase-specific documents that expand upon each phase from the Nebula. These provide granular implementation details and actionable tasks.
 
 ## Naming Convention
 
-### Star-Cluster Document
+### Nebula Document
 - **Primary:** `ROADMAP.md` - The main project roadmap
 
 ### Constellation Documents
@@ -25,7 +25,7 @@ Detailed, phase-specific documents that expand upon each phase from the Star-Clu
 - **Examples:**
   - `ROADMAP_PHASE_0_SETUP.md`
   - `ROADMAP_PHASE_1_CORE.md`
-  - `ROADMAP_PHASE_2_ADVANCED.md`
+  - `ROADMAP_PHASE_2_FEATURES.md`
   - `ROADMAP_PHASE_3_INTEGRATION.md`
   - `ROADMAP_PHASE_4_DEPLOYMENT.md`
 
@@ -34,7 +34,7 @@ Detailed, phase-specific documents that expand upon each phase from the Star-Clu
 Each Constellation document should include:
 
 ### 1. Phase Overview
-- Clear connection to the Star-Cluster phase
+- Clear connection to the Nebula phase
 - Phase objectives and success criteria
 - Dependencies on previous phases
 
@@ -104,12 +104,12 @@ Each Constellation document should include:
 ## Implementation Guidelines
 
 ### 1. Document Consistency
-- Each Constellation explicitly references its Star-Cluster phase
+- Each Constellation explicitly references its Nebula phase
 - Consistent formatting and structure across all documents
 - Standard metadata and versioning
 
 ### 2. Maintenance Protocol
-- Regular review and updates of both Star-Cluster and Constellations
+- Regular review and updates of both Nebula and Constellations
 - Version control for documentation changes
 - Clear change management process
 
@@ -141,6 +141,39 @@ Each task must include:
 - **Validation Evidence:** Screenshots, logs, or recorded demonstrations
 - **Iteration History:** Record of test-fix-retest cycles
 
+## MCP Integration & Cloud Access
+
+### Model Context Protocol Support
+The Nebula Framework integrates with MCP (Model Context Protocol) for seamless AI development:
+
+#### Cloud Integration Options
+1. **GitMCP Service** (Recommended): Direct GitHub repository access
+   - URL: `https://gitmcp.io/_/your-username/your-repo`
+   - Always up-to-date with repository changes
+   - No local installation required
+
+2. **Custom MCP Server**: Local or hosted server implementation
+   - Full control over framework delivery
+   - Custom tools and enhanced functionality
+   - Scalable for team environments
+
+3. **Package Distribution**: npm or similar package managers
+   - Version-controlled framework distribution
+   - Easy team sharing and updates
+
+#### AI Tool Integration
+- **Cursor IDE**: Direct MCP server integration
+- **Claude Desktop**: Framework file access via MCP
+- **VS Code**: MCP plugin support
+- **Custom AI Tools**: Standardized MCP protocol access
+
+### Framework Access Patterns
+With MCP integration, developers can:
+- Access framework files from any project
+- Reference current documentation without copying
+- Get project-type-specific adaptations automatically
+- Maintain consistent framework usage across teams
+
 ## Technology Stack Adaptation
 
 This framework can be adapted to any technology stack by:
@@ -151,6 +184,12 @@ This framework can be adapted to any technology stack by:
 4. **Incorporating Stack-Specific Challenges** and considerations
 5. **Defining Validation Methods** appropriate for the technology stack
 
+### Current Framework Adaptations
+- **Flutter Development**: `FLUTTER_NEBULA_ADAPTATION.md`
+- **Tauri Development**: `TAURI_NEBULA_ADAPTATION.md`
+- **Python Development**: `PYTHON_NEBULA_ADAPTATION.md`
+- **Generic Framework**: `CONTEXT_ENGINEERING_PROTOCOL.md`
+
 ## Benefits
 
 - **Clarity & Focus:** Developers work with appropriately scoped information
@@ -159,6 +198,8 @@ This framework can be adapted to any technology stack by:
 - **Better Progress Tracking:** Granular task management with clear milestones
 - **Scalable Documentation:** Framework grows with project complexity
 - **Context Preservation:** Maintains project knowledge across team changes
+- **AI-Optimized:** Structured for maximum AI assistant effectiveness
+- **Cloud-Accessible:** Framework available from any development environment
 
 ## Usage Examples
 
@@ -166,17 +207,26 @@ This framework can be adapted to any technology stack by:
 - Core setup, development, testing, deployment
 - Minimal constellation complexity
 - Focus on essential deliverables
+- Single-developer or small team focus
 
 ### Large Project (7+ phases)
 - Extended planning, multiple development cycles
 - Complex constellation interdependencies
 - Comprehensive testing and deployment strategies
+- Multi-team coordination and integration
 
 ### Multi-Team Project
 - Team-specific constellations
 - Cross-team integration phases
-- Shared Star-Cluster with distributed ownership
+- Shared Nebula with distributed ownership
+- Centralized framework access via MCP
+
+### AI-Assisted Development
+- Framework-guided AI conversations
+- Context-aware code generation
+- Automated testing validation
+- Continuous framework reference
 
 ---
 
-*This protocol provides the foundation for structured project management and context engineering across diverse technology stacks and project scales.* 
+*This protocol provides the foundation for structured project management and context engineering across diverse technology stacks and project scales, optimized for AI-assisted development with cloud-based accessibility.* 
