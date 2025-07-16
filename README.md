@@ -6,6 +6,7 @@ This guide shows you how to use the Nebula Framework to structure your projects 
 ## 📚 What You Have Here
 - **Nebula_Protocol.md** - The core framework specification
 - **[FRAMEWORK]_NEBULA_ADAPTATION.md** - Technology-specific adaptations (Flutter, Tauri, Python)
+- **MCP_implementation.md** - Complete MCP server setup and activation guide
 - **IMPLEMENTATION_GUIDE.md** - Detailed implementation instructions
 - **Nebula_readme.md** - Complete framework overview and philosophy
 
@@ -275,6 +276,7 @@ testing and validation standards."
 
 - **[Nebula Framework Overview](Nebula_readme.md)** - Complete framework philosophy
 - **[Core Protocol](Nebula_Protocol.md)** - Framework specifications
+- **[MCP Implementation Guide](MCP_implementation.md)** - Complete MCP server setup and activation
 - **[Implementation Guide](IMPLEMENTATION_GUIDE.md)** - Detailed implementation steps
 - **Framework Adaptations**: Choose your technology stack
   - `FLUTTER_NEBULA_ADAPTATION.md`
