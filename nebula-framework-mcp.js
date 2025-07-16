@@ -29,7 +29,7 @@ server.tool("get_framework_file",
           "flutter": "FLUTTER_NEBULA_ADAPTATION.md",
           "tauri": "TAURI_NEBULA_ADAPTATION.md", 
           "python": "PYTHON_NEBULA_ADAPTATION.md",
-          "generic": "CONTEXT_ENGINEERING_PROTOCOL.md"
+          "generic": "Nebula_Protocol.md"
         };
         filename = typeMap[project_type];
       }
@@ -72,15 +72,15 @@ server.tool("list_framework_files",
         .filter(file => file.endsWith('.md'))
         .sort();
       
-      const descriptions = {
-        "README.md": "How-to-use guide for the Nebula Framework",
-        "Nebula_readme.md": "Complete framework philosophy and overview",
-        "CONTEXT_ENGINEERING_PROTOCOL.md": "Core framework specification (generic)",
-        "FLUTTER_NEBULA_ADAPTATION.md": "Flutter-specific adaptation",
-        "TAURI_NEBULA_ADAPTATION.md": "Tauri-specific adaptation", 
-        "PYTHON_NEBULA_ADAPTATION.md": "Python-specific adaptation",
-        "IMPLEMENTATION_GUIDE.md": "Detailed implementation steps"
-      };
+              const descriptions = {
+          "README.md": "How-to-use guide for the Nebula Framework",
+          "Nebula_readme.md": "Complete framework philosophy and overview",
+          "Nebula_Protocol.md": "Core framework specification (generic)",
+          "FLUTTER_NEBULA_ADAPTATION.md": "Flutter-specific adaptation",
+          "TAURI_NEBULA_ADAPTATION.md": "Tauri-specific adaptation", 
+          "PYTHON_NEBULA_ADAPTATION.md": "Python-specific adaptation",
+          "IMPLEMENTATION_GUIDE.md": "Detailed implementation steps"
+        };
 
       const fileList = files.map(file => 
         `- **${file}**: ${descriptions[file] || "Framework documentation"}`
@@ -111,12 +111,12 @@ server.tool("setup_project_framework",
   async ({ project_type }) => {
     try {
       // Get main framework file
-      const mainFiles = {
-        "flutter": "FLUTTER_NEBULA_ADAPTATION.md",
-        "tauri": "TAURI_NEBULA_ADAPTATION.md",
-        "python": "PYTHON_NEBULA_ADAPTATION.md", 
-        "generic": "CONTEXT_ENGINEERING_PROTOCOL.md"
-      };
+              const mainFiles = {
+          "flutter": "FLUTTER_NEBULA_ADAPTATION.md",
+          "tauri": "TAURI_NEBULA_ADAPTATION.md",
+          "python": "PYTHON_NEBULA_ADAPTATION.md", 
+          "generic": "Nebula_Protocol.md"
+        };
 
       const mainFile = mainFiles[project_type];
       const howToFile = "README.md";

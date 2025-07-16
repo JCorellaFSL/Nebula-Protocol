@@ -4,7 +4,7 @@
 This guide shows you how to use the Nebula Framework to structure your projects for AI-assisted development using tools like GPT, Claude, Gemini, Cursor, Windsurf, and other AI-powered IDEs.
 
 ## 📚 What You Have Here
-- **CONTEXT_ENGINEERING_PROTOCOL.md** - The core framework specification
+- **Nebula_Protocol.md** - The core framework specification
 - **[FRAMEWORK]_NEBULA_ADAPTATION.md** - Technology-specific adaptations (Flutter, Tauri, Python)
 - **IMPLEMENTATION_GUIDE.md** - Detailed implementation instructions
 - **Nebula_readme.md** - Complete framework overview and philosophy
@@ -25,7 +25,7 @@ Use: TAURI_NEBULA_ADAPTATION.md
 Use: PYTHON_NEBULA_ADAPTATION.md
 
 # For other frameworks
-Use: CONTEXT_ENGINEERING_PROTOCOL.md (generic)
+Use: Nebula_Protocol.md (generic)
 ```
 
 ### Step 2: Load Framework into Your AI Tool
@@ -274,7 +274,7 @@ testing and validation standards."
 ## 📖 Additional Resources
 
 - **[Nebula Framework Overview](Nebula_readme.md)** - Complete framework philosophy
-- **[Core Protocol](CONTEXT_ENGINEERING_PROTOCOL.md)** - Framework specifications
+- **[Core Protocol](Nebula_Protocol.md)** - Framework specifications
 - **[Implementation Guide](IMPLEMENTATION_GUIDE.md)** - Detailed implementation steps
 - **Framework Adaptations**: Choose your technology stack
   - `FLUTTER_NEBULA_ADAPTATION.md`

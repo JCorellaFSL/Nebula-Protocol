@@ -111,7 +111,7 @@ The framework provides AI assistants with:
 - Deployment considerations
 
 ### 🌐 Generic Framework
-**File:** `CONTEXT_ENGINEERING_PROTOCOL.md`
+**File:** `Nebula_Protocol.md`
 - Technology-agnostic structure
 - Adaptable to any development stack
 - Core principles and patterns
@@ -154,7 +154,7 @@ cp PYTHON_NEBULA_ADAPTATION.md docs/
 cp PYTHON_README.md ./
 
 # For other frameworks
-cp CONTEXT_ENGINEERING_PROTOCOL.md docs/
+cp Nebula_Protocol.md docs/
 ```
 
 ### 2. Create Your Project Structure
@@ -175,7 +175,7 @@ your-project/
 
 ## 📖 Documentation
 
-- **[Context Engineering Protocol](CONTEXT_ENGINEERING_PROTOCOL.md)** - Generic framework
+- **[Context Engineering Protocol](Nebula_Protocol.md)** - Generic framework
 - **[Flutter Adaptation](FLUTTER_NEBULA_ADAPTATION.md)** - Flutter-specific implementation
 - **[Tauri Adaptation](TAURI_NEBULA_ADAPTATION.md)** - Tauri-specific implementation
 - **[Python Adaptation](PYTHON_NEBULA_ADAPTATION.md)** - Python-specific implementation

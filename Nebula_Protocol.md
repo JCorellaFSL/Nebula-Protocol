@@ -188,7 +188,7 @@ This framework can be adapted to any technology stack by:
 - **Flutter Development**: `FLUTTER_NEBULA_ADAPTATION.md`
 - **Tauri Development**: `TAURI_NEBULA_ADAPTATION.md`
 - **Python Development**: `PYTHON_NEBULA_ADAPTATION.md`
-- **Generic Framework**: `CONTEXT_ENGINEERING_PROTOCOL.md`
+- **Generic Framework**: `Nebula_Protocol.md`
 
 ## Benefits
 
