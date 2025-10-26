@@ -110,6 +110,21 @@ The framework provides AI assistants with:
 - API development patterns
 - Deployment considerations
 
+### 🦀 Rust Development
+**File:** `RUST_NEBULA_ADAPTATION.md`
+- Systems programming patterns
+- Memory safety and ownership
+- CLI, web services, and libraries
+- Performance optimization and profiling
+- Zero-cost abstractions
+
+### 🦀 Dioxus Development
+**File:** `DIOXUS_NEBULA_ADAPTATION.md`
+- Rust-native UI framework
+- Cross-platform (Web, Desktop, Mobile, TUI)
+- Component architecture and hooks
+- WASM optimization
+
 ### 🌐 Generic Framework
 **File:** `Nebula_Protocol.md`
 - Technology-agnostic structure
@@ -153,6 +168,14 @@ cp TAURI_README.md ./
 cp PYTHON_NEBULA_ADAPTATION.md docs/
 cp PYTHON_README.md ./
 
+# For Rust projects
+cp RUST_NEBULA_ADAPTATION.md docs/
+cp RUST_README.md ./
+
+# For Dioxus projects
+cp DIOXUS_NEBULA_ADAPTATION.md docs/
+cp DIOXUS_README.md ./
+
 # For other frameworks
 cp Nebula_Protocol.md docs/
 ```
@@ -170,8 +193,28 @@ your-project/
     └── [FRAMEWORK]_NEBULA_ADAPTATION.md
 ```
 
+### 3. Generate ALL Constellations at Initialization
+- At project start, generate all `ROADMAP_PHASE_[NUMBER]_[DESCRIPTOR].md` files for every planned phase (e.g., 0–4) in one pass.
+- Populate each with section headers (Overview, Detailed Tasks, Implementation Details, Testing Strategy, Validation Checklist) and acceptance criteria placeholders.
+- Rationale: Complete constellation scaffolding prevents architectural drift and ensures every phase has defined validation gates from day one.
+
+### 4. Validation Holds (Self-Checking Before Programming)
+#### HOLD 1: Per-Constellation Conflict Check
+- After creating each constellation, compare it to earlier phases for:
+  - Conflicts/supersessions/duplication
+  - Mis-phasing (task belongs earlier/later)
+  - Missing prerequisites or dependency links
+
+#### HOLD 2: Global Plan Review
+- Once all constellations exist, evaluate the full plan for ordering, merges/splits, and risk sequencing. Propose reassignments with clear rationale.
+
 ### 3. Implement the Core Principle
 **Every feature must follow:** Implement → Test → Validate → Document → Proceed
+
+### Constellation Template Enhancements
+- Risk Register (risks, mitigations, monitoring)
+- Phase Invariants (entry/exit conditions)
+- Expanded Validation Checklist (dependencies resolved, risks noted)
 
 ## 📖 Documentation
 
@@ -179,6 +222,8 @@ your-project/
 - [Flutter Adaptation](FLUTTER_NEBULA_ADAPTATION.md) - Flutter-specific implementation
 - [Tauri Adaptation](TAURI_NEBULA_ADAPTATION.md) - Tauri-specific implementation
 - [Python Adaptation](PYTHON_NEBULA_ADAPTATION.md) - Python-specific implementation
+- [Rust Adaptation](RUST_NEBULA_ADAPTATION.md) - Pure Rust development
+- [Dioxus Adaptation](DIOXUS_NEBULA_ADAPTATION.md) - Dioxus UI framework
 - [Implementation Guide](IMPLEMENTATION_GUIDE.md) - Step-by-step implementation
 
 ## 🤝 Contributing

@@ -13,6 +13,7 @@
   },
   "dependencies": {
     "@modelcontextprotocol/sdk": "^1.0.0",
+    "better-sqlite3": "^9.4.0",
     "zod": "^3.22.0"
   },
   "keywords": [
@@ -21,6 +22,6 @@
     "context-engineering",
     "ai-development"
   ],
-  "author": "Your Name",
+  "author": "FSLabs",
   "license": "MIT"
 } 

@@ -22,12 +22,36 @@ Detailed, phase-specific documents that expand upon each phase from the Nebula. 
 
 ### Constellation Documents
 - **Convention:** `ROADMAP_PHASE_[NUMBER]_[DESCRIPTOR].md`
+- **Sub-Phase Convention:** `ROADMAP_PHASE_[X.Y]_[DESCRIPTOR].md` for granular breakdown
 - **Examples:**
-  - `ROADMAP_PHASE_0_SETUP.md`
-  - `ROADMAP_PHASE_1_CORE.md`
-  - `ROADMAP_PHASE_2_FEATURES.md`
-  - `ROADMAP_PHASE_3_INTEGRATION.md`
-  - `ROADMAP_PHASE_4_DEPLOYMENT.md`
+  - `ROADMAP_PHASE_0_SETUP.md` - Project initialization
+  - `ROADMAP_PHASE_1_CORE.md` - Core backend/logic
+  - `ROADMAP_PHASE_1.5_BASIC_UI.md` - **MANDATORY** Basic UI implementation
+  - `ROADMAP_PHASE_2_FEATURES.md` - Feature development (UI + backend together)
+  - `ROADMAP_PHASE_3_INTEGRATION.md` - Testing and integration
+  - `ROADMAP_PHASE_3.5_UI_POLISH.md` - **MANDATORY** UI refinement and polish
+  - `ROADMAP_PHASE_4_DEPLOYMENT.md` - Deployment and distribution
+
+### Mandatory UI Phases
+To prevent "ready but unusable" applications, two UI-focused phases are **REQUIRED**:
+
+1. **Phase 1.5: Basic UI (MANDATORY)**
+   - Implements basic, functional user interface for all core features
+   - Ensures application is usable and testable
+   - Creates foundation for user feedback
+   - **Quality Gate:** No proceeding to Phase 2 without working UI
+   
+2. **Phase 3.5: UI Polish (MANDATORY)**
+   - Refines visual design and user experience
+   - Adds animations, transitions, and accessibility features
+   - Ensures professional, production-ready interface
+   - **Quality Gate:** Application ready for public release
+
+### Sub-Phase Naming for Adjustments
+- **Format:** `Phase_X.YY` where YY = 01-99 for quality gate fixes
+- **Examples:**
+  - `ROADMAP_PHASE_1.01_CORE_FIXES.md` - Post-Phase 1 adjustments
+  - `ROADMAP_PHASE_2.01_FEATURE_REFINEMENT.md` - Post-Phase 2 fixes
 
 ## Constellation Content Structure
 
@@ -73,6 +97,31 @@ Each Constellation document should include:
 - Deliverable specifications
 - **Validation Evidence:** Documented proof of successful testing
 
+### 8. Quality Gate Checkpoint (MANDATORY)
+After completing each constellation, perform quality gate review:
+- **Does this affect previous constellations?** Review Phase 0 through current for conflicts
+- **Are there breaking changes?** Document and assess impact
+- **Does the app remain usable?** Verify UI functionality if applicable
+- **Decision Points:**
+  - **PROCEED:** No issues, continue to next constellation
+  - **CREATE SUB-PHASE:** Issues found, create Phase X.01 for fixes
+  - **ROLLBACK:** Major issues require rethinking approach
+
+### 9. Constellation Size Guidelines
+To prevent context overload and maintain focus:
+- **Maximum tokens:** 4,000 tokens (~3,000 words)
+- **Maximum tasks:** 8-10 major tasks per constellation
+- **Maximum scope:** 4-6 hours of implementation time
+- **Split criteria:** If exceeding limits, create sub-phases (Phase X.1, X.2, etc.)
+
+### 10. Logging Requirements (Phase 0 Mandatory)
+Every project must initialize logging infrastructure in Phase 0:
+- **Log directory:** `.nebula/logs/` in project root
+- **Log levels:** DEBUG, INFO, WARN, ERROR, CRITICAL
+- **Format:** Structured JSON logs for parsing
+- **Retention:** Development (7 days), Production (30 days), Errors (permanent)
+- **Integration:** All errors automatically logged to project memory
+
 ## Framework Principles
 
 ### 1. Continuous Validation (CRITICAL)
@@ -100,6 +149,27 @@ Each Constellation document should include:
 - Granular task tracking within phases
 - Clear milestone definitions
 - Measurable progress indicators
+
+### 6. Automatic Version Tracking
+- **Phase Completion → Version Bump:** Semantic versioning tied to phases
+  - Phase 0 complete → 0.1.0
+  - Phase 1 complete → 0.2.0
+  - Phase 1.5 complete → 0.3.0
+  - Phase 2 complete → 0.4.0
+  - Phase 3 complete → 0.5.0
+  - Phase 3.5 complete → 0.6.0
+  - Phase 4 complete → 1.0.0
+- **Sub-Phase Completion → Patch Bump:** Phase X.01 → patch increment
+- **Auto-Update:** Package files (package.json, Cargo.toml, pubspec.yaml) updated automatically
+- **Git Tags:** Automatic git tags created on phase completion
+
+### 7. Project Memory Integration
+- **Local Knowledge Graph:** `.nebula/project_memory.sqlite` in project root
+- **Error Tracking:** All errors automatically logged with context
+- **Pattern Recognition:** Recurring errors identified and solutions suggested
+- **Decision History:** Architectural decisions recorded for future reference
+- **Context Snapshots:** Session state saved for continuity between work sessions
+- **Cross-Project Learning:** Successful patterns shared via framework Star Chart
 
 ## Implementation Guidelines
 

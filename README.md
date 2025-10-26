@@ -5,7 +5,7 @@ This guide shows you how to use the Nebula Framework to structure your projects 
 
 ## 📚 What You Have Here
 - **Nebula_Protocol.md** - The core framework specification
-- **[FRAMEWORK]_NEBULA_ADAPTATION.md** - Technology-specific adaptations (Flutter, Tauri, Python)
+- **[FRAMEWORK]_NEBULA_ADAPTATION.md** - Technology-specific adaptations (Flutter, Tauri, Python, Rust, Dioxus)
 - **MCP_implementation.md** - Complete MCP server setup and activation guide
 - **IMPLEMENTATION_GUIDE.md** - Detailed implementation instructions
 - **Nebula_readme.md** - Complete framework overview and philosophy
@@ -30,6 +30,17 @@ git clone https://github.com/JCorellaFSL/Context-Engineering-Protocol.git ~/nebu
 - ✅ **Stay Updated:** Use `git pull` to get the latest improvements
 - ✅ **MCP Integration:** Required for local MCP server setup
 
+### MCP Configuration Options (Local vs Remote)
+
+- **Remote (GitMCP) — Recommended for simplicity**: Configure an MCP server that points to your GitHub repo. See `MCP_implementation.md` for the exact JSON snippet and setup steps.
+- **Local (Custom server) — Offline/full control**: Use the provided installers to run a local MCP server that reads files from this repository.
+  - Linux/macOS: run `install-mcp-server.sh` from the repo root
+  - Windows: run `install-mcp-server.ps1` from the repo root
+
+Notes:
+- `cursor-mcp-config.json` is a placeholder example and is not used automatically by Cursor. For local setup, the effective config lives at `~/.cursor/mcp.json`.
+- The local installer sets `NEBULA_FRAMEWORK_PATH` to this repository so the server can serve files without additional configuration.
+
 ## 🚀 Quick Start: 3 Steps to AI-Powered Development
 
 ### Step 1: Choose Your Framework Adaptation
@@ -44,6 +55,12 @@ Use: TAURI_NEBULA_ADAPTATION.md
 
 # For Python projects
 Use: PYTHON_NEBULA_ADAPTATION.md
+
+# For Rust projects
+Use: RUST_NEBULA_ADAPTATION.md
+
+# For Dioxus projects  
+Use: DIOXUS_NEBULA_ADAPTATION.md
 
 # For other frameworks
 Use: Nebula_Protocol.md (generic)
@@ -65,12 +82,44 @@ Use: Nebula_Protocol.md (generic)
 2. **Set the context** with this prompt:
    ```
    Please use the attached Nebula Framework document as a reference 
-   for structuring and developing my [Flutter/Tauri/Python] project. 
+   for structuring and developing my [Flutter/Tauri/Python/Rust/Dioxus] project. 
    Follow the Nebula (main roadmap) and Constellation (phase-specific) 
    pattern for all development discussions.
    ```
 
 ### Step 3: Create Your Project Structure
+
+#### Critical: Generate ALL Constellations at Initialization
+- Generate every `ROADMAP_PHASE_[NUMBER]_[DESCRIPTOR].md` file for all planned phases upfront (e.g., 0–4). Do not create them one-by-one later; incomplete constellation sets lead to architectural gaps and unsafe assumptions.
+- Each constellation can start with placeholders, but the file must exist with headings, acceptance criteria stubs, and validation checklist.
+- Example prompt to your AI tool:
+  ```
+  Generate the full set of constellation documents now for phases 0 through 4
+  using the Nebula pattern. Include headings, acceptance criteria placeholders,
+  testing strategy sections, and validation checklists for each phase.
+  ```
+
+#### HOLD 1: Per‑Constellation Conflict Review (during generation)
+- For each newly generated constellation, run a quick review against all prior constellations:
+  - Check for conflicts: tasks that supersede, duplicate, or nullify previous tasks
+  - Check for phase fit: tasks better aligned to earlier/later phases
+  - Check dependencies: ensure prerequisites are satisfied or linked
+- Example prompt:
+  ```
+  Review ROADMAP_PHASE_2_FEATURES.md against phases 0–1 for conflicts,
+  supersession, duplication, and mis-phasing. Propose reassignments or edits and
+  list explicit rationale and updated dependencies.
+  ```
+
+#### HOLD 2: Global Constellation Review (after all are generated)
+- Perform a whole-plan pass to suggest re-ordering, merging/splitting tasks, and dependency fixes.
+- Ensure high-risk/infrastructure items occur before features dependent on them.
+- Example prompt:
+  ```
+  Evaluate phases 0–4 for ordering and dependency correctness. Identify tasks to
+  move between phases, merges/splits, and risks if sequence is unchanged. Output
+  a proposed diff of phase assignment per task with justification.
+  ```
 
 #### A. Start with the Nebula (Main Roadmap)
 Create `ROADMAP.md` using this template:
@@ -120,7 +169,7 @@ Create `ROADMAP.md` using this template:
 ```
 
 #### B. Create Constellation Documents for Each Phase
-For each phase, create a detailed constellation document:
+Create the full set of constellation documents for all phases at project initialization, then refine details iteratively:
 
 ```markdown
 # ROADMAP_PHASE_[NUMBER]_[DESCRIPTOR].md
@@ -143,6 +192,14 @@ Connection to Nebula phase and specific objectives
 - Architecture decisions
 - Integration patterns
 
+## Risk Register
+- Top risks for this phase and mitigations
+- Monitoring plan and decision triggers
+
+## Phase Invariants (Entry/Exit)
+- Entry conditions that must be true before starting
+- Exit conditions that must be true to complete the phase
+
 ## Testing Strategy
 - How to test each feature
 - Validation criteria
@@ -153,6 +210,8 @@ Connection to Nebula phase and specific objectives
 - [ ] Manual testing completed
 - [ ] Integration tested
 - [ ] Documentation updated
+- [ ] Dependencies resolved and linked
+- [ ] Risks identified and mitigations noted
 ```
 
 ## 🤖 Working with AI: Best Practices
@@ -302,5 +361,7 @@ testing and validation standards."
   - `FLUTTER_NEBULA_ADAPTATION.md`
   - `TAURI_NEBULA_ADAPTATION.md`
   - `PYTHON_NEBULA_ADAPTATION.md`
+  - `RUST_NEBULA_ADAPTATION.md`
+  - `DIOXUS_NEBULA_ADAPTATION.md`
 
 **Start your AI-assisted development journey with structured context engineering today!** 

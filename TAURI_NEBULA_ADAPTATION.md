@@ -89,49 +89,93 @@ This document adapts the Nebula Context Engineering Protocol specifically for Ta
 
 ## Tauri Project Phase Examples
 
-### Phase 0: Tauri Setup
+### Phase 0: Tauri Setup (→ 0.1.0)
 - **Constellation:** `ROADMAP_PHASE_0_TAURI_SETUP.md`
-- **Focus:** Environment setup, project structure, basic configuration
+- **Focus:** Environment setup, project structure, **LOGGING INFRASTRUCTURE**
 - **Key Tasks:**
   - Rust and Node.js environment setup
-  - Tauri project initialization
+  - Tauri project initialization (`npm create tauri-app`)
+  - **Initialize logging (tracing in Rust, console in frontend)**
+  - **Create `.nebula/logs/` directory structure**
+  - **Initialize project memory via MCP**
   - Development environment configuration
   - Build pipeline setup
+- **Exit Condition:** Logging operational, project memory initialized, basic app runs
 
-### Phase 1: Core Tauri Architecture
+### Phase 1: Core Tauri Architecture (→ 0.2.0)
 - **Constellation:** `ROADMAP_PHASE_1_TAURI_CORE.md`
-- **Focus:** Frontend/backend architecture, IPC setup
+- **Focus:** Frontend/backend architecture, IPC setup, **BACKEND ONLY**
 - **Key Tasks:**
-  - Frontend framework integration
-  - Basic Tauri command structure
+  - Frontend framework integration (React/Vue/Svelte setup)
+  - Basic Tauri command structure in Rust
   - IPC communication patterns
   - Window and app configuration
+  - Data models and business logic
+- **WARNING:** Cannot proceed to Phase 2 without completing Phase 1.5!
 
-### Phase 2: Feature Development
-- **Constellation:** `ROADMAP_PHASE_2_TAURI_FEATURES.md`
-- **Focus:** Specific app features and functionality
+### Phase 1.5: Basic UI (→ 0.3.0) **MANDATORY - DO NOT SKIP**
+- **Constellation:** `ROADMAP_PHASE_1.5_BASIC_UI.md`
+- **Focus:** Make all Phase 1 backend features usable through frontend UI
 - **Key Tasks:**
-  - Feature-specific commands
-  - Frontend component development
-  - Data persistence implementation
-  - Plugin integration
+  - Create UI components for all Tauri commands
+  - Implement navigation/routing
+  - Display data from backend commands
+  - Forms for user input
+  - Basic styling (functional, not polished)
+  - Error display and user feedback
+- **Quality Gate:** Manual testing checklist completed, app is usable
+- **Exit Condition:** User can interact with all Phase 1 features
 
-### Phase 3: System Integration
-- **Constellation:** `ROADMAP_PHASE_3_TAURI_SYSTEM.md`
-- **Focus:** Desktop-specific features and OS integration
+### Phase 2: Feature Development (→ 0.4.0)
+- **Constellation:** `ROADMAP_PHASE_2_TAURI_FEATURES.md`
+- **Focus:** Specific app features with BOTH frontend UI and backend commands
+- **Key Tasks:**
+  - Feature-specific Tauri commands with corresponding UI
+  - Frontend component development integrated with backend
+  - Data persistence with UI management
+  - Plugin integration with user-facing features
+- **Quality Gate:** Review Phases 0-2 for conflicts, create Phase 2.01 if issues found
+- **Logging:** All IPC errors logged to project memory
+
+### Phase 3: System Integration (→ 0.5.0)
+- **Constellation:** `ROADMAP_PHASE_3_TAURI_INTEGRATION.md`
+- **Focus:** Desktop features, OS integration, comprehensive testing
 - **Key Tasks:**
   - System tray implementation
-  - File system operations
-  - OS notifications
+  - File system operations (with permissions)
+  - OS notifications and native features
   - Deep linking and protocol handling
+  - Cross-platform testing (Windows, macOS, Linux)
+  - Performance optimization
+  - Error pattern analysis from project memory
+- **Quality Gate:** Review all phases for integration issues
 
-### Phase 4: Testing & Deployment
-- **Constellation:** `ROADMAP_PHASE_4_TAURI_DEPLOYMENT.md`
-- **Focus:** Testing, building, and deployment
+### Phase 3.5: UI Polish (→ 0.6.0) **MANDATORY - DO NOT SKIP**
+- **Constellation:** `ROADMAP_PHASE_3.5_UI_POLISH.md`
+- **Focus:** Professional, production-ready desktop UI
 - **Key Tasks:**
-  - Comprehensive testing implementation
+  - Visual design refinement (native desktop feel)
+  - Smooth transitions and animations
+  - Window management polish (minimize, maximize, close)
+  - Keyboard shortcuts and accessibility
+  - Menu bar and context menus
+  - Responsive layouts for different window sizes
+  - Loading states and progress indicators
+  - User feedback integration
+- **Quality Gate:** Design review, UX testing on all platforms
+- **Exit Condition:** App feels professional and native on each OS
+
+### Phase 4: Deployment (→ 1.0.0)
+- **Constellation:** `ROADMAP_PHASE_4_TAURI_DEPLOYMENT.md`
+- **Focus:** Final testing, building, and deployment
+- **Key Tasks:**
+  - Final comprehensive testing
   - Cross-platform build configuration
-  - Code signing and distribution
+  - Code signing for all platforms (Windows, macOS)
+  - Distribution setup (installers, auto-updater)
+  - **Version bump to 1.0.0**
+- **Quality Gate:** Final review, all tests passing
+- **Exit Condition:** App deployed and distributable
   - Update mechanism implementation
 
 ## Tauri Immediate Validation Approach

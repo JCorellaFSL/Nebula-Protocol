@@ -160,7 +160,7 @@ const server = new McpServer({
 server.tool("get_framework_file",
   { 
     filename: z.string().describe("Framework file to retrieve"),
-    project_type: z.enum(["flutter", "tauri", "python", "generic"]).optional()
+    project_type: z.enum(["flutter", "tauri", "python", "electron", "generic"]).optional()
   },
   async ({ filename, project_type }) => {
     try {
@@ -169,6 +169,7 @@ server.tool("get_framework_file",
           "flutter": "FLUTTER_NEBULA_ADAPTATION.md",
           "tauri": "TAURI_NEBULA_ADAPTATION.md", 
           "python": "PYTHON_NEBULA_ADAPTATION.md",
+          "electron": "ELECTRON_NEBULA_ADAPTATION.md",
           "generic": "Nebula_Protocol.md"
         };
         filename = typeMap[project_type];
@@ -219,6 +220,7 @@ server.tool("list_framework_files",
         "FLUTTER_NEBULA_ADAPTATION.md": "Flutter-specific adaptation",
         "TAURI_NEBULA_ADAPTATION.md": "Tauri-specific adaptation", 
         "PYTHON_NEBULA_ADAPTATION.md": "Python-specific adaptation",
+        "ELECTRON_NEBULA_ADAPTATION.md": "Electron-specific adaptation",
         "IMPLEMENTATION_GUIDE.md": "Detailed implementation steps"
       };
 
@@ -246,16 +248,17 @@ server.tool("list_framework_files",
 // Tool to get complete framework setup for a project type
 server.tool("setup_project_framework",
   { 
-    project_type: z.enum(["flutter", "tauri", "python", "generic"])
+    project_type: z.enum(["flutter", "tauri", "python", "electron", "generic"])
   },
   async ({ project_type }) => {
     try {
-      const mainFiles = {
-        "flutter": "FLUTTER_NEBULA_ADAPTATION.md",
-        "tauri": "TAURI_NEBULA_ADAPTATION.md",
-        "python": "PYTHON_NEBULA_ADAPTATION.md", 
-        "generic": "Nebula_Protocol.md"
-      };
+        const mainFiles = {
+          "flutter": "FLUTTER_NEBULA_ADAPTATION.md",
+          "tauri": "TAURI_NEBULA_ADAPTATION.md",
+          "python": "PYTHON_NEBULA_ADAPTATION.md",
+          "electron": "ELECTRON_NEBULA_ADAPTATION.md", 
+          "generic": "Nebula_Protocol.md"
+        };
 
       const mainFile = mainFiles[project_type];
       const howToFile = "README.md";

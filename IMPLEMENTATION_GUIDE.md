@@ -21,6 +21,38 @@ your-project/
     └── [FRAMEWORK]_NEBULA_ADAPTATION.md
 ```
 
+### 2.a Mandatory Constellation Generation (All Phases Upfront)
+- Immediately generate the complete set of constellation documents (`ROADMAP_PHASE_[NUMBER]_[DESCRIPTOR].md`) for all planned phases.
+- Include headings and acceptance criteria placeholders even if specifics are TBD.
+- Example instruction for your AI tool:
+  ```
+  Create the full set of constellation documents for phases 0–4 now, using the
+  Nebula structure. Do not defer creation. Provide placeholders for acceptance
+  criteria, testing strategy, and validation checklist in each file.
+  ```
+
+### 2.b Validation Holds
+#### HOLD 1: Per-Constellation Conflict Review
+- Prompt:
+  ```
+  Review ROADMAP_PHASE_[N]_[NAME].md against previously created phases for
+  conflicts, supersession, duplication, and mis-phasing. Suggest moves or edits,
+  and enumerate dependency adjustments required.
+  ```
+
+#### HOLD 2: Global Review After All Constellations Exist
+- Prompt:
+  ```
+  Evaluate phases 0–4 as a whole. Identify reorderings, merges/splits, and
+  prerequisite gaps. Output a proposed phase assignment diff with justifications
+  and risks mitigated.
+  ```
+
+### 2.c Constellation Template Enhancements
+- Include a Risk Register (top risks, mitigations, monitoring plan)
+- Define Phase Invariants: entry conditions and exit conditions
+- Expand Validation Checklist to include dependency resolution and risk notes
+
 ### 3. Create Your Nebula (Main Roadmap)
 Use this template for your `ROADMAP.md`:
 

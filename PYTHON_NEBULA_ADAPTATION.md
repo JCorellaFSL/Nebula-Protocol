@@ -91,50 +91,91 @@ This document adapts the Nebula Context Engineering Protocol specifically for Py
 
 ## Python Project Phase Examples
 
-### Phase 0: Python Setup
+### Phase 0: Python Setup (→ 0.1.0)
 - **Constellation:** `ROADMAP_PHASE_0_PYTHON_SETUP.md`
-- **Focus:** Environment setup, project structure, dependency management
+- **Focus:** Environment setup, project structure, **LOGGING INFRASTRUCTURE**
 - **Key Tasks:**
   - Python environment setup (virtual environment, pyenv)
   - Project structure creation
-  - Package management configuration
+  - **Initialize logging (logging module with JSON formatter)**
+  - **Create `.nebula/logs/` directory structure**
+  - **Initialize project memory via MCP**
+  - Package management configuration (requirements.txt or pyproject.toml)
   - Development tools setup (linting, formatting)
 
-### Phase 1: Core Python Architecture
+### Phase 1: Core Python Architecture (→ 0.2.0)
 - **Constellation:** `ROADMAP_PHASE_1_PYTHON_CORE.md`
-- **Focus:** Core application structure, database models, basic functionality
+- **Focus:** Core application structure, database models, **BACKEND ONLY**
 - **Key Tasks:**
-  - Application framework setup
+  - Application framework setup (Django/Flask/FastAPI)
   - Database model definitions
   - Core business logic implementation
   - Configuration management
+  - API endpoint structure (backend logic only)
+- **WARNING:** Cannot proceed to Phase 2 without completing Phase 1.5!
 
-### Phase 2: Feature Development
-- **Constellation:** `ROADMAP_PHASE_2_PYTHON_FEATURES.md`
-- **Focus:** Specific features and API endpoints
+### Phase 1.5: Basic UI (→ 0.3.0) **MANDATORY - DO NOT SKIP**
+- **Constellation:** `ROADMAP_PHASE_1.5_BASIC_UI.md`
+- **Focus:** Make all Phase 1 features accessible through UI/API interface
 - **Key Tasks:**
-  - Feature-specific modules and functions
-  - API endpoint implementations
-  - Database operations and queries
-  - Business logic development
+  - **Web App:** Create templates/frontend for all endpoints
+  - **API:** Create API documentation and test interface (Swagger/ReDoc)
+  - **CLI:** Create command-line interface for all operations
+  - Basic forms for data input
+  - Display data from backend
+  - Error messages and user feedback
+  - Manual testing via browser/Postman/CLI
+- **Quality Gate:** Manual testing checklist completed, endpoints testable
+- **Exit Condition:** User/developer can interact with all Phase 1 features
 
-### Phase 3: Integration & Testing
+### Phase 2: Feature Development (→ 0.4.0)
+- **Constellation:** `ROADMAP_PHASE_2_PYTHON_FEATURES.md`
+- **Focus:** Specific features with BOTH backend and user interface
+- **Key Tasks:**
+  - Feature-specific modules with corresponding UI/API
+  - API endpoint implementations with documentation
+  - Database operations with management interface
+  - Business logic with user-facing components
+- **Quality Gate:** Review Phases 0-2 for conflicts, create Phase 2.01 if issues found
+- **Logging:** All errors logged to project memory
+
+### Phase 3: Integration & Testing (→ 0.5.0)
 - **Constellation:** `ROADMAP_PHASE_3_PYTHON_INTEGRATION.md`
 - **Focus:** Integration testing, third-party services, optimization
 - **Key Tasks:**
   - Integration with external services
-  - Performance optimization
-  - Security implementation
+  - Performance optimization (query optimization, caching)
+  - Security implementation (auth, CORS, rate limiting)
+  - Comprehensive testing (unit, integration, E2E)
+  - Error pattern analysis from project memory
+- **Quality Gate:** Review all phases for integration issues
+
+### Phase 3.5: UI Polish (→ 0.6.0) **MANDATORY - DO NOT SKIP**
+- **Constellation:** `ROADMAP_PHASE_3.5_UI_POLISH.md`
+- **Focus:** Professional, production-ready interface
+- **Key Tasks:**
+  - **Web App:** Visual design refinement, responsive design
+  - **API:** Complete documentation, examples, error messages
+  - **CLI:** Help messages, colors, progress bars
+  - User experience improvements
+  - Accessibility features
+  - Loading states and feedback
+  - User feedback integration
+- **Quality Gate:** UX review, documentation review
+- **Exit Condition:** App/API ready for public release
   - Comprehensive testing
 
-### Phase 4: Deployment & Distribution
+### Phase 4: Deployment (→ 1.0.0)
 - **Constellation:** `ROADMAP_PHASE_4_PYTHON_DEPLOYMENT.md`
-- **Focus:** Deployment, monitoring, and maintenance
+- **Focus:** Production deployment, monitoring, and distribution
 - **Key Tasks:**
-  - Production deployment setup
-  - Monitoring and logging
-  - Package distribution
-  - Documentation and maintenance
+  - Production deployment setup (Docker, AWS, Heroku, etc.)
+  - Monitoring and logging infrastructure
+  - Package distribution (PyPI if library, Docker if app)
+  - Final documentation
+  - **Version bump to 1.0.0**
+- **Quality Gate:** Final review, all tests passing
+- **Exit Condition:** App/API deployed and available
 
 ## Python Immediate Validation Approach
 
