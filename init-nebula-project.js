@@ -211,6 +211,15 @@ function copyFrameworkAdaptation() {
 function createInitialRoadmap() {
   console.log('\n🗺️  Creating initial ROADMAP.md...');
   
+  const adaptationMap = {
+    flutter: 'FLUTTER_NEBULA_ADAPTATION.md',
+    tauri: 'TAURI_NEBULA_ADAPTATION.md',
+    python: 'PYTHON_NEBULA_ADAPTATION.md',
+    rust: 'RUST_NEBULA_ADAPTATION.md',
+    dioxus: 'DIOXUS_NEBULA_ADAPTATION.md',
+    generic: 'Nebula_Protocol.md'
+  };
+  
   const roadmapContent = `# ${projectName} - Nebula Roadmap
 
 ## Project Overview
@@ -298,15 +307,6 @@ This project uses Nebula's project memory system located in \`.nebula/\`
   } else {
     console.log('  ⏭️  ROADMAP.md already exists');
   }
-  
-  const adaptationMap = {
-    flutter: 'FLUTTER_NEBULA_ADAPTATION.md',
-    tauri: 'TAURI_NEBULA_ADAPTATION.md',
-    python: 'PYTHON_NEBULA_ADAPTATION.md',
-    rust: 'RUST_NEBULA_ADAPTATION.md',
-    dioxus: 'DIOXUS_NEBULA_ADAPTATION.md',
-    generic: 'Nebula_Protocol.md'
-  };
 }
 
 // Create README instructions
