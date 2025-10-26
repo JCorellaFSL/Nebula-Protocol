@@ -67,12 +67,13 @@ The Nebula Framework includes a Model Context Protocol (MCP) server that provide
 - ✅ **No maintenance** needed
 - ✅ **Team sharing** - everyone uses same URL
 
-#### Available Tools:
+#### Available Tools (Cloud Method):
 - `fetch_JCorellaFSL_documentation` - Fetch framework documents
-- `search_JCorellaFSL_documentation` - Search documentation
+- `search_JCorellaFSL_documentation` - Search documentation  
 - `search_JCorellaFSL_code` - Search repository code
 - `fetch_generic_url_content` - Fetch referenced content
-- Plus 23+ project memory and knowledge graph tools
+
+**Note:** The cloud method provides GitHub file access only. For project memory and knowledge graph tools, use the local server method below.
 
 ---
 
@@ -149,13 +150,32 @@ npm install
 - ✅ **Local file access** for project memory
 - ✅ **Faster response** (no network latency)
 
-#### Available Tools:
-All 27+ tools including:
-- Framework file access
-- Project memory database (SQLite)
-- Star Chart knowledge graph
-- Error pattern recognition
-- Decision history tracking
+#### Available Tools (Local Method):
+All 27 tools including:
+
+**Framework Access (3 tools):**
+- `get_framework_file` - Load any framework .md file
+- `list_framework_files` - List all available files  
+- `setup_project_framework` - Copy framework to project
+
+**Project Memory (11 tools):**
+- `project_memory_init` - Initialize SQLite memory database
+- `project_memory_log_error` - Log errors with pattern detection
+- `project_memory_record_solution` - Record error solutions
+- `project_memory_find_similar_errors` - Search past errors
+- `project_memory_get_patterns` - Get recurring patterns
+- `project_memory_record_decision` - Track architectural decisions
+- `project_memory_quality_gate` - Record quality gate results
+- `project_memory_get_context` - Retrieve context snapshots
+- `project_memory_save_context` - Save session state
+- `project_memory_version_bump` - Record version changes
+- `project_memory_get_stats` - Get project statistics
+
+**Star Chart Knowledge Graph (13 tools):**
+- `starchart_init`, `starchart_add_node`, `starchart_add_edge`
+- `starchart_record_event`, `starchart_add_lesson`, `starchart_get_constellation`
+- `starchart_get_path`, `starchart_search`, `starchart_get_timeline`
+- `starchart_get_lessons`, `starchart_link_artifact`, `starchart_get_stats`, `starchart_export`
 
 ---
 
@@ -167,10 +187,13 @@ All 27+ tools including:
 | **Requires Node.js** | No | Yes |
 | **Works Offline** | No | Yes |
 | **Auto-Updates** | Yes (GitHub) | No (manual pull) |
-| **Project Memory** | Via GitHub | Local SQLite |
+| **Available Tools** | 4 (GitHub access) | 27 (all features) |
+| **Project Memory** | ❌ No | ✅ Yes (SQLite) |
+| **Knowledge Graph** | ❌ No | ✅ Yes (Star Chart) |
 | **Custom Modifications** | No | Yes |
 | **Team Sharing** | Easy (one URL) | Manual (config sharing) |
 | **Speed** | Network dependent | Local (fast) |
+| **Best For** | Reading docs | Active development |
 
 ---
 
