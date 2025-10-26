@@ -5,11 +5,13 @@
   "main": "nebula-framework-mcp.js",
   "type": "module",
   "bin": {
-    "nebula-framework-mcp": "./nebula-framework-mcp.js"
+    "nebula-framework-mcp": "./nebula-framework-mcp.js",
+    "init-nebula": "./init-nebula-project.js"
   },
   "scripts": {
     "start": "node nebula-framework-mcp.js",
-    "inspector": "npx @modelcontextprotocol/inspector node nebula-framework-mcp.js"
+    "inspector": "npx @modelcontextprotocol/inspector node nebula-framework-mcp.js",
+    "init": "node init-nebula-project.js"
   },
   "dependencies": {
     "@modelcontextprotocol/sdk": "^1.0.0",

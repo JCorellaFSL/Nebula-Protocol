@@ -239,7 +239,51 @@ For detailed troubleshooting, see **[MCP Implementation Guide](MCP_implementatio
 
 ---
 
-## 🚀 Quick Start: 3 Steps to AI-Powered Development
+## 🚀 Quick Start: Initialize Your Project
+
+### Option A: Automated Setup (Recommended)
+
+Use the `init-nebula` command to automatically set up your project:
+
+```bash
+# Clone the Nebula Framework
+git clone https://github.com/JCorellaFSL/Nebula-Protocol.git
+cd Nebula-Protocol
+
+# Install the framework
+npm install
+npm link  # Makes init-nebula available globally
+
+# Navigate to your project
+cd /path/to/your-project
+
+# Initialize Nebula for your project
+init-nebula rust my-todo-app
+# OR
+init-nebula flutter my-mobile-app
+# OR  
+init-nebula python my-web-service
+```
+
+**What this does:**
+- ✅ Creates `.nebula/` directory with project-local tools
+- ✅ Copies project memory database system
+- ✅ Installs dependencies in `.nebula/tools/`
+- ✅ Updates `.gitignore` to exclude logs/databases
+- ✅ Configures build exclusions (keeps `.nebula/` out of production)
+- ✅ Copies framework adaptation documents to `docs/`
+- ✅ Creates initial `ROADMAP.md` with phase structure
+- ✅ Initializes project memory database
+
+**Result:** Your project has self-contained Nebula tools that:
+- Stay out of production builds
+- Track errors and patterns locally
+- Persist across development sessions
+- Don't require global MCP server
+
+---
+
+### Option B: Manual Setup
 
 ### Step 1: Choose Your Framework Adaptation
 Pick the adaptation that matches your project:
