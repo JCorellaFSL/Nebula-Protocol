@@ -30,16 +30,191 @@ git clone https://github.com/JCorellaFSL/Context-Engineering-Protocol.git ~/nebu
 - ✅ **Stay Updated:** Use `git pull` to get the latest improvements
 - ✅ **MCP Integration:** Required for local MCP server setup
 
-### MCP Configuration Options (Local vs Remote)
+## 🔌 MCP Server Setup (Choose Your Method)
 
-- **Remote (GitMCP) — Recommended for simplicity**: Configure an MCP server that points to your GitHub repo. See `MCP_implementation.md` for the exact JSON snippet and setup steps.
-- **Local (Custom server) — Offline/full control**: Use the provided installers to run a local MCP server that reads files from this repository.
-  - Linux/macOS: run `install-mcp-server.sh` from the repo root
-  - Windows: run `install-mcp-server.ps1` from the repo root
+The Nebula Framework includes a Model Context Protocol (MCP) server that provides direct access to framework files and tools. Choose the setup method that works best for you:
 
-Notes:
-- `cursor-mcp-config.json` is a placeholder example and is not used automatically by Cursor. For local setup, the effective config lives at `~/.cursor/mcp.json`.
-- The local installer sets `NEBULA_FRAMEWORK_PATH` to this repository so the server can serve files without additional configuration.
+### Method 1: Cloud-Hosted via GitMCP (Recommended) ☁️
+
+**Best for:** Quick setup, always up-to-date, works anywhere
+
+#### Setup Steps:
+
+1. **Open Cursor Settings**
+   - Go to `Settings → Tools & MCP`
+   - Click "Add Custom MCP"
+
+2. **Add the Configuration**
+   ```json
+   {
+     "mcpServers": {
+       "nebula-framework": {
+         "url": "https://gitmcp.io/_/JCorellaFSL/Nebula-Protocol"
+       }
+     }
+   }
+   ```
+
+3. **Save and Restart**
+   - Save the configuration
+   - Restart Cursor or reload the window
+   - The MCP server will appear in "Installed MCP Servers"
+
+#### Advantages:
+- ✅ **No local installation** required
+- ✅ **Always up-to-date** with GitHub repository
+- ✅ **Works anywhere** - just configure once
+- ✅ **No maintenance** needed
+- ✅ **Team sharing** - everyone uses same URL
+
+#### Available Tools:
+- `fetch_JCorellaFSL_documentation` - Fetch framework documents
+- `search_JCorellaFSL_documentation` - Search documentation
+- `search_JCorellaFSL_code` - Search repository code
+- `fetch_generic_url_content` - Fetch referenced content
+- Plus 23+ project memory and knowledge graph tools
+
+---
+
+### Method 2: Local MCP Server 💻
+
+**Best for:** Offline work, custom modifications, full control
+
+#### Prerequisites:
+- Node.js 18+ installed
+- Repository cloned locally
+
+#### Setup Steps:
+
+**For Windows:**
+```powershell
+# Navigate to the repository
+cd C:\path\to\Nebula-Protocol
+
+# Run the installer
+.\install-mcp-server.ps1
+```
+
+**For Linux/macOS:**
+```bash
+# Navigate to the repository
+cd ~/path/to/Nebula-Protocol
+
+# Make installer executable
+chmod +x install-mcp-server.sh
+
+# Run the installer
+./install-mcp-server.sh
+```
+
+#### Manual Configuration:
+
+If you prefer manual setup, create or edit:
+
+**Windows:** `%APPDATA%\Cursor\User\globalStorage\saoudrizwan.claude-dev\settings\cline_mcp_settings.json`
+
+**Linux/macOS:** `~/.config/Cursor/User/globalStorage/saoudrizwan.claude-dev/settings/cline_mcp_settings.json`
+
+Add this configuration:
+```json
+{
+  "mcpServers": {
+    "nebula-framework": {
+      "command": "node",
+      "args": [
+        "/absolute/path/to/Nebula-Protocol/nebula-framework-mcp.js"
+      ],
+      "env": {
+        "NEBULA_FRAMEWORK_PATH": "/absolute/path/to/Nebula-Protocol"
+      },
+      "disabled": false,
+      "alwaysAllow": []
+    }
+  }
+}
+```
+
+Replace `/absolute/path/to/Nebula-Protocol` with your actual path.
+
+#### Install Dependencies:
+```bash
+cd /path/to/Nebula-Protocol
+npm install
+```
+
+#### Advantages:
+- ✅ **Works offline**
+- ✅ **Full control** over server code
+- ✅ **Custom modifications** possible
+- ✅ **Local file access** for project memory
+- ✅ **Faster response** (no network latency)
+
+#### Available Tools:
+All 27+ tools including:
+- Framework file access
+- Project memory database (SQLite)
+- Star Chart knowledge graph
+- Error pattern recognition
+- Decision history tracking
+
+---
+
+### Method Comparison
+
+| Feature | Cloud (GitMCP) | Local Server |
+|---------|---------------|--------------|
+| **Setup Time** | 2 minutes | 5-10 minutes |
+| **Requires Node.js** | No | Yes |
+| **Works Offline** | No | Yes |
+| **Auto-Updates** | Yes (GitHub) | No (manual pull) |
+| **Project Memory** | Via GitHub | Local SQLite |
+| **Custom Modifications** | No | Yes |
+| **Team Sharing** | Easy (one URL) | Manual (config sharing) |
+| **Speed** | Network dependent | Local (fast) |
+
+---
+
+### Verification
+
+After setup (either method), verify the MCP server is working:
+
+1. Open Cursor
+2. Go to `Settings → Tools & MCP`
+3. Look for **"nebula-framework"** in "Installed MCP Servers"
+4. Green indicator means it's active ✅
+
+### Test the Connection
+
+In Cursor chat, try:
+```
+"Use the nebula-framework MCP to list available framework files"
+```
+
+Or:
+```
+"Fetch the Rust Nebula adaptation using MCP"
+```
+
+If the MCP is working, I'll be able to access your framework documentation directly!
+
+---
+
+### Troubleshooting
+
+#### Cloud Method Issues:
+- **"Server not found"**: Check the URL is exactly `https://gitmcp.io/_/JCorellaFSL/Nebula-Protocol`
+- **"Connection failed"**: Verify internet connection and GitHub is accessible
+- **"No tools available"**: Restart Cursor after configuration
+
+#### Local Method Issues:
+- **"Command not found"**: Ensure Node.js is installed (`node --version`)
+- **"Module not found"**: Run `npm install` in the repository directory
+- **"Path not found"**: Verify NEBULA_FRAMEWORK_PATH points to correct directory
+- **"Permission denied"**: On Linux/macOS, ensure script has execute permissions
+
+For detailed troubleshooting, see **[MCP Implementation Guide](MCP_implementation.md)**
+
+---
 
 ## 🚀 Quick Start: 3 Steps to AI-Powered Development
 
