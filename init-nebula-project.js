@@ -406,7 +406,7 @@ Documentation: docs/Nebula_Protocol.md
 }
 
 // Initialize project memory database
-function initializeProjectMemory() {
+async function initializeProjectMemory() {
   console.log('\n🧠 Initializing project memory database...');
   
   try {
