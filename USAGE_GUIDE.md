@@ -1,6 +1,17 @@
 # Nebula Framework Usage Guide
 
+**⚠️ UPDATED:** November 2024 - Adaptive approach with Star Gates and cosmic terminology
+
 Complete guide to using the Nebula Framework for AI-assisted software development.
+
+---
+
+## 🌌 Cosmic Terminology
+
+- **⭐ Constellations** - Major development phases
+- **🪐 Star Systems** - Sub-phases within constellations
+- **🚪 Star Gates** - Mandatory quality checkpoints
+- **🌌 Nebula** - Your main project roadmap
 
 ---
 
@@ -16,9 +27,9 @@ The Nebula Framework supports two complementary modes:
 
 ### 2. Project-Local Tools (Full Features) 💻
 - **Install tools** in your project's `.nebula/` directory
-- **27 tools** including project memory and knowledge graph
+- **30 tools** including Star Gate tracking, project memory, and knowledge graph
 - **Stays out of builds** - automatically excluded
-- **Perfect for:** Active development, error tracking, pattern learning
+- **Perfect for:** Active development, Star Gate validation, error tracking
 
 **Best Practice:** Use both! Cloud MCP for docs, local tools for development.
 
@@ -46,7 +57,18 @@ The Nebula Framework supports two complementary modes:
 ### Step 2: Initialize Your Project (5 minutes)
 
 ```bash
-# Clone and install Nebula Framework (one-time)
+# Install Nebula Framework CLI (one-time)
+npm install -g nebula-framework-mcp
+
+# Initialize project with adaptive structure
+init-nebula [type] [name] [complexity]
+
+# Examples:
+init-nebula python my-app simple       # Simple: 3 constellations
+init-nebula rust my-app moderate       # Moderate: 5 constellations (default)
+init-nebula rust my-ide complex        # Complex: 5+ with Star Systems
+
+# Or clone framework for customization
 git clone https://github.com/JCorellaFSL/Nebula-Protocol.git
 cd Nebula-Protocol
 npm install

@@ -1,11 +1,13 @@
 # Python Nebula Framework Adaptation
 
+**⚠️ UPDATED:** November 2024 - Now uses Constellations, Star Systems, and Star Gates terminology
+
 ## Overview
 This document adapts the Nebula Context Engineering Protocol specifically for Python development projects, incorporating Python-specific tools, patterns, and best practices for web applications, APIs, data science, and automation projects.
 
 ## Python-Specific Constellation Content Structure
 
-### 1. Phase Overview
+### 1. Constellation Overview
 - **Python Context:** Project type implications (web app, API, data science, automation)
 - **Framework Considerations:** Django, Flask, FastAPI, or other framework-specific requirements
 - **Environment Management:** Virtual environments, dependency isolation

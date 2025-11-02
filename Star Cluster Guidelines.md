@@ -1,4 +1,19 @@
-My Proposal for Context Engineering Protocols:
+# Star Cluster Guidelines
+
+**📜 HISTORICAL DOCUMENT:** This is the original proposal that evolved into the Nebula Framework.
+
+**⚠️ UPDATED TERMINOLOGY (November 2024):**
+- "Star-Cluster" → **Nebula** (main ROADMAP.md)
+- "Constellations" → **Constellations** (still used, now `CONSTELLATION_[N]_[NAME].md`)
+- "Phases" → **Constellations** (main development phases)
+- NEW: **Star Systems** (sub-phases within constellations)
+- NEW: **Star Gates** (quality checkpoints)
+
+**See:** [November 2024 Updates](updates/NOVEMBER_UPDATES.md) for current implementation.
+
+---
+
+## Original Proposal for Context Engineering Protocols:
 1. Naming Convention for "Constellation" Roadmaps:
 
 Star-Cluster: The main, high-level ROADMAP.md will remain as is, serving as our "Star-Cluster."

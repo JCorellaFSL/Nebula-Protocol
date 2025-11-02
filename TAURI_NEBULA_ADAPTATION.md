@@ -1,11 +1,13 @@
 # Tauri Nebula Framework Adaptation
 
+**⚠️ UPDATED:** November 2024 - Now uses Constellations, Star Systems, and Star Gates terminology
+
 ## Overview
 This document adapts the Nebula Context Engineering Protocol specifically for Tauri development projects, incorporating Tauri's unique web frontend + Rust backend architecture, desktop-specific patterns, and cross-platform considerations.
 
 ## Tauri-Specific Constellation Content Structure
 
-### 1. Phase Overview
+### 1. Constellation Overview
 - **Tauri Context:** Frontend/backend architecture implications
 - **Platform Considerations:** Windows/macOS/Linux specific requirements
 - **IPC Strategy:** Inter-process communication patterns

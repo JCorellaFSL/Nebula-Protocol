@@ -1,5 +1,7 @@
 # Python Nebula Framework
 
+**⚠️ UPDATED:** November 2024 - Now uses Constellations, Star Systems, and Star Gates terminology
+
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 [![Python](https://img.shields.io/badge/Python-3.9%2B-blue.svg)](https://python.org)
 [![Nebula](https://img.shields.io/badge/Nebula-Context%20Engineering-green.svg)](https://github.com/your-repo/nebula-framework)

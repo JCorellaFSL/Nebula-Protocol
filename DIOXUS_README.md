@@ -1,5 +1,7 @@
 # Dioxus Nebula Framework
 
+**⚠️ UPDATED:** November 2024 - Now uses Constellations, Star Systems, and Star Gates terminology
+
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 [![Dioxus](https://img.shields.io/badge/Dioxus-Framework-blue.svg)](https://dioxuslabs.com)
 [![Nebula](https://img.shields.io/badge/Nebula-Context%20Engineering-green.svg)](https://github.com/your-repo/nebula-framework)

@@ -1,60 +1,152 @@
 # Nebula Framework Implementation Guide
 
+**⚠️ UPDATED:** November 2024 - Now uses adaptive, flexible approach with cosmic terminology
+
 ## Quick Start
 
 ### 1. Choose Your Framework Version
 - **Generalized Version:** Use `Nebula_Protocol.md` for any technology stack
 - **Flutter Projects:** Use `FLUTTER_NEBULA_ADAPTATION.md` for mobile/cross-platform apps
 - **Tauri Projects:** Use `TAURI_NEBULA_ADAPTATION.md` for desktop applications
+- **Python Projects:** Use `PYTHON_NEBULA_ADAPTATION.md` for Python applications
+- **Rust Projects:** Use `RUST_NEBULA_ADAPTATION.md` for Rust applications
+- **Dioxus Projects:** Use `DIOXUS_NEBULA_ADAPTATION.md` for Dioxus UI applications
 
-### 2. Setup Your Project Structure
+### 2. Understand the Cosmic Terminology
+
+**🌌 Nebula** = Main project roadmap (`ROADMAP.md`)
+
+**⭐ Constellations** = Major development phases
+- Convention: `CONSTELLATION_[NUMBER]_[DESCRIPTOR].md`
+- Examples: `CONSTELLATION_0_SETUP.md`, `CONSTELLATION_1_CORE.md`
+
+**🪐 Star Systems** = Sub-phases within constellations (created as needed)
+- Convention: `STAR_SYSTEM_[X.Y]_[DESCRIPTOR].md`
+- Examples: `STAR_SYSTEM_1.1_DATABASE.md`, `STAR_SYSTEM_1.2_API.md`
+
+**🚪 Star Gates** = Quality checkpoints between constellations (MANDATORY)
+- Convention: `STAR_GATE_[NUMBER]_[CONSTELLATION].md`
+- Examples: `STAR_GATE_0_SETUP.md`, `STAR_GATE_1_CORE.md`
+
+### 3. Setup Your Project Structure (Adaptive Approach)
+
+**NEW APPROACH:** Structure grows with actual complexity, not predicted complexity.
+
+**Simple Project:**
 ```
 your-project/
 ├── ROADMAP.md                          # Nebula (main roadmap)
-├── ROADMAP_PHASE_0_SETUP.md           # Setup constellation
-├── ROADMAP_PHASE_1_CORE.md            # Core development constellation
-├── ROADMAP_PHASE_2_FEATURES.md        # Feature development constellation
-├── ROADMAP_PHASE_3_INTEGRATION.md     # Integration constellation
-├── ROADMAP_PHASE_4_DEPLOYMENT.md      # Deployment constellation
+├── CONSTELLATION_0_SETUP.md           # Setup
+├── CONSTELLATION_1_CORE.md            # Core development
+├── CONSTELLATION_2_DEPLOYMENT.md      # Deployment
+├── STAR_GATE_0_SETUP.md              # Quality checkpoint
+├── STAR_GATE_1_CORE.md               # Quality checkpoint
+├── STAR_GATE_2_DEPLOYMENT.md         # Quality checkpoint
 └── docs/
-    ├── Nebula_Protocol.md    # Framework reference
     └── [FRAMEWORK]_NEBULA_ADAPTATION.md
 ```
 
-### 2.a Mandatory Constellation Generation (All Phases Upfront)
-- Immediately generate the complete set of constellation documents (`ROADMAP_PHASE_[NUMBER]_[DESCRIPTOR].md`) for all planned phases.
-- Include headings and acceptance criteria placeholders even if specifics are TBD.
-- Example instruction for your AI tool:
-  ```
-  Create the full set of constellation documents for phases 0–4 now, using the
-  Nebula structure. Do not defer creation. Provide placeholders for acceptance
-  criteria, testing strategy, and validation checklist in each file.
-  ```
+**Moderate Project (Default):**
+```
+your-project/
+├── ROADMAP.md
+├── CONSTELLATION_0_SETUP.md
+├── CONSTELLATION_1_CORE.md
+├── CONSTELLATION_2_FEATURES.md
+├── CONSTELLATION_3_INTEGRATION.md
+├── CONSTELLATION_4_DEPLOYMENT.md
+├── STAR_GATE_[0-4]_[NAME].md        # One per constellation
+└── docs/
+```
 
-### 2.b Validation Holds
-#### HOLD 1: Per-Constellation Conflict Review
-- Prompt:
-  ```
-  Review ROADMAP_PHASE_[N]_[NAME].md against previously created phases for
-  conflicts, supersession, duplication, and mis-phasing. Suggest moves or edits,
-  and enumerate dependency adjustments required.
-  ```
+**Complex Project (With Star Systems):**
+```
+your-project/
+├── ROADMAP.md
+├── CONSTELLATION_0_SETUP.md
+├── CONSTELLATION_1_CORE.md
+│   ├── STAR_SYSTEM_1.1_DATABASE.md
+│   ├── STAR_SYSTEM_1.2_API.md
+│   └── STAR_SYSTEM_1.3_AUTH.md
+├── STAR_GATE_1_CORE.md              # Validates all of Constellation 1
+├── CONSTELLATION_2_FEATURES.md
+└── ...
+```
 
-#### HOLD 2: Global Review After All Constellations Exist
-- Prompt:
-  ```
-  Evaluate phases 0–4 as a whole. Identify reorderings, merges/splits, and
-  prerequisite gaps. Output a proposed phase assignment diff with justifications
-  and risks mitigated.
-  ```
+### 4. Initialize Your Project (Automated)
 
-### 2.c Constellation Template Enhancements
-- Include a Risk Register (top risks, mitigations, monitoring plan)
-- Define Phase Invariants: entry conditions and exit conditions
-- Expand Validation Checklist to include dependency resolution and risk notes
+```bash
+# Install Nebula Framework globally (one-time)
+npm install -g nebula-framework-mcp
 
-### 3. Create Your Nebula (Main Roadmap)
-Use this template for your `ROADMAP.md`:
+# Initialize project with adaptive structure
+init-nebula [type] [name] [complexity]
+
+# Examples:
+init-nebula python my-simple-app simple       # 3 constellations
+init-nebula rust my-todo-app moderate         # 5 constellations (default)
+init-nebula rust my-vscode-clone complex      # 5+ constellations, expandable
+```
+
+### 5. Adaptive Constellation Generation (NEW)
+
+**CHANGED FROM OLD APPROACH:** No longer generate all constellations upfront.
+
+**Start Simple:**
+- Begin with core constellations (Setup, Core, Deployment for simple projects)
+- Add more as needed based on actual complexity
+
+**Expand When Needed:**
+- If a constellation exceeds 4000 tokens or 8-10 tasks
+- Break into Star Systems organically
+- Use `constellation-analyzer.js` to identify when to split
+
+**Example:**
+```bash
+# Analyze constellation complexity
+analyze-constellation CONSTELLATION_1_CORE.md
+
+# Output tells you if it needs splitting:
+# 🔴 ACTION REQUIRED: This constellation should be split into Star Systems
+```
+
+### 6. Star Gate Enforcement (NEW)
+
+After completing each constellation, you MUST pass through its Star Gate:
+
+**Star Gate Checklist:**
+- ✅ All automated tests passing (genuinely testing, not faking)
+- 👤 Manual verification for user-facing features
+- 📝 All code committed and pushed to remote repository
+- 🔗 Integration check (no breaking changes)
+- 📚 Documentation updated
+
+**Create Star Gate Document:**
+```bash
+cp TEMPLATE_STAR_GATE.md STAR_GATE_1_CORE.md
+# Fill out checklist
+# Log results to project memory
+```
+
+### 7. Use Constellation Analyzer
+
+```bash
+# Check if constellation is too complex
+analyze-constellation CONSTELLATION_1_CORE.md
+
+# Analyze entire project
+analyze-constellation ./
+
+# Results show:
+# - Token count vs limit
+# - Task count vs recommended
+# - Complexity assessment
+# - Recommendations for splitting
+```
+
+### 8. Create Your Nebula (Main Roadmap)
+
+**NOTE:** Use `init-nebula` to generate this automatically, or create manually:
 
 ```markdown
 # Project Name - Nebula Roadmap

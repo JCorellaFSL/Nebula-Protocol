@@ -1,12 +1,14 @@
-# ROADMAP_PHASE_1.5_BASIC_UI - Basic User Interface
+# CONSTELLATION_1.5_BASIC_UI - Basic User Interface
 
-## Phase Overview
-**MANDATORY PHASE - DO NOT SKIP**
+**⚠️ UPDATED:** November 2024 - Now uses Constellation terminology
+
+## Constellation Overview
+**MANDATORY CONSTELLATION - DO NOT SKIP**
 
 This phase ensures that all core backend functionality implemented in Phase 1 has a functional, usable user interface. The goal is to make the application testable and usable by humans, preventing the "ready but broken" scenario where code exists but users cannot interact with it.
 
-**Connection to Nebula:** Implements basic UI for all Phase 1 core features
-**Dependencies:** Phase 1 (Core Development) must be complete
+**Connection to Nebula:** Implements basic UI for all Constellation 1 core features
+**Dependencies:** Constellation 1 (Core Development) must be complete
 **Version Target:** 0.3.0 (upon completion)
 
 ### Objectives
@@ -22,6 +24,7 @@ This phase ensures that all core backend functionality implemented in Phase 1 ha
 - ✅ Basic styling applied (visually coherent, not production-ready)
 - ✅ Manual testing checklist completed with screenshots
 - ✅ No console errors or critical warnings
+- ✅ **Star Gate ready:** All tests prepared for STAR_GATE_1_CORE.md
 
 ## Detailed Tasks
 
@@ -54,7 +57,7 @@ This phase ensures that all core backend functionality implemented in Phase 1 ha
 
 **Logging:**
 ```
-[INFO] Phase 1.5 started: Basic UI setup
+[INFO] Constellation 1.5 started: Basic UI setup
 [INFO] UI framework initialized successfully
 [DEBUG] Available routes: [/, /home, /settings]
 ```
@@ -230,14 +233,14 @@ This phase ensures that all core backend functionality implemented in Phase 1 ha
 
 ## Phase Invariants
 
-### Entry Conditions (Must be true to start Phase 1.5)
-- [ ] Phase 1 (Core Development) marked complete
-- [ ] All Phase 1 backend features tested and working
+### Entry Conditions (Must be true to start Constellation 1.5)
+- [ ] Constellation 1 (Core Development) marked complete
+- [ ] All Constellation 1 backend features tested and working
 - [ ] API/interfaces documented
 - [ ] No critical bugs in Phase 1
 
-### Exit Conditions (Must be true to complete Phase 1.5)
-- [ ] All Phase 1 features have functional UI
+### Exit Conditions (Must be true to complete Constellation 1.5)
+- [ ] All Constellation 1 features have functional UI
 - [ ] Application can be manually tested by non-developer
 - [ ] Quality gate review passed
 - [ ] Version bumped to 0.3.0
@@ -278,7 +281,7 @@ Create a table for each feature:
 - [ ] **Dependencies Resolved:** No blocking issues from Phase 1
 - [ ] **Risks Noted:** Risk register updated with issues found
 
-## Quality Gate: Phase 1.5 Completion Review
+## Star Gate: Constellation 1.5 Completion Review
 
 ### Review Questions
 1. **Can someone use this app?** (Must be YES to proceed)
@@ -287,9 +290,9 @@ Create a table for each feature:
 4. **Is the app stable enough for Phase 2 development?** (Must be YES)
 
 ### Decision
-- [ ] **PROCEED** to Phase 2: No issues, UI is functional
-- [ ] **CREATE Phase 1.5.01**: Minor UI fixes needed
-- [ ] **ROLLBACK to Phase 1.01**: Backend issues found, must fix first
+- [ ] **PROCEED** to Constellation 2: No issues, UI is functional
+- [ ] **CREATE STAR_SYSTEM_1.5.1**: Minor UI fixes needed
+- [ ] **ROLLBACK to Constellation 1**: Backend issues found, must fix first
 
 ### Notes from Review
 ```
@@ -317,5 +320,5 @@ Next Steps: [Actions]
 
 ---
 
-**REMEMBER: This phase is about USABILITY, not BEAUTY. Phase 3.5 will handle polish. Focus on making every feature testable and functional.**
+**REMEMBER: This constellation is about USABILITY, not BEAUTY. Constellation 3.5 will handle polish. Focus on making every feature testable and functional.**
 

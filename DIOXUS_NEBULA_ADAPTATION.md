@@ -1,11 +1,13 @@
 # Dioxus Nebula Framework Adaptation
 
+**⚠️ UPDATED:** November 2024 - Now uses Constellations, Star Systems, and Star Gates terminology
+
 ## Overview
 This document adapts the Nebula Context Engineering Protocol specifically for Dioxus development projects, incorporating Dioxus's unique Rust-based reactive UI architecture, cross-platform capabilities (Web, Desktop, Mobile, TUI), and component-driven development patterns.
 
 ## Dioxus-Specific Constellation Content Structure
 
-### 1. Phase Overview
+### 1. Constellation Overview
 - **Dioxus Context:** Component architecture and rendering strategy
 - **Platform Considerations:** Web/Desktop/Mobile/TUI specific requirements
 - **State Management:** Hooks, context, and signals patterns

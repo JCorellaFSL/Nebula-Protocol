@@ -1,6 +1,17 @@
 # Nebula Framework Verification Report
 ## All Languages & Platforms Compliance Check
 
+**📜 HISTORICAL DOCUMENT:** Verification report from initial framework implementation.
+
+**⚠️ FRAMEWORK UPDATED (November 2024):**
+- **Quality gates** → **Star Gates** (mandatory quality checkpoints)
+- **Phases** → **Constellations** (main development phases)
+- New: **Star Systems** (adaptive sub-phases)
+- Git push requirements added to Star Gates
+- **See:** [November 2024 Updates](updates/NOVEMBER_UPDATES.md)
+
+---
+
 **Date:** October 26, 2025  
 **Status:** ✅ ALL FRAMEWORKS COMPLIANT
 

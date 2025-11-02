@@ -1,5 +1,16 @@
 # Nebula Protocol: Professional Technical Review
 
+**📜 HISTORICAL DOCUMENT:** Technical architecture review from initial framework development.
+
+**⚠️ FRAMEWORK UPDATED (November 2024):**
+- Now uses **Constellations**, **Star Systems**, and **Star Gates** terminology
+- Added adaptive phase management (simple/moderate/complex)
+- New tools: constellation-analyzer, Star Gate MCP tools
+- Enhanced project memory with Star Gate tracking
+- **See:** [November 2024 Updates](updates/NOVEMBER_UPDATES.md)
+
+---
+
 **Review Date:** October 26, 2025  
 **Reviewer Perspective:** Software Architecture & Engineering Best Practices  
 **Protocol Version:** Post-October 2025 Updates

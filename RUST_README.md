@@ -1,5 +1,7 @@
 # Rust Nebula Framework
 
+**⚠️ UPDATED:** November 2024 - Now uses Constellations, Star Systems, and Star Gates terminology
+
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 [![Rust](https://img.shields.io/badge/Rust-Framework-orange.svg)](https://www.rust-lang.org)
 [![Nebula](https://img.shields.io/badge/Nebula-Context%20Engineering-green.svg)](https://github.com/your-repo/nebula-framework)

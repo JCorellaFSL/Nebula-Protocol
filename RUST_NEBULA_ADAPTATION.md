@@ -1,11 +1,13 @@
 # Rust Nebula Framework Adaptation
 
+**⚠️ UPDATED:** November 2024 - Now uses Constellations, Star Systems, and Star Gates terminology
+
 ## Overview
 This document adapts the Nebula Context Engineering Protocol specifically for pure Rust development projects, incorporating Rust-specific tools, patterns, and best practices for systems programming, CLI tools, backend services, WebAssembly, and high-performance applications.
 
 ## Rust-Specific Constellation Content Structure
 
-### 1. Phase Overview
+### 1. Constellation Overview
 - **Rust Context:** Project type implications (CLI, web server, library, WebAssembly, embedded)
 - **Architecture Considerations:** Async/sync, single-threaded/multi-threaded design
 - **Safety Requirements:** Memory safety, thread safety, error handling patterns

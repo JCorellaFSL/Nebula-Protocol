@@ -1,5 +1,15 @@
 # Nebula Protocol: Executive Technical Review
 
+**📜 HISTORICAL DOCUMENT:** Technical review from initial framework development.
+
+**⚠️ FRAMEWORK UPDATED (November 2024):**
+- Now uses **Constellations** (main phases), **Star Systems** (sub-phases), and **Star Gates** (quality checkpoints)
+- Adaptive phase management replaces rigid upfront planning
+- Enhanced with constellation analyzer and 30 MCP tools
+- **See:** [November 2024 Updates](updates/NOVEMBER_UPDATES.md)
+
+---
+
 **Review Date:** October 26, 2025  
 **Overall Rating:** ⭐⭐⭐⭐½ (4.5/5) - **ADOPT RECOMMENDED**
 

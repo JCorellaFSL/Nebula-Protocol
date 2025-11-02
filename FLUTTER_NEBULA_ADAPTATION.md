@@ -1,11 +1,13 @@
 # Flutter Nebula Framework Adaptation
 
+**⚠️ UPDATED:** November 2024 - Now uses Constellations, Star Systems, and Star Gates terminology
+
 ## Overview
 This document adapts the Nebula Context Engineering Protocol specifically for Flutter development projects, incorporating Flutter-specific tools, patterns, and best practices.
 
 ## Flutter-Specific Constellation Content Structure
 
-### 1. Phase Overview
+### 1. Constellation Overview
 - **Flutter Context:** Widget architecture implications
 - **Platform Considerations:** iOS/Android/Web/Desktop specific requirements
 - **State Management:** BLoC, Provider, Riverpod, or other state management approach
@@ -121,7 +123,8 @@ This document adapts the Nebula Context Engineering Protocol specifically for Fl
   - Navigation system setup
   - Basic app structure
 
-### Phase 2: Feature Development (→ 0.4.0)
+### Constellation 2: Feature Development (→ 0.3.0)
+**Star Gate:** STAR_GATE_2_FEATURES.md (→ 0.4.0)
 - **Constellation:** `ROADMAP_PHASE_2_FLUTTER_FEATURES.md`
 - **Focus:** Specific app features with UI + backend TOGETHER
 - **Key Tasks:**

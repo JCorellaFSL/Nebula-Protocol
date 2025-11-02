@@ -1,5 +1,7 @@
 # Tauri Nebula Framework
 
+**⚠️ UPDATED:** November 2024 - Now uses Constellations, Star Systems, and Star Gates terminology
+
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 [![Tauri](https://img.shields.io/badge/Tauri-Framework-blue.svg)](https://tauri.app)
 [![Nebula](https://img.shields.io/badge/Nebula-Context%20Engineering-green.svg)](https://github.com/your-repo/nebula-framework)
