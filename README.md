@@ -3,6 +3,8 @@
 ## 🎯 Purpose
 This guide shows you how to use the Nebula Framework to structure your projects for AI-assisted development using tools like GPT, Claude, Gemini, Cursor, Windsurf, and other AI-powered IDEs.
 
+**NEW:** Enhanced with context optimization tools and Star System guidelines for complex projects (40+ components).
+
 ## 📚 What You Have Here
 - **Nebula_Protocol.md** - The core framework specification
 - **[FRAMEWORK]_NEBULA_ADAPTATION.md** - Technology-specific adaptations (Flutter, Tauri, Python, Rust, Dioxus)
