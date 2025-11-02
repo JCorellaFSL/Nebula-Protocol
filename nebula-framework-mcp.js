@@ -792,15 +792,188 @@ server.tool("project_memory_get_stats",
         `- Total: ${stats.totalErrors}\n` +
         `- Unresolved: ${stats.unresolvedErrors}\n` +
         `- Patterns: ${stats.errorPatterns}\n\n` +
-        `**Quality Gates:**\n` +
+        `**Quality Gates (Legacy):**\n` +
         `- Total: ${stats.qualityGates}\n` +
         `- Passed: ${stats.passedQualityGates}\n\n` +
+        `**Star Gates:**\n` +
+        `- Total: ${stats.starGates}\n` +
+        `- Passed: ${stats.starGatesPassed}\n` +
+        `- Failed: ${stats.starGatesFailed}\n` +
+        `- Skipped: ${stats.starGatesSkipped}\n` +
+        `- Tests Skipped: ${stats.testsSkipped}\n\n` +
         `**Decisions Recorded:** ${stats.decisions}`;
       
       return { content: [{ type: "text", text: output }] };
     } catch (error) {
       return {
         content: [{ type: "text", text: `Error getting statistics: ${error.message}` }]
+      };
+    }
+  }
+);
+
+// Star Gate tools
+server.tool("star_gate_record",
+  {
+    project_path: z.string(),
+    constellation: z.string(),
+    constellation_number: z.number().int(),
+    status: z.enum(["passed", "failed", "pending", "skipped"]),
+    tests_automated: z.number().int().optional(),
+    tests_automated_passing: z.number().int().optional(),
+    tests_manual: z.number().int().optional(),
+    tests_manual_passing: z.number().int().optional(),
+    tests_skipped: z.number().int().optional(),
+    skip_reasons: z.array(z.string()).optional(),
+    duration_minutes: z.number().int().optional(),
+    performance_acceptable: z.boolean().optional(),
+    docs_updated: z.boolean().optional(),
+    breaking_changes: z.boolean().optional(),
+    breaking_changes_notes: z.string().optional(),
+    notes: z.string().optional(),
+    reviewer: z.string().optional(),
+    reviewer_type: z.enum(["human", "ai", "system"]).optional()
+  },
+  async ({
+    project_path,
+    constellation,
+    constellation_number,
+    status,
+    tests_automated = 0,
+    tests_automated_passing = 0,
+    tests_manual = 0,
+    tests_manual_passing = 0,
+    tests_skipped = 0,
+    skip_reasons = [],
+    duration_minutes,
+    performance_acceptable = true,
+    docs_updated = true,
+    breaking_changes = false,
+    breaking_changes_notes,
+    notes,
+    reviewer,
+    reviewer_type = "human"
+  }) => {
+    try {
+      const memory = new ProjectMemory(project_path);
+      const gateId = memory.recordStarGate({
+        constellation,
+        constellationNumber: constellation_number,
+        status,
+        testsAutomated: tests_automated,
+        testsAutomatedPassing: tests_automated_passing,
+        testsManual: tests_manual,
+        testsManualPassing: tests_manual_passing,
+        testsSkipped: tests_skipped,
+        skipReasons: skip_reasons,
+        durationMinutes: duration_minutes,
+        performanceAcceptable: performance_acceptable,
+        docsUpdated: docs_updated,
+        breakingChanges: breaking_changes,
+        breakingChangesNotes: breaking_changes_notes,
+        notes,
+        reviewer,
+        reviewerType: reviewer_type
+      });
+      memory.close();
+      
+      const statusIcon = status === 'passed' ? '✅' : status === 'failed' ? '❌' : status === 'skipped' ? '⏭️' : '⏳';
+      let response = `${statusIcon} Star Gate Recorded: ${constellation}\n`;
+      response += `Status: ${status.toUpperCase()}\n`;
+      response += `Tests: ${tests_automated_passing}/${tests_automated} automated, ${tests_manual_passing}/${tests_manual} manual\n`;
+      
+      if (tests_skipped > 0) {
+        response += `\n⚠️  WARNING: ${tests_skipped} tests skipped\n`;
+        response += `Reasons: ${skip_reasons.join(', ')}\n`;
+      }
+      
+      if (breaking_changes) {
+        response += `\n⚠️  BREAKING CHANGES: ${breaking_changes_notes}\n`;
+      }
+      
+      return {
+        content: [{
+          type: "text",
+          text: response
+        }]
+      };
+    } catch (error) {
+      return {
+        content: [{ type: "text", text: `Error recording Star Gate: ${error.message}` }]
+      };
+    }
+  }
+);
+
+server.tool("star_gate_get",
+  {
+    project_path: z.string(),
+    constellation: z.string().optional(),
+    status: z.enum(["passed", "failed", "pending", "skipped"]).optional()
+  },
+  async ({ project_path, constellation, status }) => {
+    try {
+      const memory = new ProjectMemory(project_path);
+      const gates = memory.getStarGates({ constellation, status });
+      memory.close();
+      
+      if (gates.length === 0) {
+        return { content: [{ type: "text", text: "No Star Gates found matching criteria." }] };
+      }
+      
+      const output = gates.map(g => {
+        const statusIcon = g.status === 'passed' ? '✅' : g.status === 'failed' ? '❌' : g.status === 'skipped' ? '⏭️' : '⏳';
+        const skipReasons = g.skip_reasons ? JSON.parse(g.skip_reasons) : [];
+        
+        let text = `${statusIcon} ${g.constellation} (${g.completed_at})\n`;
+        text += `   Tests: ${g.tests_automated_passing}/${g.tests_automated} auto, ${g.tests_manual_passing}/${g.tests_manual} manual\n`;
+        
+        if (g.tests_skipped > 0) {
+          text += `   ⚠️  Skipped: ${g.tests_skipped} (${skipReasons.join(', ')})\n`;
+        }
+        
+        if (g.breaking_changes) {
+          text += `   ⚠️  Breaking changes: ${g.breaking_changes_notes}\n`;
+        }
+        
+        if (g.notes) {
+          text += `   Notes: ${g.notes}\n`;
+        }
+        
+        return text;
+      }).join('\n');
+      
+      return { content: [{ type: "text", text: output }] };
+    } catch (error) {
+      return {
+        content: [{ type: "text", text: `Error retrieving Star Gates: ${error.message}` }]
+      };
+    }
+  }
+);
+
+server.tool("constellation_analyze",
+  {
+    file_path: z.string()
+  },
+  async ({ file_path }) => {
+    try {
+      // Import and run constellation analyzer logic
+      const { execSync } = await import('child_process');
+      const result = execSync(`node ${path.join(FRAMEWORK_PATH, 'constellation-analyzer.js')} "${file_path}"`, {
+        encoding: 'utf8',
+        maxBuffer: 10 * 1024 * 1024
+      });
+      
+      return {
+        content: [{
+          type: "text",
+          text: result
+        }]
+      };
+    } catch (error) {
+      return {
+        content: [{ type: "text", text: `Error analyzing constellation: ${error.message}` }]
       };
     }
   }

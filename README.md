@@ -308,6 +308,11 @@ Use: DIOXUS_NEBULA_ADAPTATION.md
 Use: Nebula_Protocol.md (generic)
 ```
 
+**NEW in November 2024:** The framework now uses cosmic terminology:
+- **Constellations** = Main phases (e.g., `CONSTELLATION_0_SETUP.md`)
+- **Star Systems** = Sub-phases (e.g., `STAR_SYSTEM_1.1_DATABASE.md`)
+- **Star Gates** = Quality checkpoints (e.g., `STAR_GATE_1_CORE.md`)
+
 ### Step 2: Load Framework into Your AI Tool
 
 #### For AI-IDEs (Cursor, Windsurf, etc.)
@@ -331,15 +336,29 @@ Use: Nebula_Protocol.md (generic)
 
 ### Step 3: Create Your Project Structure
 
-#### Critical: Generate ALL Constellations at Initialization
-- Generate every `ROADMAP_PHASE_[NUMBER]_[DESCRIPTOR].md` file for all planned phases upfront (e.g., 0–4). Do not create them one-by-one later; incomplete constellation sets lead to architectural gaps and unsafe assumptions.
-- Each constellation can start with placeholders, but the file must exist with headings, acceptance criteria stubs, and validation checklist.
-- Example prompt to your AI tool:
+#### NEW APPROACH: Adaptive Constellation Generation
+**CHANGED in November 2024:** The framework now supports organic growth instead of rigid upfront planning.
+
+**Simple Projects (e.g., Python clock app):**
+- Start with 3-5 basic constellations: Setup → Core → Deployment
+- No forced complexity or unnecessary bureaucracy
+- Example prompt:
   ```
-  Generate the full set of constellation documents now for phases 0 through 4
-  using the Nebula pattern. Include headings, acceptance criteria placeholders,
-  testing strategy sections, and validation checklists for each phase.
+  Create a simple Nebula structure for this project with Setup, Core, and Deployment
+  constellations. Keep it minimal—this is a straightforward application.
   ```
+
+**Complex Projects (e.g., VSCode clone with agentic features):**
+- Begin with core constellations (Setup, Core, Features, Integration, Deployment)
+- Expand into Star Systems as complexity emerges
+- Structure grows naturally with actual needs, not predictions
+- Example prompt:
+  ```
+  Create initial constellation structure for this complex project. We'll expand 
+  into Star Systems as we discover complexity. Start with 5 core constellations.
+  ```
+
+**Rationale:** Real development is discovery-based. Forcing complete upfront planning causes phase proliferation (1.01, 1.02, 1.52, 1.53, etc.) and doesn't match reality.
 
 #### HOLD 1: Per‑Constellation Conflict Review (during generation)
 - For each newly generated constellation, run a quick review against all prior constellations:

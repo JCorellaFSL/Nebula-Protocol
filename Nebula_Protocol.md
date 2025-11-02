@@ -20,47 +20,64 @@ Detailed, phase-specific documents that expand upon each phase from the Nebula. 
 ### Nebula Document
 - **Primary:** `ROADMAP.md` - The main project roadmap
 
-### Constellation Documents
-- **Convention:** `ROADMAP_PHASE_[NUMBER]_[DESCRIPTOR].md`
-- **Sub-Phase Convention:** `ROADMAP_PHASE_[X.Y]_[DESCRIPTOR].md` for granular breakdown
+### Constellation Documents (Main Phases)
+- **Convention:** `CONSTELLATION_[NUMBER]_[DESCRIPTOR].md`
+- **Legacy:** `ROADMAP_PHASE_[NUMBER]_[DESCRIPTOR].md` (still supported for backward compatibility)
 - **Examples:**
-  - `ROADMAP_PHASE_0_SETUP.md` - Project initialization
-  - `ROADMAP_PHASE_1_CORE.md` - Core backend/logic
-  - `ROADMAP_PHASE_1.5_BASIC_UI.md` - **MANDATORY** Basic UI implementation
-  - `ROADMAP_PHASE_2_FEATURES.md` - Feature development (UI + backend together)
-  - `ROADMAP_PHASE_3_INTEGRATION.md` - Testing and integration
-  - `ROADMAP_PHASE_3.5_UI_POLISH.md` - **MANDATORY** UI refinement and polish
-  - `ROADMAP_PHASE_4_DEPLOYMENT.md` - Deployment and distribution
+  - `CONSTELLATION_0_SETUP.md` - Project initialization
+  - `CONSTELLATION_1_CORE.md` - Core backend/logic
+  - `CONSTELLATION_2_FEATURES.md` - Feature development
+  - `CONSTELLATION_3_INTEGRATION.md` - Testing and integration
+  - `CONSTELLATION_4_DEPLOYMENT.md` - Deployment and distribution
 
-### Mandatory UI Phases
-To prevent "ready but unusable" applications, two UI-focused phases are **REQUIRED**:
-
-1. **Phase 1.5: Basic UI (MANDATORY)**
-   - Implements basic, functional user interface for all core features
-   - Ensures application is usable and testable
-   - Creates foundation for user feedback
-   - **Quality Gate:** No proceeding to Phase 2 without working UI
-   
-2. **Phase 3.5: UI Polish (MANDATORY)**
-   - Refines visual design and user experience
-   - Adds animations, transitions, and accessibility features
-   - Ensures professional, production-ready interface
-   - **Quality Gate:** Application ready for public release
-
-### Sub-Phase Naming for Adjustments
-- **Format:** `Phase_X.YY` where YY = 01-99 for quality gate fixes
+### Star System Documents (Sub-Phases)
+- **Convention:** `STAR_SYSTEM_[X.Y]_[DESCRIPTOR].md` for granular breakdown within constellations
+- **Legacy:** `ROADMAP_PHASE_[X.Y]_[DESCRIPTOR].md` (still supported)
 - **Examples:**
-  - `ROADMAP_PHASE_1.01_CORE_FIXES.md` - Post-Phase 1 adjustments
-  - `ROADMAP_PHASE_2.01_FEATURE_REFINEMENT.md` - Post-Phase 2 fixes
+  - `STAR_SYSTEM_1.1_DATABASE.md` - Database layer within Core constellation
+  - `STAR_SYSTEM_1.2_API.md` - API framework within Core constellation
+  - `STAR_SYSTEM_2.1_UI_COMPONENTS.md` - UI components within Features constellation
+
+### Star Gates (Quality Gates)
+**Star Gates** are mandatory quality checkpoints between constellations that enforce testing and validation:
+
+**Purpose:**
+- Prevent rushed, untested code progression
+- Ensure proper testing before moving to next constellation
+- Document testing decisions in project memory
+- Combat LLM rush-coding patterns
+
+**Implementation:**
+- **Convention:** `STAR_GATE_[NUMBER]_[CONSTELLATION].md`
+- **Examples:**
+  - `STAR_GATE_0_SETUP.md` - Validates Constellation 0 completion
+  - `STAR_GATE_1_CORE.md` - Validates Constellation 1 completion
+  
+**Requirements:**
+- Automated tests (must genuinely test functionality)
+- Manual verification for user-facing features
+- All skipped tests documented with rationale in project memory
+- Cannot proceed to next constellation without passing Star Gate
+
+### Adaptive Phase Management
+The framework now supports **organic growth** instead of rigid upfront planning:
+
+**Simple Projects (3-5 constellations):**
+- Minimal structure without forced complexity
+- Direct constellation sequence: Setup → Core → Deployment
+
+**Complex Projects (8+ constellations with star systems):**
+- Constellations expand into Star Systems as needed
+- Structure emerges from actual complexity, not prediction
 
 ## Constellation Content Structure
 
-Each Constellation document should include:
+Each **Constellation** document should include:
 
-### 1. Phase Overview
-- Clear connection to the Nebula phase
-- Phase objectives and success criteria
-- Dependencies on previous phases
+### 1. Constellation Overview
+- Clear connection to the Nebula roadmap
+- Constellation objectives and success criteria
+- Dependencies on previous constellations
 
 ### 2. Detailed Sub-Tasks
 - Actionable, granular tasks with immediate validation requirements
@@ -75,9 +92,10 @@ Each Constellation document should include:
 - Data models and API specifications
 
 ### 4. Testing Strategy
-- Testing approach for the phase
+- Testing approach for the constellation
 - Quality assurance criteria
 - Validation methods
+- Preparation for Star Gate verification
 
 ### 5. Potential Challenges
 - Known technical hurdles
@@ -97,25 +115,35 @@ Each Constellation document should include:
 - Deliverable specifications
 - **Validation Evidence:** Documented proof of successful testing
 
-### 8. Quality Gate Checkpoint (MANDATORY)
-After completing each constellation, perform quality gate review:
-- **Does this affect previous constellations?** Review Phase 0 through current for conflicts
-- **Are there breaking changes?** Document and assess impact
-- **Does the app remain usable?** Verify UI functionality if applicable
+### 8. Star Gate Checkpoint (MANDATORY)
+After completing each constellation, pass through its Star Gate:
+- **Automated Tests:** All tests passing (must genuinely test, not fake outcomes)
+- **Manual Verification:** User-facing features tested by humans
+- **Git Push:** All changes committed and pushed to remote repository
+- **Integration Check:** Does this affect previous constellations?
+- **Breaking Changes:** Document and assess impact
+- **App Usability:** Verify functionality if applicable
 - **Decision Points:**
-  - **PROCEED:** No issues, continue to next constellation
-  - **CREATE SUB-PHASE:** Issues found, create Phase X.01 for fixes
+  - **PASS:** All criteria met, proceed to next constellation
+  - **CREATE STAR SYSTEM:** Issues found, expand constellation into Star Systems for fixes
   - **ROLLBACK:** Major issues require rethinking approach
+- **Project Memory:** All decisions logged automatically
+
+**Git Best Practices:**
+- Commit after each significant change
+- Push to remote before Star Gate passage
+- Create git tags for constellation completions
+- Push tags to remote for version tracking
 
 ### 9. Constellation Size Guidelines
 To prevent context overload and maintain focus:
 - **Maximum tokens:** 4,000 tokens (~3,000 words)
 - **Maximum tasks:** 8-10 major tasks per constellation
 - **Maximum scope:** 4-6 hours of implementation time
-- **Split criteria:** If exceeding limits, create sub-phases (Phase X.1, X.2, etc.)
+- **Split criteria:** If exceeding limits, create Star Systems (X.1, X.2, etc.) within the constellation
 
-### 10. Logging Requirements (Phase 0 Mandatory)
-Every project must initialize logging infrastructure in Phase 0:
+### 10. Logging Requirements (Constellation 0 Mandatory)
+Every project must initialize logging infrastructure in Constellation 0 (Setup):
 - **Log directory:** `.nebula/logs/` in project root
 - **Log levels:** DEBUG, INFO, WARN, ERROR, CRITICAL
 - **Format:** Structured JSON logs for parsing
@@ -124,11 +152,12 @@ Every project must initialize logging infrastructure in Phase 0:
 
 ## Framework Principles
 
-### 1. Continuous Validation (CRITICAL)
+### 1. Continuous Validation via Star Gates (CRITICAL)
 - **Test-First Approach:** Every feature implementation must include immediate testing
-- **Validation Gate:** No task is considered complete without successful validation
-- **Immediate Feedback Loop:** Manual or automated testing occurs before proceeding to next task
+- **Star Gate Enforcement:** No constellation is complete without passing its Star Gate
+- **Immediate Feedback Loop:** Manual or automated testing occurs before proceeding
 - **Human Verification:** AI-generated code requires human validation through testing
+- **Project Memory Tracking:** All Star Gate results logged automatically
 
 ### 2. Modular Planning
 - Each phase can be planned and executed independently
@@ -151,17 +180,15 @@ Every project must initialize logging infrastructure in Phase 0:
 - Measurable progress indicators
 
 ### 6. Automatic Version Tracking
-- **Phase Completion → Version Bump:** Semantic versioning tied to phases
-  - Phase 0 complete → 0.1.0
-  - Phase 1 complete → 0.2.0
-  - Phase 1.5 complete → 0.3.0
-  - Phase 2 complete → 0.4.0
-  - Phase 3 complete → 0.5.0
-  - Phase 3.5 complete → 0.6.0
-  - Phase 4 complete → 1.0.0
-- **Sub-Phase Completion → Patch Bump:** Phase X.01 → patch increment
+- **Constellation Completion → Version Bump:** Semantic versioning tied to constellations
+  - Constellation 0 complete → 0.1.0
+  - Constellation 1 complete → 0.2.0
+  - Constellation 2 complete → 0.3.0
+  - Constellation 3 complete → 0.4.0
+  - Constellation 4 complete → 1.0.0
+- **Star System Completion → Patch Bump:** Star System X.Y → patch increment
 - **Auto-Update:** Package files (package.json, Cargo.toml, pubspec.yaml) updated automatically
-- **Git Tags:** Automatic git tags created on phase completion
+- **Git Tags:** Automatic git tags created on constellation completion
 
 ### 7. Project Memory Integration
 - **Local Knowledge Graph:** `.nebula/project_memory.sqlite` in project root
@@ -190,13 +217,14 @@ Every project must initialize logging infrastructure in Phase 0:
 
 ## AI Development Integration
 
-### Critical Success Factor: Immediate Validation
-When working with AI assistance, the framework enforces:
+### Critical Success Factor: Star Gate Enforcement
+When working with AI assistance, the framework enforces quality through Star Gates:
 
-1. **No Feature Left Untested:** Every AI-generated implementation must be immediately validated
+1. **No Feature Left Untested:** Every AI-generated implementation must pass through Star Gate
 2. **Human-in-the-Loop:** AI suggestions require human verification through testing
-3. **Iterative Refinement:** Test-fail-refine cycles until validation criteria are met
-4. **Evidence-Based Progress:** Documented proof of successful testing before task completion
+3. **Iterative Refinement:** Test-fail-refine cycles until Star Gate criteria are met
+4. **Evidence-Based Progress:** Star Gate passage logged in project memory before proceeding
+5. **Rush-Coding Prevention:** Cannot skip Star Gates; all skips logged and flagged
 
 ### Testing Approaches
 - **Manual Testing:** Human verification of functionality and user experience

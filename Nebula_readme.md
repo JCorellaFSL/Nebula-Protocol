@@ -31,18 +31,39 @@ The central `ROADMAP.md` document that provides:
 - **Success Criteria:** Measurable outcomes
 - **Timeline:** Project milestones and deadlines
 
-### Constellations (Phase-Specific Roadmaps)
-Detailed documents for each phase following the naming convention:
+### Constellations (Main Development Phases)
+Detailed documents for each major phase following the naming convention:
 ```
-ROADMAP_PHASE_[NUMBER]_[DESCRIPTOR].md
+CONSTELLATION_[NUMBER]_[DESCRIPTOR].md
 ```
 
 **Examples:**
-- `ROADMAP_PHASE_0_SETUP.md` - Environment and project setup
-- `ROADMAP_PHASE_1_CORE.md` - Core functionality implementation
-- `ROADMAP_PHASE_2_FEATURES.md` - Feature development
-- `ROADMAP_PHASE_3_INTEGRATION.md` - Integration and testing
-- `ROADMAP_PHASE_4_DEPLOYMENT.md` - Deployment and distribution
+- `CONSTELLATION_0_SETUP.md` - Environment and project setup
+- `CONSTELLATION_1_CORE.md` - Core functionality implementation
+- `CONSTELLATION_2_FEATURES.md` - Feature development
+- `CONSTELLATION_3_INTEGRATION.md` - Integration and testing
+- `CONSTELLATION_4_DEPLOYMENT.md` - Deployment and distribution
+
+### Star Systems (Sub-Phases)
+Detailed breakdowns within constellations for complex components:
+```
+STAR_SYSTEM_[X.Y]_[DESCRIPTOR].md
+```
+
+**Examples:**
+- `STAR_SYSTEM_1.1_DATABASE.md` - Database layer within Core
+- `STAR_SYSTEM_1.2_API.md` - API framework within Core
+- `STAR_SYSTEM_2.1_UI.md` - User interface within Features
+
+### Star Gates (Quality Checkpoints)
+Mandatory testing and validation gates between constellations:
+```
+STAR_GATE_[NUMBER]_[CONSTELLATION].md
+```
+
+**Examples:**
+- `STAR_GATE_0_SETUP.md` - Validates setup constellation
+- `STAR_GATE_1_CORE.md` - Validates core constellation
 
 ## 📋 Naming Convention Benefits
 
@@ -193,28 +214,44 @@ your-project/
     └── [FRAMEWORK]_NEBULA_ADAPTATION.md
 ```
 
-### 3. Generate ALL Constellations at Initialization
-- At project start, generate all `ROADMAP_PHASE_[NUMBER]_[DESCRIPTOR].md` files for every planned phase (e.g., 0–4) in one pass.
-- Populate each with section headers (Overview, Detailed Tasks, Implementation Details, Testing Strategy, Validation Checklist) and acceptance criteria placeholders.
-- Rationale: Complete constellation scaffolding prevents architectural drift and ensures every phase has defined validation gates from day one.
+### 3. Adaptive Constellation Generation (NEW APPROACH)
+**CHANGED:** The framework now supports organic growth instead of rigid upfront planning.
 
-### 4. Validation Holds (Self-Checking Before Programming)
-#### HOLD 1: Per-Constellation Conflict Check
-- After creating each constellation, compare it to earlier phases for:
-  - Conflicts/supersessions/duplication
-  - Mis-phasing (task belongs earlier/later)
-  - Missing prerequisites or dependency links
+**Simple Projects:**
+- Start with 3-5 basic constellations: Setup → Core → Deployment
+- No forced complexity or unnecessary structure
 
-#### HOLD 2: Global Plan Review
-- Once all constellations exist, evaluate the full plan for ordering, merges/splits, and risk sequencing. Propose reassignments with clear rationale.
+**Complex Projects:**
+- Begin with core constellations
+- Expand into Star Systems as complexity emerges
+- Structure grows naturally with actual needs, not predictions
+
+**Rationale:** Real development is discovery-based. Forcing complete upfront planning causes phase proliferation (1.01, 1.02, 1.52, 1.53, etc.) and doesn't match reality.
+
+### 4. Star Gate Validation (Quality Enforcement)
+**Star Gates** are mandatory checkpoints that enforce testing and validation:
+
+**Purpose:**
+- Prevent rushing through untested code
+- Combat LLM rush-coding patterns
+- Ensure proper testing before proceeding
+
+**Requirements:**
+- **Automated Tests:** Must genuinely test functionality (no fake scripted outcomes)
+- **Manual Verification:** Human testing for user-facing features
+- **Project Memory Logging:** All Star Gate results tracked automatically
+- **Skip Documentation:** Any skipped tests logged with rationale and flagged
+
+**Cannot proceed to next constellation without passing its Star Gate.**
 
 ### 3. Implement the Core Principle
-**Every feature must follow:** Implement → Test → Validate → Document → Proceed
+**Every feature must follow:** Implement → Test → Pass Star Gate → Document → Proceed
 
-### Constellation Template Enhancements
-- Risk Register (risks, mitigations, monitoring)
-- Phase Invariants (entry/exit conditions)
-- Expanded Validation Checklist (dependencies resolved, risks noted)
+### Star Gate Template Enhancements
+- **Two-Tier Testing:** Automated + Manual verification
+- **Project Memory Integration:** Automatic logging of all decisions
+- **Skip Tracking:** Documented rationale for any skipped tests
+- **Genuine Testing Enforcement:** Scripts must actually test, not fake outcomes
 
 ## 📖 Documentation
 

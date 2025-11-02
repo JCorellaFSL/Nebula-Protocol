@@ -6,12 +6,14 @@
   "type": "module",
   "bin": {
     "nebula-framework-mcp": "./nebula-framework-mcp.js",
-    "init-nebula": "./init-nebula-project.js"
+    "init-nebula": "./init-nebula-project.js",
+    "analyze-constellation": "./constellation-analyzer.js"
   },
   "scripts": {
     "start": "node nebula-framework-mcp.js",
     "inspector": "npx @modelcontextprotocol/inspector node nebula-framework-mcp.js",
-    "init": "node init-nebula-project.js"
+    "init": "node init-nebula-project.js",
+    "analyze": "node constellation-analyzer.js"
   },
   "dependencies": {
     "@modelcontextprotocol/sdk": "^1.0.0",

@@ -108,7 +108,32 @@ export class ProjectMemory {
         )
       `).run();
 
-      // Quality gates
+      // Star Gates (Quality gates with enhanced tracking)
+      this.db.prepare(`
+        CREATE TABLE IF NOT EXISTS star_gates (
+          id TEXT PRIMARY KEY,
+          constellation TEXT,
+          constellation_number INTEGER,
+          completed_at TEXT DEFAULT CURRENT_TIMESTAMP,
+          status TEXT CHECK (status IN ('passed','failed','pending','skipped')),
+          tests_automated INTEGER DEFAULT 0,
+          tests_automated_passing INTEGER DEFAULT 0,
+          tests_manual INTEGER DEFAULT 0,
+          tests_manual_passing INTEGER DEFAULT 0,
+          tests_skipped INTEGER DEFAULT 0,
+          skip_reasons TEXT,
+          duration_minutes INTEGER,
+          performance_acceptable BOOLEAN DEFAULT 1,
+          docs_updated BOOLEAN DEFAULT 1,
+          breaking_changes BOOLEAN DEFAULT 0,
+          breaking_changes_notes TEXT,
+          notes TEXT,
+          reviewer TEXT,
+          reviewer_type TEXT CHECK (reviewer_type IN ('human','ai','system'))
+        )
+      `).run();
+      
+      // Legacy quality_gates table (keep for backward compatibility)
       this.db.prepare(`
         CREATE TABLE IF NOT EXISTS quality_gates (
           id TEXT PRIMARY KEY,
@@ -158,6 +183,8 @@ export class ProjectMemory {
         this.db.prepare(`CREATE INDEX IF NOT EXISTS idx_error_patterns_signature ON error_patterns(pattern_signature)`).run();
         this.db.prepare(`CREATE INDEX IF NOT EXISTS idx_decisions_phase ON decisions(phase)`).run();
         this.db.prepare(`CREATE INDEX IF NOT EXISTS idx_quality_gates_constellation ON quality_gates(constellation)`).run();
+        this.db.prepare(`CREATE INDEX IF NOT EXISTS idx_star_gates_constellation ON star_gates(constellation)`).run();
+        this.db.prepare(`CREATE INDEX IF NOT EXISTS idx_star_gates_status ON star_gates(status)`).run();
       } catch (error) {
         // Indexes may already exist
       }
@@ -399,6 +426,86 @@ export class ProjectMemory {
     return this.db.prepare(query).all(...params);
   }
 
+  // Star Gate recording (new enhanced version)
+  recordStarGate({
+    constellation,
+    constellationNumber,
+    status,
+    testsAutomated = 0,
+    testsAutomatedPassing = 0,
+    testsManual = 0,
+    testsManualPassing = 0,
+    testsSkipped = 0,
+    skipReasons = [],
+    durationMinutes,
+    performanceAcceptable = true,
+    docsUpdated = true,
+    breakingChanges = false,
+    breakingChangesNotes = null,
+    notes,
+    reviewer,
+    reviewerType = 'human'
+  }) {
+    const id = crypto.randomUUID();
+    this.db.prepare(`
+      INSERT INTO star_gates (
+        id, constellation, constellation_number, status,
+        tests_automated, tests_automated_passing,
+        tests_manual, tests_manual_passing,
+        tests_skipped, skip_reasons, duration_minutes,
+        performance_acceptable, docs_updated,
+        breaking_changes, breaking_changes_notes,
+        notes, reviewer, reviewer_type
+      )
+      VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+    `).run(
+      id, constellation, constellationNumber, status,
+      testsAutomated, testsAutomatedPassing,
+      testsManual, testsManualPassing,
+      testsSkipped, JSON.stringify(skipReasons), durationMinutes,
+      performanceAcceptable ? 1 : 0, docsUpdated ? 1 : 0,
+      breakingChanges ? 1 : 0, breakingChangesNotes,
+      notes, reviewer, reviewerType
+    );
+    
+    // Log warning if tests were skipped
+    if (testsSkipped > 0) {
+      console.warn(`⚠️  Star Gate ${constellation}: ${testsSkipped} tests skipped`);
+      console.warn(`   Reasons: ${skipReasons.join(', ')}`);
+    }
+    
+    return id;
+  }
+
+  getStarGates({ constellation, status }) {
+    let query = `SELECT * FROM star_gates WHERE 1=1`;
+    const params = [];
+    
+    if (constellation) {
+      query += ` AND constellation = ?`;
+      params.push(constellation);
+    }
+    if (status) {
+      query += ` AND status = ?`;
+      params.push(status);
+    }
+    
+    query += ` ORDER BY completed_at DESC`;
+    
+    return this.db.prepare(query).all(...params);
+  }
+
+  getStarGateStats() {
+    return {
+      total: this.db.prepare(`SELECT COUNT(*) as count FROM star_gates`).get().count,
+      passed: this.db.prepare(`SELECT COUNT(*) as count FROM star_gates WHERE status = 'passed'`).get().count,
+      failed: this.db.prepare(`SELECT COUNT(*) as count FROM star_gates WHERE status = 'failed'`).get().count,
+      skipped: this.db.prepare(`SELECT COUNT(*) as count FROM star_gates WHERE status = 'skipped'`).get().count,
+      testsSkippedTotal: this.db.prepare(`SELECT SUM(tests_skipped) as total FROM star_gates`).get().total || 0
+    };
+  }
+
+  // Legacy quality gate support (backward compatibility)
   recordQualityGate({ constellation, passed, issuesFound, subPhaseCreated, notes, reviewer }) {
     const id = crypto.randomUUID();
     this.db.prepare(`
@@ -497,6 +604,8 @@ export class ProjectMemory {
   }
 
   getStatistics() {
+    const starGateStats = this.getStarGateStats();
+    
     const stats = {
       totalErrors: this.db.prepare(`SELECT COUNT(*) as count FROM error_log`).get().count,
       unresolvedErrors: this.db.prepare(`SELECT COUNT(*) as count FROM error_log WHERE resolved = 0`).get().count,
@@ -504,6 +613,11 @@ export class ProjectMemory {
       decisions: this.db.prepare(`SELECT COUNT(*) as count FROM decisions`).get().count,
       qualityGates: this.db.prepare(`SELECT COUNT(*) as count FROM quality_gates`).get().count,
       passedQualityGates: this.db.prepare(`SELECT COUNT(*) as count FROM quality_gates WHERE passed = 1`).get().count,
+      starGates: starGateStats.total,
+      starGatesPassed: starGateStats.passed,
+      starGatesFailed: starGateStats.failed,
+      starGatesSkipped: starGateStats.skipped,
+      testsSkipped: starGateStats.testsSkippedTotal,
       currentVersion: null,
       currentPhase: null
     };

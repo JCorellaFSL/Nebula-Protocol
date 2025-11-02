@@ -23,10 +23,14 @@ const __dirname = path.dirname(fileURLToPath(import.meta.url));
 // Supported project types
 const PROJECT_TYPES = ['flutter', 'tauri', 'python', 'rust', 'dioxus'];
 
+// Project complexity levels
+const COMPLEXITY_LEVELS = ['simple', 'moderate', 'complex'];
+
 // Parse command line arguments
 const args = process.argv.slice(2);
 const projectType = args[0] || 'generic';
 const projectName = args[1] || 'my-project';
+const projectComplexity = args[2] || 'moderate'; // NEW: complexity argument
 
 if (!PROJECT_TYPES.includes(projectType) && projectType !== 'generic') {
   console.error(`\n❌ Unknown project type: ${projectType}`);
@@ -36,7 +40,14 @@ if (!PROJECT_TYPES.includes(projectType) && projectType !== 'generic') {
 
 console.log('\n🌌 Initializing Nebula Framework for your project...\n');
 console.log(`📦 Project Type: ${projectType}`);
-console.log(`📂 Project Name: ${projectName}\n`);
+console.log(`📂 Project Name: ${projectName}`);
+console.log(`🎯 Complexity Level: ${projectComplexity}\n`);
+
+if (!COMPLEXITY_LEVELS.includes(projectComplexity)) {
+  console.log(`⚠️  Unknown complexity level: ${projectComplexity}`);
+  console.log(`   Supported: ${COMPLEXITY_LEVELS.join(', ')}`);
+  console.log(`   Using default: moderate\n`);
+}
 
 // Create .nebula directory structure
 function createNebulaDirectory() {
@@ -207,9 +218,37 @@ function copyFrameworkAdaptation() {
   }
 }
 
+// Determine constellation structure based on complexity
+function getConstellationStructure(complexity) {
+  if (complexity === 'simple') {
+    return [
+      { num: 0, name: 'SETUP', desc: 'Project initialization and setup' },
+      { num: 1, name: 'CORE', desc: 'Core functionality implementation' },
+      { num: 2, name: 'DEPLOYMENT', desc: 'Deployment and distribution' }
+    ];
+  } else if (complexity === 'moderate') {
+    return [
+      { num: 0, name: 'SETUP', desc: 'Project initialization and setup' },
+      { num: 1, name: 'CORE', desc: 'Core functionality implementation' },
+      { num: 2, name: 'FEATURES', desc: 'Feature development' },
+      { num: 3, name: 'INTEGRATION', desc: 'Testing and integration' },
+      { num: 4, name: 'DEPLOYMENT', desc: 'Deployment and distribution' }
+    ];
+  } else { // complex
+    return [
+      { num: 0, name: 'SETUP', desc: 'Project initialization and environment' },
+      { num: 1, name: 'CORE', desc: 'Core architecture and backend' },
+      { num: 2, name: 'FEATURES', desc: 'Feature development' },
+      { num: 3, name: 'INTEGRATION', desc: 'Testing and integration' },
+      { num: 4, name: 'DEPLOYMENT', desc: 'Deployment and distribution' },
+      { note: 'Star Systems can be added within constellations as complexity emerges' }
+    ];
+  }
+}
+
 // Create initial ROADMAP.md
 function createInitialRoadmap() {
-  console.log('\n🗺️  Creating initial ROADMAP.md...');
+  console.log('\n🗺️  Creating initial ROADMAP.md (adaptive structure)...');
   
   const adaptationMap = {
     flutter: 'FLUTTER_NEBULA_ADAPTATION.md',
@@ -220,84 +259,113 @@ function createInitialRoadmap() {
     generic: 'Nebula_Protocol.md'
   };
   
+  const constellations = getConstellationStructure(projectComplexity);
+  
+  // Generate constellation sections
+  let constellationSections = '';
+  constellations.forEach((c, index) => {
+    if (c.note) {
+      constellationSections += `\n**Note:** ${c.note}\n`;
+      return;
+    }
+    const version = `0.${c.num + 1}.0`;
+    const status = c.num === 0 ? '🔄 In Progress' : '⏳ Pending';
+    constellationSections += `
+### Constellation ${c.num}: ${c.name} (→ ${version})
+- **Status:** ${status}
+- **Document:** \`CONSTELLATION_${c.num}_${c.name}.md\`
+- **Star Gate:** \`STAR_GATE_${c.num}_${c.name}.md\`
+- **Description:** ${c.desc}
+- **Objectives:** TBD (define in constellation document)
+- **Key Deliverables:** TBD
+
+`;
+  });
+
   const roadmapContent = `# ${projectName} - Nebula Roadmap
 
 ## Project Overview
 ${projectName} - A ${projectType} project following the Nebula Framework
 
+**Complexity Level:** ${projectComplexity}  
+**Adaptive Structure:** This project uses an ${projectComplexity} constellation structure that can expand organically as complexity emerges.
+
 ## Technology Stack
 - **Framework:** ${projectType.charAt(0).toUpperCase() + projectType.slice(1)}
 - **Development Approach:** AI-assisted with Nebula Protocol
-- **Version:** 0.0.1 (pre-Phase 0)
+- **Version:** 0.0.1 (pre-Constellation 0)
 
-## Development Phases
+## Framework Terminology
+- **🌌 Nebula:** This document - the main project roadmap
+- **⭐ Constellations:** Major development phases (e.g., CONSTELLATION_0_SETUP.md)
+- **🪐 Star Systems:** Sub-phases within constellations (e.g., STAR_SYSTEM_1.1_DATABASE.md)
+- **🚪 Star Gates:** Quality checkpoints between constellations (e.g., STAR_GATE_0_SETUP.md)
 
-### Phase 0: Setup & Foundation (→ 0.1.0)
-- **Status:** 🔄 In Progress
-- **Constellation:** ROADMAP_PHASE_0_SETUP.md
-- **Objectives:** 
-  - Project initialization
-  - Development environment setup
-  - Logging infrastructure (MANDATORY)
-  - Project memory initialization
-- **Key Deliverables:**
-  - Basic project structure
-  - Dependencies installed
-  - Logging operational
-  - Development tools configured
+## Development Constellations
+${constellationSections}
+## Adaptive Growth
 
-### Phase 1: Core Development (→ 0.2.0)
-- **Status:** ⏳ Pending
-- **Constellation:** ROADMAP_PHASE_1_CORE.md
-- **Objectives:** Core backend/logic implementation
-- **Key Deliverables:** TBD
+This project starts with **${constellations.filter(c => !c.note).length} core constellations**.
 
-### Phase 1.5: Basic UI (→ 0.3.0) **MANDATORY**
-- **Status:** ⏳ Pending
-- **Constellation:** ROADMAP_PHASE_1.5_BASIC_UI.md
-- **Objectives:** Make Phase 1 features usable through basic UI
-- **Key Deliverables:** Functional, testable user interface
+### When to Expand into Star Systems:
+- A constellation task becomes too large (>4000 tokens, >8-10 tasks)
+- Clear sub-components emerge within a constellation
+- Different testing strategies needed for components
+- Parallel work streams are possible
 
-### Phase 2: Feature Development (→ 0.4.0)
-- **Status:** ⏳ Pending
-- **Constellation:** ROADMAP_PHASE_2_FEATURES.md
-- **Objectives:** Implement specific features
-- **Key Deliverables:** TBD
+### Example Star System Expansion:
+If Constellation 1 (CORE) becomes complex:
+\`\`\`
+CONSTELLATION_1_CORE.md  →  Expands to:
+  ├── STAR_SYSTEM_1.1_DATABASE.md
+  ├── STAR_SYSTEM_1.2_API.md
+  ├── STAR_SYSTEM_1.3_AUTH.md
+  └── STAR_GATE_1_CORE.md (validates all star systems)
+\`\`\`
 
-### Phase 3: Integration & Testing (→ 0.5.0)
-- **Status:** ⏳ Pending
-- **Constellation:** ROADMAP_PHASE_3_INTEGRATION.md
-- **Objectives:** Testing, optimization, integration
-- **Key Deliverables:** Tested, integrated application
+## Star Gates (Quality Enforcement)
 
-### Phase 3.5: UI Polish (→ 0.6.0) **MANDATORY**
-- **Status:** ⏳ Pending
-- **Constellation:** ROADMAP_PHASE_3.5_UI_POLISH.md
-- **Objectives:** Professional UI refinement
-- **Key Deliverables:** Production-ready interface
+**Every constellation must pass through its Star Gate before proceeding.**
 
-### Phase 4: Deployment (→ 1.0.0)
-- **Status:** ⏳ Pending
-- **Constellation:** ROADMAP_PHASE_4_DEPLOYMENT.md
-- **Objectives:** Deploy and distribute
-- **Key Deliverables:** Live, accessible application
+### Star Gate Requirements:
+- ✅ **Automated Tests:** All tests passing (must genuinely test, not fake outcomes)
+- 👤 **Manual Verification:** Human testing for user-facing features
+- 📝 **Integration Check:** Verify no breaking changes to previous constellations
+- 📊 **Performance:** Acceptable performance benchmarks
+- 📚 **Documentation:** All docs updated
+
+### Skip Documentation:
+If tests are skipped, document:
+- Reason for skip
+- Risk assessment
+- Mitigation plan
+- Approval
+
+**All Star Gate results are logged to project memory automatically.**
 
 ## Success Criteria
-- [ ] All phases completed with quality gates passed
-- [ ] Application is usable and testable (Phase 1.5+)
-- [ ] UI is professional and polished (Phase 3.5+)
-- [ ] Deployed and accessible (Phase 4)
+- [ ] All constellations completed with Star Gates passed
+- [ ] Application is functional and tested
+- [ ] No critical bugs or technical debt
+- [ ] Deployed and accessible (if applicable)
 
-## Project Memory
-This project uses Nebula's project memory system located in \`.nebula/\`
-- Error logs automatically tracked
-- Pattern recognition enabled
-- Decision history maintained
-- Context snapshots saved
+## Project Memory (Automatic)
+This project uses Nebula's mandatory project memory system in \`.nebula/\`:
+- ✅ **Auto-enabled:** Error logs automatically tracked
+- 🧠 **Pattern Recognition:** Recurring errors identified
+- 📋 **Decision History:** Architectural decisions maintained
+- 💾 **Context Snapshots:** Session state saved
+- 🚪 **Star Gate Logs:** All quality gate results tracked
+
+## Version Tracking (Automatic)
+- **Constellation Complete:** Minor version bump (0.X.0 → 0.Y.0)
+- **Star System Complete:** Patch version bump (0.X.Y → 0.X.Z)
+- **Git Tags:** Automatic tags on constellation completion
 
 ---
-**Framework:** [Nebula Protocol](docs/Nebula_Protocol.md)
-**Adaptation:** [${projectType.toUpperCase()}_NEBULA_ADAPTATION.md](docs/${adaptationMap[projectType]})
+**Framework:** [Nebula Protocol](docs/Nebula_Protocol.md)  
+**Adaptation:** [${projectType.toUpperCase()}_NEBULA_ADAPTATION.md](docs/${adaptationMap[projectType]})  
+**November 2024 Updates:** [NOVEMBER_UPDATES.md](docs/NOVEMBER_UPDATES.md)
 `;
 
   const roadmapPath = path.join(process.cwd(), 'ROADMAP.md');
@@ -423,6 +491,8 @@ async function initializeProjectMemory() {
 // Main execution
 async function main() {
   try {
+    const constellations = getConstellationStructure(projectComplexity);
+    
     createNebulaDirectory();
     copyProjectMemoryTools();
     createToolsPackageJson();
@@ -434,13 +504,19 @@ async function main() {
     
     console.log('\n✅ Nebula Framework initialization complete!\n');
     console.log('📋 Next Steps:\n');
-    console.log('1. Review ROADMAP.md and customize for your project');
-    console.log('2. Create constellation documents for each phase');
-    console.log(`3. Reference docs/${projectType.toUpperCase()}_NEBULA_ADAPTATION.md for guidance`);
-    console.log('4. Start Phase 0: Setup & Foundation\n');
-    console.log('🔧 Project memory tools available in .nebula/tools/');
-    console.log('📊 Logs will be saved to .nebula/logs/');
-    console.log('🧠 Error patterns and solutions tracked automatically\n');
+    console.log('1. Review ROADMAP.md for your adaptive constellation structure');
+    console.log(`2. Project complexity: ${projectComplexity} (${constellations.filter(c => !c.note).length} initial constellations)`);
+    console.log('3. Create Star Gate documents for quality enforcement');
+    console.log(`4. Reference docs/${projectType.toUpperCase()}_NEBULA_ADAPTATION.md for guidance`);
+    console.log('5. Start Constellation 0: Setup\n');
+    console.log('🌌 Cosmic Framework Active:');
+    console.log('   ⭐ Constellations - Main development phases');
+    console.log('   🪐 Star Systems - Granular breakdowns (add as needed)');
+    console.log('   🚪 Star Gates - Mandatory quality checkpoints\n');
+    console.log('🧠 Auto-enabled features:');
+    console.log('   ✅ Project memory tracking (.nebula/project_memory.sqlite)');
+    console.log('   ✅ Error logging (.nebula/logs/)');
+    console.log('   ✅ Star Gate validation logging\n');
     
   } catch (error) {
     console.error('\n❌ Initialization failed:', error.message);
