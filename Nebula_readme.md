@@ -239,10 +239,17 @@ your-project/
 **Requirements:**
 - **Automated Tests:** Must genuinely test functionality (no fake scripted outcomes)
 - **Manual Verification:** Human testing for user-facing features
+- **Git Push:** Code committed and pushed to remote repository
 - **Project Memory Logging:** All Star Gate results tracked automatically
 - **Skip Documentation:** Any skipped tests logged with rationale and flagged
 
 **Cannot proceed to next constellation without passing its Star Gate.**
+
+**Git Integration:**
+- Commit frequently during development
+- Push to remote before attempting Star Gate
+- Create and push git tags on constellation completion
+- Backup ensures work safety and team collaboration
 
 ### 3. Implement the Core Principle
 **Every feature must follow:** Implement → Test → Pass Star Gate → Document → Proceed
