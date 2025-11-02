@@ -365,7 +365,7 @@ This project uses Nebula's mandatory project memory system in \`.nebula/\`:
 ---
 **Framework:** [Nebula Protocol](docs/Nebula_Protocol.md)  
 **Adaptation:** [${projectType.toUpperCase()}_NEBULA_ADAPTATION.md](docs/${adaptationMap[projectType]})  
-**November 2024 Updates:** [NOVEMBER_UPDATES.md](docs/NOVEMBER_UPDATES.md)
+**Updates:** [Update History](../updates/README.md)
 `;
 
   const roadmapPath = path.join(process.cwd(), 'ROADMAP.md');
