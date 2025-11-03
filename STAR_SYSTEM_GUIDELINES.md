@@ -1,5 +1,50 @@
 # Star System Guidelines: Context Optimization & Problem Decomposition
 
+## 🎯 Core Principle: Separation of Concerns
+
+### Constellations vs. Star Systems
+
+The Nebula Framework uses a **two-tier documentation system**:
+
+#### 🌌 Constellations: Non-Technical Overview
+**Purpose:** Answer WHAT and WHY  
+**Content:**
+- Strategic goals and objectives
+- Business value and user impact
+- Success criteria
+- High-level scope
+- **NO technical implementation details**
+
+**Example:** `CONSTELLATION_1_CORE.md` describes what the core system does and why it matters, but not HOW to build it.
+
+#### 🪐 Star Systems: Technical Instruction Sets
+**Purpose:** Answer HOW  
+**Content:**
+- Step-by-step implementation instructions
+- Code examples and patterns
+- Technical specifications
+- Architecture decisions
+- Testing requirements
+- **Direct LLM execution guidance**
+
+**Example:** `STAR_SYSTEM_1.1_DATABASE.md` provides exact SQL schemas, migration scripts, and implementation steps.
+
+### Why This Separation Matters
+
+**Problem it solves:**
+- ❌ **Old approach:** Mixing strategy and technical details in one document → bloat, confusion, context overload
+- ✅ **New approach:** Clear separation → focused documents, optimized context usage, better AI output
+
+**Workflow:**
+1. Read **Constellation** → Understand WHAT and WHY
+2. Create **Star Systems** → Define HOW technically
+3. Implement from **Star Systems** → LLM has focused instructions
+4. Pass **Star Gate** → Validate before next phase
+
+**This guide focuses on Star Systems** - the technical instruction documents that make up the execution layer of your project.
+
+---
+
 ## Philosophy: Engineering vs. Bureaucracy
 
 ### The Engineering Principle

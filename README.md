@@ -310,10 +310,22 @@ Use: DIOXUS_NEBULA_ADAPTATION.md
 Use: Nebula_Protocol.md (generic)
 ```
 
-**NEW in November 2024:** The framework now uses cosmic terminology:
-- **Constellations** = Main phases (e.g., `CONSTELLATION_0_SETUP.md`)
-- **Star Systems** = Sub-phases (e.g., `STAR_SYSTEM_1.1_DATABASE.md`)
-- **Star Gates** = Quality checkpoints (e.g., `STAR_GATE_1_CORE.md`)
+**NEW in November 2024:** The framework uses cosmic terminology with **clear separation of concerns**:
+
+- **🌌 Constellations** = Non-technical overview documents (WHAT and WHY)
+  - Strategic goals, business value, success criteria
+  - Example: `CONSTELLATION_0_SETUP.md`
+  
+- **🪐 Star Systems** = Technical instruction sets (HOW)
+  - Step-by-step implementation, code examples, architecture
+  - Example: `STAR_SYSTEM_1.1_DATABASE.md`
+  
+- **🚪 Star Gates** = Quality checkpoints (VALIDATION)
+  - Mandatory testing and validation before next phase
+  - Example: `STAR_GATE_1_CORE.md`
+
+**Key Principle:** Constellations provide context, Star Systems provide code.  
+This separation prevents documentation bloat and keeps LLM context optimized.
 
 ### Step 2: Load Framework into Your AI Tool
 

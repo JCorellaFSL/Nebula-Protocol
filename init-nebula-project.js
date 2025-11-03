@@ -296,32 +296,69 @@ ${projectName} - A ${projectType} project following the Nebula Framework
 - **Version:** 0.0.1 (pre-Constellation 0)
 
 ## Framework Terminology
-- **🌌 Nebula:** This document - the main project roadmap
-- **⭐ Constellations:** Major development phases (e.g., CONSTELLATION_0_SETUP.md)
-- **🪐 Star Systems:** Sub-phases within constellations (e.g., STAR_SYSTEM_1.1_DATABASE.md)
-- **🚪 Star Gates:** Quality checkpoints between constellations (e.g., STAR_GATE_0_SETUP.md)
+
+### 🌌 Nebula
+This document - the main project roadmap and strategic overview
+
+### ⭐ Constellations (Non-Technical Overview)
+**What they are:** High-level phase documents that answer WHAT and WHY  
+**Purpose:** Strategic context, goals, success criteria, business value  
+**Content:** Non-technical overview - NO implementation details  
+**Example:** \`CONSTELLATION_0_SETUP.md\` describes what needs to be set up and why
+
+### 🪐 Star Systems (Technical Instruction Sets)
+**What they are:** Detailed technical documents that answer HOW  
+**Purpose:** Step-by-step implementation guides for LLM execution  
+**Content:** Code examples, technical specs, architecture decisions  
+**Example:** \`STAR_SYSTEM_1.1_DATABASE.md\` provides exact SQL schemas and implementation steps
+
+### 🚪 Star Gates (Quality Checkpoints)
+Mandatory validation gates between constellations  
+**Example:** \`STAR_GATE_0_SETUP.md\` validates all setup is complete before moving to core development
 
 ## Development Constellations
 ${constellationSections}
-## Adaptive Growth
+## Documentation Structure & Workflow
 
-This project starts with **${constellations.filter(c => !c.note).length} core constellations**.
+This project uses a **two-tier documentation system** to separate strategic planning from technical execution.
 
-### When to Expand into Star Systems:
-- A constellation task becomes too large (>4000 tokens, >8-10 tasks)
-- Clear sub-components emerge within a constellation
-- Different testing strategies needed for components
-- Parallel work streams are possible
+### Tier 1: Constellations (Strategic Overview)
+Each constellation document provides:
+- **What** needs to be built
+- **Why** it matters to the project
+- Business value and user impact
+- Success criteria
+- **NO technical details** (those go in Star Systems)
 
-### Example Star System Expansion:
-If Constellation 1 (CORE) becomes complex:
+### Tier 2: Star Systems (Technical Implementation)
+When a constellation needs technical detail:
+- Create Star System documents for each component
+- Provide step-by-step LLM-executable instructions
+- Include code examples and architecture
+- Specify testing requirements
+
+### Example Workflow:
 \`\`\`
-CONSTELLATION_1_CORE.md  →  Expands to:
-  ├── STAR_SYSTEM_1.1_DATABASE.md
-  ├── STAR_SYSTEM_1.2_API.md
-  ├── STAR_SYSTEM_1.3_AUTH.md
-  └── STAR_GATE_1_CORE.md (validates all star systems)
+1. Read CONSTELLATION_1_CORE.md → Understand WHAT and WHY
+   ↓
+2. Implement simple constellations directly (if straightforward)
+   ↓
+3. OR: Break complex constellations into Star Systems
+   - STAR_SYSTEM_1.1_DATABASE.md → Technical HOW for database
+   - STAR_SYSTEM_1.2_API.md → Technical HOW for API
+   - STAR_SYSTEM_1.3_AUTH.md → Technical HOW for auth
+   ↓
+4. Pass STAR_GATE_1_CORE.md → Validate all work before next constellation
 \`\`\`
+
+### When to Create Star Systems:
+- Constellation scope is technically complex
+- Multiple technology stacks involved
+- Component exceeds context limits (>4000 tokens, >8-10 tasks)
+- Parallel implementation streams are beneficial
+
+This project starts with **${constellations.filter(c => !c.note).length} constellation overviews**.  
+Star Systems will be created as technical complexity emerges.
 
 ## Star Gates (Quality Enforcement)
 

@@ -13,7 +13,12 @@ The central, high-level project roadmap that serves as the primary navigation do
 - Key stakeholders and responsibilities
 
 ### 2. Constellations (Phase-Specific Roadmaps)
-Detailed, phase-specific documents that expand upon each phase from the Nebula. These provide granular implementation details and actionable tasks.
+Non-technical overview documents that expand upon each phase from the Nebula. These provide:
+- **What** needs to be built and **why** it matters
+- Business value and user impact
+- High-level goals and success criteria
+- Context for technical implementation
+- **NO implementation details** (those belong in Star Systems)
 
 ## Naming Convention
 
@@ -31,8 +36,15 @@ Detailed, phase-specific documents that expand upon each phase from the Nebula. 
   - `CONSTELLATION_4_DEPLOYMENT.md` - Deployment and distribution
 
 ### Star System Documents (Sub-Phases)
+**Technical instruction sets** that provide implementation details for LLM execution.
+
 - **Convention:** `STAR_SYSTEM_[X.Y]_[DESCRIPTOR].md` for granular breakdown within constellations
 - **Legacy:** `ROADMAP_PHASE_[X.Y]_[DESCRIPTOR].md` (still supported)
+- **Purpose:** 
+  - **How** to build what the Constellation defines
+  - Step-by-step technical instructions
+  - Code examples and architecture decisions
+  - Direct LLM execution guidance
 - **Examples:**
   - `STAR_SYSTEM_1.1_DATABASE.md` - Database layer within Core constellation
   - `STAR_SYSTEM_1.2_API.md` - API framework within Core constellation
@@ -70,52 +82,82 @@ The framework now supports **organic growth** instead of rigid upfront planning:
 - Constellations expand into Star Systems as needed
 - Structure emerges from actual complexity, not prediction
 
-## Constellation Content Structure
+## Documentation Structure & Separation of Concerns
 
-Each **Constellation** document should include:
+### Constellations: Non-Technical Overview
 
-### 1. Constellation Overview
+Each **Constellation** document is a **strategic overview** that provides context, not implementation. Include:
+
+#### 1. Constellation Overview
 - Clear connection to the Nebula roadmap
-- Constellation objectives and success criteria
+- **What** this constellation accomplishes
+- **Why** it matters to the project
+- Business value and user impact
 - Dependencies on previous constellations
 
-### 2. Detailed Sub-Tasks
-- Actionable, granular tasks with immediate validation requirements
-- Task priorities and dependencies
-- Estimated effort and timeline
-- **Mandatory Testing Step:** Each sub-task must include validation criteria and testing approach
+#### 2. Goals & Success Criteria
+- High-level objectives (not tasks)
+- Measurable outcomes
+- Definition of "done" for this constellation
+- Expected deliverables (what, not how)
 
-### 3. Technical Implementation Details
-- Technology stack specifics
+#### 3. Scope & Boundaries
+- What's included in this constellation
+- What's explicitly out of scope
+- Connections to other constellations
+- When to break into Star Systems
+
+#### 4. Star System Breakdown
+- List of Star Systems within this constellation
+- Brief description of each (what it builds)
+- **No technical details** - reference Star System docs
+
+#### 5. Star Gate Requirements
+- Testing criteria for this constellation
+- Quality benchmarks
+- Validation approach
+- Preparation for Star Gate checkpoint
+
+---
+
+### Star Systems: Technical Instruction Sets
+
+Each **Star System** document is an **execution guide** for LLMs. Include:
+
+#### 1. Technical Overview
+- What this Star System builds (specific component/feature)
+- Technology stack and architecture
+- Integration points
+- Prerequisites
+
+#### 2. Implementation Steps
+- Step-by-step technical instructions
+- Code examples and patterns
+- Configuration details
+- File structure and naming
+
+#### 3. Technical Specifications
+- API specifications
+- Data models and schemas
 - Architecture decisions
-- Integration patterns
-- Data models and API specifications
+- Performance requirements
 
-### 4. Testing Strategy
-- Testing approach for the constellation
-- Quality assurance criteria
-- Validation methods
-- Preparation for Star Gate verification
+#### 4. Testing & Validation
+- Unit tests and integration tests
+- Test cases and scenarios
+- Validation criteria
+- Edge cases to handle
 
-### 5. Potential Challenges
+#### 5. Potential Challenges
 - Known technical hurdles
 - Risk mitigation strategies
 - Decision points requiring stakeholder input
 
-### 6. Task-Test-Validate Cycle
-- **Implementation Step:** Code/feature development
-- **Immediate Testing:** Manual verification or automated script execution
-- **Validation Criteria:** Clear pass/fail criteria for each test
-- **Iteration Loop:** Fix-test-validate until criteria are met
-- **Documentation:** Record test results and validation outcomes
+---
 
-### 7. Acceptance Criteria
-- Clear definition of "done" for each sub-task
-- Success metrics and validation methods
-- Deliverable specifications
-- **Validation Evidence:** Documented proof of successful testing
+## Star Gate Validation Process
 
-### 8. Star Gate Checkpoint (MANDATORY)
+### Star Gate Checkpoint (MANDATORY)
 After completing each constellation, pass through its Star Gate:
 - **Automated Tests:** All tests passing (must genuinely test, not fake outcomes)
 - **Manual Verification:** User-facing features tested by humans

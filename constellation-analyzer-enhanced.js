@@ -7,6 +7,11 @@
  * - LLM context window optimization
  * - Cognitive load management
  * - Engineering problem decomposition
+ * - Separation of concerns (overview vs. technical)
+ * 
+ * Designed for the two-tier documentation system:
+ * - Constellations: Non-technical overview (WHAT/WHY) - should be concise
+ * - Star Systems: Technical details (HOW) - can be more detailed
  * 
  * Usage: node constellation-analyzer-enhanced.js [file-or-directory]
  */
@@ -165,6 +170,28 @@ function analyzeConstellation(filePath) {
   // === RECOMMENDATIONS ===
   report += `${'='.repeat(70)}\n`;
   report += `RECOMMENDATIONS:\n\n`;
+  
+  // Detect document type
+  const isConstellation = filename.includes('CONSTELLATION');
+  const isStarSystem = filename.includes('STAR_SYSTEM');
+  
+  if (isConstellation && totalTokens > 2000) {
+    report += `[YELLOW] NOTE: This is a CONSTELLATION (overview document)\n`;
+    report += `Constellations should be concise (WHAT/WHY only):\n`;
+    report += `  - Focus on strategic goals and success criteria\n`;
+    report += `  - Avoid technical implementation details\n`;
+    report += `  - Move HOW to Star System documents\n`;
+    report += `  - Target: 1000-2000 tokens for readability\n\n`;
+  }
+  
+  if (isStarSystem && totalTokens < 1500) {
+    report += `[YELLOW] NOTE: This is a STAR SYSTEM (technical document)\n`;
+    report += `Star Systems should provide detailed HOW guidance:\n`;
+    report += `  - Include step-by-step implementation\n`;
+    report += `  - Provide code examples and patterns\n`;
+    report += `  - Specify technical requirements\n`;
+    report += `  - Target: 2000-4000 tokens for completeness\n\n`;
+  }
   
   const needsSplit = totalTokens > CONFIG.OPTIMAL_MAX_TOKENS || 
                      estimatedTasks > CONFIG.OPTIMAL_MAX_TASKS || 
