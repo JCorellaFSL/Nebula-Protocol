@@ -352,7 +352,7 @@ Star Gates are mandatory for good reason:
 
 ### Week 2: Working Efficiently
 - [ ] Use `analyze-constellation` to check complexity
-- [ ] Create first Star System (if needed)
+- [ ] Create your Star Systems (1-2 for simple, 3-8 for complex constellations)
 - [ ] Pass 2-3 more Star Gates
 - [ ] Document decisions in project memory
 

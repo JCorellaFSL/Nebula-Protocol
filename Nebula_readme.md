@@ -207,12 +207,17 @@ cp Nebula_Protocol.md docs/
 ### 2. Create Your Project Structure
 ```
 your-project/
-├── ROADMAP.md                          # Nebula
-├── ROADMAP_PHASE_0_SETUP.md           # Setup constellation
-├── ROADMAP_PHASE_1_CORE.md            # Core development
-├── ROADMAP_PHASE_2_FEATURES.md        # Feature development
-├── ROADMAP_PHASE_3_INTEGRATION.md     # Integration & testing
-├── ROADMAP_PHASE_4_DEPLOYMENT.md      # Deployment
+├── ROADMAP.md                              # Nebula (main roadmap)
+├── CONSTELLATION_0_SETUP.md                # Setup constellation (overview)
+│   ├── STAR_SYSTEM_0.1_ENVIRONMENT.md     # Environment setup (technical)
+│   └── STAR_GATE_0_SETUP.md               # Setup validation
+├── CONSTELLATION_1_CORE.md                 # Core development (overview)
+│   ├── STAR_SYSTEM_1.1_DATABASE.md        # Database (technical)
+│   ├── STAR_SYSTEM_1.2_API.md             # API layer (technical)
+│   └── STAR_GATE_1_CORE.md                # Core validation
+├── CONSTELLATION_2_FEATURES.md             # Feature development
+├── CONSTELLATION_3_INTEGRATION.md          # Integration & testing
+├── CONSTELLATION_4_DEPLOYMENT.md           # Deployment
 └── docs/
     └── [FRAMEWORK]_NEBULA_ADAPTATION.md
 ```

@@ -22,7 +22,7 @@ Before attempting to pass through this Star Gate:
 - [ ] All code changes committed to version control
 - [ ] **Code pushed to remote repository** (GitHub, GitLab, Bitbucket, etc.)
 - [ ] No critical linter errors or build failures
-- [ ] All Star Systems (if any) within this constellation are complete
+- [ ] All Star Systems within this constellation are complete
 - [ ] Documentation updated to reflect implemented features
 
 **⚠️ IMPORTANT:** Always push to remote before passing Star Gate. This ensures:
@@ -183,12 +183,15 @@ All of the following must be true:
 - [ ] Documentation updated
 - [ ] No critical bugs or blockers
 
-### 🔀 CREATE STAR SYSTEM
-If issues are found but constellation scope is too large:
-- [ ] Break constellation into Star Systems
+### 🔀 ADD MORE STAR SYSTEMS
+If issues are found and constellation needs further decomposition:
+- [ ] Add additional Star Systems to better organize work
 - [ ] Create `STAR_SYSTEM_[X.Y]_[NAME].md` for focused fixes
-- [ ] Address issues in granular star systems
+- [ ] Reorganize existing Star Systems if needed
+- [ ] Address issues in granular components
 - [ ] Re-attempt Star Gate passage
+
+**Note:** Star Systems should already exist. This is about adding MORE if needed, not creating them for the first time.
 
 ### 🔄 ROLLBACK
 If major architectural issues discovered:
@@ -201,7 +204,7 @@ If major architectural issues discovered:
 
 ## Final Verdict
 
-**Decision:** ⏳ Pending / ✅ PASSED / 🔀 Create Star Systems / 🔄 Rollback
+**Decision:** ⏳ Pending / ✅ PASSED / 🔀 Add More Star Systems / 🔄 Rollback
 
 **Reviewer:** [Name]  
 **Date:** YYYY-MM-DD

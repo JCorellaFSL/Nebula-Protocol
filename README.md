@@ -396,7 +396,7 @@ CONSTELLATION (overview) → STAR SYSTEMS (technical) → STAR GATE (validation)
   - Check dependencies: ensure prerequisites are satisfied or linked
 - Example prompt:
   ```
-  Review ROADMAP_PHASE_2_FEATURES.md against phases 0–1 for conflicts,
+  Review CONSTELLATION_2_FEATURES.md against constellations 0–1 for conflicts,
   supersession, duplication, and mis-phasing. Propose reassignments or edits and
   list explicit rationale and updated dependencies.
   ```
@@ -508,16 +508,16 @@ When starting a new AI conversation:
 
 1. **Load the framework**: Upload or reference your chosen adaptation
 2. **Set the project context**: "I'm working on a [Flutter/Tauri/Python] project using the Nebula Framework"
-3. **Specify current phase**: "I'm currently in Phase [X] focusing on [description]"
-4. **Reference constellation**: "Please refer to ROADMAP_PHASE_[X]_[NAME].md for detailed requirements"
+3. **Specify current constellation**: "I'm currently in Constellation [X] focusing on [description]"
+4. **Reference constellation**: "Please refer to CONSTELLATION_[X]_[NAME].md for strategic overview and STAR_SYSTEM_[X.Y]_[NAME].md for technical details"
 
 ### AI Conversation Patterns
 
 #### Starting a New Feature
 ```
-"I need to implement [feature] as part of Phase [X]. 
-Please refer to ROADMAP_PHASE_[X]_[NAME].md for the specific 
-requirements and testing criteria."
+"I need to implement [feature] as part of Constellation [X]. 
+Please refer to CONSTELLATION_[X]_[NAME].md for strategic context
+and STAR_SYSTEM_[X.Y]_[NAME].md for technical implementation details."
 ```
 
 #### Requesting Code Implementation

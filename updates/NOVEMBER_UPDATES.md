@@ -98,17 +98,22 @@ ROADMAP.md (Nebula)
 - Clear phase boundary (setup → development → deployment)
 - Team handoff point
 
-**When to create a Star System:**
-- Constellation task becomes too large (>4000 tokens)
-- Clear sub-component emerges
-- Different testing strategy needed
-- Parallel work streams possible
+**How many Star Systems to create:**
+- **Simple constellation:** 1-2 Star Systems
+  - Feature is self-contained
+  - Single developer can hold it in working memory
+  - Testing is straightforward
+  
+- **Moderate constellation:** 2-4 Star Systems
+  - Multiple sub-components emerge
+  - Different testing strategies needed
+  
+- **Complex constellation:** 3-8 Star Systems
+  - Constellation task exceeds 4000 tokens
+  - Clear architectural layers
+  - Parallel work streams possible
 
-**When to stay simple:**
-- Feature is self-contained
-- Single developer can hold it in working memory
-- Testing is straightforward
-- No architectural complexity
+**Note:** Star Systems are always created. Complexity determines quantity, not existence.
 
 ### Implementation Requirements
 

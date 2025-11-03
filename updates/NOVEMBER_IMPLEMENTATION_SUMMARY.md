@@ -64,9 +64,9 @@ init-nebula rust my-vscode-clone complex
 
 **Key Features:**
 - Adaptive ROADMAP.md generation based on complexity
-- Clear guidance on when to expand into Star Systems
-- No forced bureaucracy for simple projects
-- Scalable structure for complex projects
+- Clear guidance on Star System quantity per complexity level
+- No forced bureaucracy for simple projects (fewer Star Systems)
+- Scalable structure for complex projects (more Star Systems)
 
 ---
 
