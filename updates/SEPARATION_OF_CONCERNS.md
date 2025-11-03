@@ -191,17 +191,24 @@ The Nebula Framework now enforces a **strict separation** between strategic plan
 
 ## Workflow Example
 
-### Simple Feature (No Star Systems Needed)
+### Simple Feature (Minimal Star Systems)
 
 ```markdown
 CONSTELLATION_2_FEATURES.md (1500 tokens)
 ├─ What: Add user profile page
 ├─ Why: Users need to view/edit their information
 ├─ Success: Profile displays correctly, edits save
-└─ Implementation: Direct from constellation (straightforward)
+└─ Star Systems: See below
+
+STAR_SYSTEM_2.1_PROFILE_UI.md (2000 tokens)
+├─ How: Create profile component
+├─ Technical: React component structure, form handling
+└─ Testing: Unit tests, user interaction tests
 ```
 
-### Complex Feature (Star Systems Required)
+**Result:** Simple feature = 1 focused Star System
+
+### Complex Feature (Multiple Star Systems)
 
 ```markdown
 CONSTELLATION_2_FEATURES.md (1800 tokens)

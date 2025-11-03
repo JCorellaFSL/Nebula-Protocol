@@ -462,25 +462,22 @@ Create `ROADMAP.md` using this template:
 Create the full set of constellation documents for all phases at project initialization, then refine details iteratively:
 
 ```markdown
-# ROADMAP_PHASE_[NUMBER]_[DESCRIPTOR].md
+# CONSTELLATION_[NUMBER]_[DESCRIPTOR].md
 
-## Phase Overview
-Connection to Nebula phase and specific objectives
+## Constellation Overview
+Connection to Nebula roadmap and strategic objectives
 
-## Detailed Tasks
-1. **Task Name**
-   - Description: [What needs to be done]
-   - Acceptance Criteria: [How to know it's complete]
-   - Testing Method: [How to validate]
-   - Dependencies: [What must be done first]
+## Goals & Success Criteria
+- High-level objectives (not tasks)
+- Measurable outcomes
+- Definition of "done"
 
-2. **Next Task**
-   - [Continue pattern...]
+## Star System Breakdown
+List of Star Systems within this constellation:
+- `STAR_SYSTEM_[X.1]_[NAME].md` - Brief description (what it builds)
+- `STAR_SYSTEM_[X.2]_[NAME].md` - Brief description (what it builds)
 
-## Implementation Details
-- Technology specifics
-- Architecture decisions
-- Integration patterns
+**Note:** Technical details go in Star System documents, not here
 
 ## Risk Register
 - Top risks for this phase and mitigations

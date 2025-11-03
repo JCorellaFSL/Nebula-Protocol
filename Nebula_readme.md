@@ -45,10 +45,13 @@ CONSTELLATION_[NUMBER]_[DESCRIPTOR].md
 - `CONSTELLATION_4_DEPLOYMENT.md` - Deployment and distribution
 
 ### Star Systems (Sub-Phases)
-Detailed breakdowns within constellations for complex components:
+Technical implementation details for each constellation (always created):
 ```
 STAR_SYSTEM_[X.Y]_[DESCRIPTOR].md
 ```
+
+**Purpose:** Provide step-by-step technical instructions (HOW to build)  
+**Quantity:** 1-2 for simple constellations, 3-8 for complex constellations
 
 **Examples:**
 - `STAR_SYSTEM_1.1_DATABASE.md` - Database layer within Core
