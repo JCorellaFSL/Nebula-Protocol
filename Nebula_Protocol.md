@@ -74,13 +74,25 @@ Non-technical overview documents that expand upon each phase from the Nebula. Th
 ### Adaptive Phase Management
 The framework now supports **organic growth** instead of rigid upfront planning:
 
-**Simple Projects (3-5 constellations):**
-- Minimal structure without forced complexity
-- Direct constellation sequence: Setup → Core → Deployment
+**Universal Structure:** All projects follow the same documentation pattern:
+```
+CONSTELLATION (overview) → STAR SYSTEMS (technical) → STAR GATE (validation)
+```
 
-**Complex Projects (8+ constellations with star systems):**
-- Constellations expand into Star Systems as needed
-- Structure emerges from actual complexity, not prediction
+**Simple Projects (3-5 constellations):**
+- Fewer constellations overall
+- 1-2 Star Systems per constellation
+- Example: Setup has Environment + Dependencies Star Systems
+- **Separation maintained, just smaller scale**
+
+**Complex Projects (8+ constellations):**
+- More constellations to organize complexity
+- 3-8 Star Systems per constellation
+- Example: Core has Database + API + Auth + WebSocket Star Systems
+- **Separation critical for managing scale**
+
+**Key Principle:** Star Systems are not optional - they're the standard technical layer.  
+Complexity determines quantity, not whether to use them.
 
 ## Documentation Structure & Separation of Concerns
 
@@ -105,12 +117,14 @@ Each **Constellation** document is a **strategic overview** that provides contex
 - What's included in this constellation
 - What's explicitly out of scope
 - Connections to other constellations
-- When to break into Star Systems
+- How many Star Systems this will need (1-2 for simple, 3-8 for complex)
 
 #### 4. Star System Breakdown
-- List of Star Systems within this constellation
+- List of Star Systems within this constellation (always present)
 - Brief description of each (what it builds)
 - **No technical details** - reference Star System docs
+- Simple projects: 1-2 Star Systems per constellation
+- Complex projects: 3-8 Star Systems per constellation
 
 #### 5. Star Gate Requirements
 - Testing criteria for this constellation

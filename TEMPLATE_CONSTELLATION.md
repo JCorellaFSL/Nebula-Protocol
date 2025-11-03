@@ -51,20 +51,28 @@
 - [Explicitly not included - to be done in other constellations]
 - [Features postponed to future work]
 
-### Breaking Into Star Systems
-**When to create Star Systems:**
-- Technical complexity requires multiple implementation strategies
+### Star System Planning
+**Star Systems are always created** to maintain separation of concerns:
+
+**How many to create:**
+- **Simple constellation:** 1-2 Star Systems
+  - Example: Environment Setup + Dependencies
+- **Moderate constellation:** 2-4 Star Systems
+  - Example: Database + API + Basic Auth
+- **Complex constellation:** 3-8 Star Systems
+  - Example: Database + API + Auth + WebSocket + Cache + Monitoring
+
+**Split criteria:**
 - Different technology stacks or architectural layers
 - Independent features that can be built separately
 - Component exceeds context limits (>4000 tokens, >10 tasks)
-
-**If this constellation is simple:** Continue with direct implementation without Star Systems.
+- Logical separation (setup vs. config, backend vs. frontend)
 
 ---
 
 ## 4. Star System Breakdown
 
-> **Note:** If this constellation has NO Star Systems, implement directly from this overview.
+> **Required:** Every constellation must have Star Systems. List them below.
 
 ### Star System List
 

@@ -20,9 +20,10 @@
 - Convention: `CONSTELLATION_[NUMBER]_[DESCRIPTOR].md`
 - Examples: `CONSTELLATION_0_SETUP.md`, `CONSTELLATION_1_CORE.md`
 
-**🪐 Star Systems** = Sub-phases within constellations (created as needed)
+**🪐 Star Systems** = Technical instruction sets (always created for each constellation)
 - Convention: `STAR_SYSTEM_[X.Y]_[DESCRIPTOR].md`
 - Examples: `STAR_SYSTEM_1.1_DATABASE.md`, `STAR_SYSTEM_1.2_API.md`
+- Quantity: 1-2 for simple, 2-4 for moderate, 3-8 for complex constellations
 
 **🚪 Star Gates** = Quality checkpoints between constellations (MANDATORY)
 - Convention: `STAR_GATE_[NUMBER]_[CONSTELLATION].md`
@@ -59,19 +60,24 @@ your-project/
 └── docs/
 ```
 
-**Complex Project (With Star Systems):**
+**All Projects Use Star Systems (quantity varies):**
 ```
 your-project/
 ├── ROADMAP.md
-├── CONSTELLATION_0_SETUP.md
-├── CONSTELLATION_1_CORE.md
-│   ├── STAR_SYSTEM_1.1_DATABASE.md
-│   ├── STAR_SYSTEM_1.2_API.md
-│   └── STAR_SYSTEM_1.3_AUTH.md
-├── STAR_GATE_1_CORE.md              # Validates all of Constellation 1
-├── CONSTELLATION_2_FEATURES.md
-└── ...
+├── CONSTELLATION_0_SETUP.md (overview)
+│   ├── STAR_SYSTEM_0.1_ENVIRONMENT.md (technical)
+│   ├── STAR_SYSTEM_0.2_DEPENDENCIES.md (technical)
+│   └── STAR_GATE_0_SETUP.md (validation)
+├── CONSTELLATION_1_CORE.md (overview)
+│   ├── STAR_SYSTEM_1.1_DATABASE.md (technical)
+│   ├── STAR_SYSTEM_1.2_API.md (technical)
+│   ├── STAR_SYSTEM_1.3_AUTH.md (technical)
+│   └── STAR_GATE_1_CORE.md (validation)
+├── CONSTELLATION_2_FEATURES.md (overview)
+│   └── ...
+└── docs/
 ```
+**Note:** Simple projects have 1-2 Star Systems per constellation; complex have 3-8.
 
 ### 4. Initialize Your Project (Automated)
 
@@ -96,18 +102,24 @@ init-nebula rust my-vscode-clone complex      # 5+ constellations, expandable
 - Begin with core constellations (Setup, Core, Deployment for simple projects)
 - Add more as needed based on actual complexity
 
-**Expand When Needed:**
-- If a constellation exceeds 4000 tokens or 8-10 tasks
-- Break into Star Systems organically
-- Use `constellation-analyzer.js` to identify when to split
+**Star Systems Are Always Created:**
+- Every constellation must have Star Systems (separation of concerns)
+- Simple constellation: 1-2 Star Systems
+- Complex constellation: 3-8 Star Systems
+- Use `constellation-analyzer.js` to validate size
 
 **Example:**
 ```bash
-# Analyze constellation complexity
+# Analyze constellation/star system size
 analyze-constellation CONSTELLATION_1_CORE.md
 
-# Output tells you if it needs splitting:
-# 🔴 ACTION REQUIRED: This constellation should be split into Star Systems
+# For constellations >2000 tokens:
+# [YELLOW] NOTE: This is a CONSTELLATION (overview document)
+# Move technical details to Star Systems
+
+# For star systems <1500 tokens:
+# [YELLOW] NOTE: This is a STAR SYSTEM (technical document)
+# Add more implementation detail
 ```
 
 ### 6. Star Gate Enforcement (NEW)

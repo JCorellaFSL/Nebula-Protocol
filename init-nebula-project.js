@@ -331,34 +331,36 @@ Each constellation document provides:
 - **NO technical details** (those go in Star Systems)
 
 ### Tier 2: Star Systems (Technical Implementation)
-When a constellation needs technical detail:
-- Create Star System documents for each component
+**Always created** - every constellation has Star Systems:
 - Provide step-by-step LLM-executable instructions
 - Include code examples and architecture
 - Specify testing requirements
+- **Quantity varies by complexity, not existence**
 
 ### Example Workflow:
 \`\`\`
-1. Read CONSTELLATION_1_CORE.md → Understand WHAT and WHY
+1. Read CONSTELLATION_0_SETUP.md → Understand setup WHAT and WHY
    ↓
-2. Implement simple constellations directly (if straightforward)
+2. Implement from Star Systems:
+   - STAR_SYSTEM_0.1_ENVIRONMENT.md → Environment setup
+   - STAR_SYSTEM_0.2_DEPENDENCIES.md → Install dependencies
    ↓
-3. OR: Break complex constellations into Star Systems
-   - STAR_SYSTEM_1.1_DATABASE.md → Technical HOW for database
-   - STAR_SYSTEM_1.2_API.md → Technical HOW for API
-   - STAR_SYSTEM_1.3_AUTH.md → Technical HOW for auth
+3. Pass STAR_GATE_0_SETUP.md → Validate before next constellation
    ↓
-4. Pass STAR_GATE_1_CORE.md → Validate all work before next constellation
+4. Repeat for each constellation
 \`\`\`
 
-### When to Create Star Systems:
-- Constellation scope is technically complex
-- Multiple technology stacks involved
-- Component exceeds context limits (>4000 tokens, >8-10 tasks)
-- Parallel implementation streams are beneficial
+### Star Systems Per Constellation:
+**${projectComplexity} Project Structure:**
+- **Simple (this is ${projectComplexity === 'simple' ? 'YOU' : 'not you'}):** 1-2 Star Systems per constellation
+  - Example: Setup → Environment + Dependencies
+- **Moderate (this is ${projectComplexity === 'moderate' ? 'YOU' : 'not you'}):** 2-4 Star Systems per constellation
+  - Example: Core → Database + API + Auth
+- **Complex (this is ${projectComplexity === 'complex' ? 'YOU' : 'not you'}):** 3-8 Star Systems per constellation
+  - Example: Core → Database + API + Auth + WebSocket + Cache
 
-This project starts with **${constellations.filter(c => !c.note).length} constellation overviews**.  
-Star Systems will be created as technical complexity emerges.
+**This project starts with ${constellations.filter(c => !c.note).length} constellations.**  
+Each will have Star Systems created to maintain separation of concerns.
 
 ## Star Gates (Quality Enforcement)
 

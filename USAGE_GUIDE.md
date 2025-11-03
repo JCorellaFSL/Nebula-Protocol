@@ -8,8 +8,8 @@ Complete guide to using the Nebula Framework for AI-assisted software developmen
 
 ## 🌌 Cosmic Terminology
 
-- **⭐ Constellations** - Major development phases
-- **🪐 Star Systems** - Sub-phases within constellations
+- **⭐ Constellations** - Non-technical overview (WHAT/WHY)
+- **🪐 Star Systems** - Technical instruction sets (HOW) - always present
 - **🚪 Star Gates** - Mandatory quality checkpoints
 - **🌌 Nebula** - Your main project roadmap
 
@@ -64,9 +64,9 @@ npm install -g nebula-framework-mcp
 init-nebula [type] [name] [complexity]
 
 # Examples:
-init-nebula python my-app simple       # Simple: 3 constellations
-init-nebula rust my-app moderate       # Moderate: 5 constellations (default)
-init-nebula rust my-ide complex        # Complex: 5+ with Star Systems
+init-nebula python my-app simple       # Simple: 3 constellations, 1-2 Star Systems each
+init-nebula rust my-app moderate       # Moderate: 5 constellations, 2-4 Star Systems each (default)
+init-nebula rust my-ide complex        # Complex: 5+ constellations, 3-8 Star Systems each
 
 # Or clone framework for customization
 git clone https://github.com/JCorellaFSL/Nebula-Protocol.git

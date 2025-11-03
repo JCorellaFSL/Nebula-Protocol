@@ -347,18 +347,27 @@ node constellation-analyzer-enhanced.js STAR_SYSTEM_1.1_DATABASE.md
 
 ## Frequently Asked Questions
 
-### Q: What if my Constellation is simple enough to not need Star Systems?
+### Q: What if my Constellation is very simple?
 
-**A:** That's perfect! Simple constellations can be implemented directly:
+**A:** Even simple constellations should use Star Systems to maintain separation of concerns:
 ```markdown
-CONSTELLATION_3_DEPLOYMENT.md
+CONSTELLATION_3_DEPLOYMENT.md (overview)
 ├─ What: Deploy to production
 ├─ Why: Make app accessible to users
-├─ How: (simple enough to include here)
-    └─ Run: docker build && docker push && kubectl apply
+├─ Success: App running in production
+└─ Star Systems: See below
+
+STAR_SYSTEM_3.1_DOCKER_BUILD.md (technical)
+├─ How: docker build && docker push commands
+├─ Configuration: Dockerfile, docker-compose.yml
+└─ Testing: Verify image works
+
+STAR_GATE_3_DEPLOYMENT.md (validation)
+└─ Test: App accessible, health check passing
 ```
 
-No Star Systems needed. Only create them when technical complexity emerges.
+**Simple = fewer Star Systems (1-2), not no Star Systems.**  
+This prevents mixing strategic goals with technical commands, even in simple cases.
 
 ### Q: Can a Star System reference another Star System?
 
@@ -390,15 +399,21 @@ STAR_SYSTEM_1.2_API.md (8000 tokens) → Split to:
 
 ### Q: Do I need to follow this strictly for small projects?
 
-**A:** For small projects (3-5 constellations, simple features):
-- Constellations can be very brief (even just goals + success criteria)
-- Star Systems might not be needed at all
-- Focus on getting work done, not documentation bureaucracy
+**A:** Yes, but with appropriate scale:
 
-For complex projects (8+ constellations, 40+ components):
+**For small projects (3-5 constellations, simple features):**
+- Constellations: Very brief overviews (goals + success criteria)
+- Star Systems: 1-2 per constellation with focused technical detail
+- Separation maintained, just smaller documents
+- **Still use the pattern** - prevents bad habits that hurt when scaling
+
+**For complex projects (8+ constellations, 40+ components):**
+- Constellations: Comprehensive overviews  
+- Star Systems: 3-8 per constellation with detailed technical content
 - Strict separation is **critical** for managing complexity
-- Prevents documentation decay
-- Keeps LLM context optimized
+- Prevents documentation decay and keeps LLM context optimized
+
+**Key:** The pattern is universal. Scale varies, not structure.
 
 ---
 

@@ -318,14 +318,16 @@ Use: Nebula_Protocol.md (generic)
   
 - **🪐 Star Systems** = Technical instruction sets (HOW)
   - Step-by-step implementation, code examples, architecture
-  - Example: `STAR_SYSTEM_1.1_DATABASE.md`
+  - Example: `STAR_SYSTEM_0.1_ENVIRONMENT.md`
+  - **Every constellation has Star Systems** - complexity determines how many
   
 - **🚪 Star Gates** = Quality checkpoints (VALIDATION)
   - Mandatory testing and validation before next phase
-  - Example: `STAR_GATE_1_CORE.md`
+  - Example: `STAR_GATE_0_SETUP.md`
 
 **Key Principle:** Constellations provide context, Star Systems provide code.  
-This separation prevents documentation bloat and keeps LLM context optimized.
+**Universal Structure:** All projects use Constellation → Star Systems → Star Gate pattern.  
+Simple projects have fewer Star Systems per constellation; complex projects have more.
 
 ### Step 2: Load Framework into Your AI Tool
 
@@ -353,26 +355,39 @@ This separation prevents documentation bloat and keeps LLM context optimized.
 #### NEW APPROACH: Adaptive Constellation Generation
 **CHANGED in November 2024:** The framework now supports organic growth instead of rigid upfront planning.
 
+**Universal Structure:** All projects follow the same pattern:
+```
+CONSTELLATION (overview) → STAR SYSTEMS (technical) → STAR GATE (validation)
+```
+
 **Simple Projects (e.g., Python clock app):**
-- Start with 3-5 basic constellations: Setup → Core → Deployment
-- No forced complexity or unnecessary bureaucracy
-- Example prompt:
+- 3-5 constellations with 1-2 Star Systems each
+- Example structure:
   ```
-  Create a simple Nebula structure for this project with Setup, Core, and Deployment
-  constellations. Keep it minimal—this is a straightforward application.
+  CONSTELLATION_0_SETUP.md (overview)
+  ├── STAR_SYSTEM_0.1_ENVIRONMENT.md (Python setup, venv)
+  └── STAR_GATE_0_SETUP.md (validation)
+  
+  CONSTELLATION_1_CORE.md (overview)
+  ├── STAR_SYSTEM_1.1_CLOCK_LOGIC.md (time display implementation)
+  └── STAR_GATE_1_CORE.md (validation)
   ```
+- **Fewer Star Systems, not no Star Systems**
 
 **Complex Projects (e.g., VSCode clone with agentic features):**
-- Begin with core constellations (Setup, Core, Features, Integration, Deployment)
-- Expand into Star Systems as complexity emerges
-- Structure grows naturally with actual needs, not predictions
-- Example prompt:
+- 5-8 constellations with 3-8 Star Systems each
+- Example structure:
   ```
-  Create initial constellation structure for this complex project. We'll expand 
-  into Star Systems as we discover complexity. Start with 5 core constellations.
+  CONSTELLATION_1_CORE.md (overview)
+  ├── STAR_SYSTEM_1.1_DATABASE.md (schema, migrations)
+  ├── STAR_SYSTEM_1.2_API.md (REST endpoints)
+  ├── STAR_SYSTEM_1.3_AUTH.md (authentication)
+  ├── STAR_SYSTEM_1.4_WEBSOCKET.md (real-time features)
+  └── STAR_GATE_1_CORE.md (validation)
   ```
+- **More Star Systems to manage complexity**
 
-**Rationale:** Real development is discovery-based. Forcing complete upfront planning causes phase proliferation (1.01, 1.02, 1.52, 1.53, etc.) and doesn't match reality.
+**Rationale:** Separation of concerns is universal. Simple projects need strategic overview + technical detail too, just less of it. This prevents mixing context in constellation files regardless of project size.
 
 #### HOLD 1: Per‑Constellation Conflict Review (during generation)
 - For each newly generated constellation, run a quick review against all prior constellations:
