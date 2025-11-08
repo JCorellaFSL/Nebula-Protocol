@@ -2,21 +2,37 @@
 
 **⚠️ UPDATED:** November 2024 - Now uses adaptive, flexible approach with cosmic terminology
 
-## ⚠️ MANDATORY REQUIREMENT: Error Logging
+## ⚠️ MANDATORY REQUIREMENTS
 
-**Before proceeding, understand this critical requirement:**
+### 1. LLM-First Development
+
+**The AI does ALL implementation unless user explicitly asks otherwise.**
+
+**Never ask the user to:**
+- ❌ Run commands manually
+- ❌ Configure environments
+- ❌ Install dependencies
+- ❌ Set up PATH variables
+
+**Instead:** Create scripts that handle everything automatically.
+
+### 2. Usability First
+
+**Every output must be immediately usable by non-programmers.**
+
+See `USABILITY_FIRST.md` for complete standards including:
+- Natural input (no unnecessary quotes/syntax)
+- Helpful error messages with solutions
+- Cross-platform launcher scripts
+- One-command installation
+
+### 3. Error Logging
 
 **Every error encountered during development MUST be logged to Project Memory.**
 
-This is NOT optional and CANNOT be waived. Error logging enables:
-- Cross-project learning via Central Knowledge Graph  
-- Automatic error pattern recognition and solutions
-- Measurable progress tracking
-- Sharing fixes across all projects
-
-**Star Gates automatically FAIL if error logging is incomplete.**
-
 See `ERROR_LOGGING_REQUIREMENTS.md` for complete requirements.
+
+**Star Gates automatically FAIL if ANY of these requirements are not met.**
 
 ---
 

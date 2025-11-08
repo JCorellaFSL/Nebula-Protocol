@@ -3,20 +3,24 @@
 ## Overview
 The Nebula Framework is a hierarchical documentation and context management system designed to provide clear project structure, focused development phases, and effective knowledge transfer across development teams. Enhanced with cloud-based MCP (Model Context Protocol) integration for seamless AI-assisted development.
 
-## Core Requirements
+## Core Principles
 
-### Mandatory Error Logging
+### 1. LLM Does the Work
+**The AI implements everything unless the user explicitly requests to do it themselves.**
+
+Target audience: Anyone from complete beginners to experienced engineers tired of boilerplate.
+
+### 2. Usability First
+**Build tools that are USABLE, not just technically correct.**
+
+See `USABILITY_FIRST.md` for complete standards.
+
+### 3. Mandatory Error Logging
 **Every error encountered during development MUST be logged to Project Memory.**
 
-This is not optional. Error logging enables:
-- Cross-project learning via Central Knowledge Graph
-- Pattern recognition and auto-suggestions
-- Solution sharing across all projects
-- Measurable progress tracking
+See `ERROR_LOGGING_REQUIREMENTS.md` for complete requirements.
 
-See `ERROR_LOGGING_REQUIREMENTS.md` for complete requirements and enforcement.
-
-**Enforcement:** Star Gates automatically fail if error logging is incomplete.
+**Enforcement:** Star Gates automatically fail if error logging OR usability standards are not met.
 
 ---
 
