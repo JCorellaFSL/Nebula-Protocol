@@ -12,6 +12,8 @@ import morgan from 'morgan';
 import { z } from 'zod';
 import config from './src/config/index.js';
 import { GitIntegration } from './src/git/git-integration.js';
+import { BranchManagement } from './src/git/branch-management.js';
+import { CentralKGSync } from './src/kg/central-kg-sync.js';
 import { ProjectMemory } from './project-memory.js';
 import { StarChart } from './star-chart.js';
 import { DocumentationService } from './nebula-docs-service.js';
@@ -19,6 +21,8 @@ import fs from 'fs';
 import path from 'path';
 import crypto from 'crypto';
 import { createClient } from 'redis';
+import pkg from 'pg';
+const { Pool } = pkg;
 
 const app = express();
 const PORT = config.api.port;
@@ -90,6 +94,36 @@ const docService = new DocumentationService(redisClient);
 
 // Initialize Git Integration Service
 const gitService = new GitIntegration(config);
+
+// Initialize PostgreSQL connection pool for Central KG
+let pgPool = null;
+let centralKGSync = null;
+
+if (config.database.postgres.enabled) {
+  pgPool = new Pool({
+    host: config.database.postgres.host,
+    port: config.database.postgres.port,
+    database: config.database.postgres.database,
+    user: config.database.postgres.user,
+    password: config.database.postgres.password,
+    max: config.database.postgres.maxConnections,
+    idleTimeoutMillis: config.database.postgres.idleTimeoutMs,
+    connectionTimeoutMillis: config.database.postgres.connectionTimeoutMs
+  });
+
+  pgPool.on('error', (err) => {
+    logger.error('PostgreSQL pool error', { error: err.message });
+  });
+
+  pgPool.on('connect', () => {
+    logger.info('PostgreSQL connected');
+  });
+
+  centralKGSync = new CentralKGSync(pgPool);
+  logger.info('Central Knowledge Graph sync initialized');
+} else {
+  logger.warn('Central Knowledge Graph disabled (PostgreSQL not configured)');
+}
 
 // Prefetch common documentation on startup (async, don't block)
 if (config.docs.prefetchEnabled) {
@@ -575,6 +609,222 @@ app.post('/api/project/:projectId/git/pull', authenticateToken, async (req, res)
     });
   } catch (error) {
     logger.error('Git pull failed', { error: error.message });
+    res.status(500).json({ error: error.message });
+  }
+});
+
+// ============================================================================
+// GIT BRANCH MANAGEMENT ENDPOINTS (GIT CLIENT AGNOSTIC)
+// Works with ANY Git client - GitHub Desktop, VS Code, CLI, etc.
+// ============================================================================
+
+// List all branches
+app.get('/api/project/:projectId/git/branches', authenticateToken, async (req, res) => {
+  try {
+    const { projectId } = req.params;
+    const projectPath = path.join(config.storage.projectsDir, projectId);
+
+    if (!fs.existsSync(projectPath)) {
+      return res.status(404).json({ error: 'Project not found' });
+    }
+
+    const branchMgr = new BranchManagement(projectPath);
+    const result = branchMgr.listBranches();
+
+    res.json({
+      success: true,
+      projectId,
+      ...result
+    });
+  } catch (error) {
+    logger.error('List branches failed', { error: error.message });
+    res.status(500).json({ error: error.message });
+  }
+});
+
+// Create new branch
+app.post('/api/project/:projectId/git/branch', authenticateToken, async (req, res) => {
+  try {
+    const { projectId } = req.params;
+    const { branchName, fromBranch, checkout = true, push = false } = req.body;
+
+    if (!branchName) {
+      return res.status(400).json({ error: 'branchName is required' });
+    }
+
+    const projectPath = path.join(config.storage.projectsDir, projectId);
+
+    if (!fs.existsSync(projectPath)) {
+      return res.status(404).json({ error: 'Project not found' });
+    }
+
+    const branchMgr = new BranchManagement(projectPath);
+    const result = branchMgr.createBranch(branchName, { fromBranch, checkout, push });
+
+    logger.info('Branch created', { projectId, branchName, checkout });
+
+    res.json({
+      success: true,
+      projectId,
+      ...result
+    });
+  } catch (error) {
+    logger.error('Create branch failed', { error: error.message });
+    res.status(500).json({ error: error.message });
+  }
+});
+
+// Switch branch (checkout)
+app.post('/api/project/:projectId/git/checkout', authenticateToken, async (req, res) => {
+  try {
+    const { projectId } = req.params;
+    const { branchName, createIfMissing = false, force = false } = req.body;
+
+    if (!branchName) {
+      return res.status(400).json({ error: 'branchName is required' });
+    }
+
+    const projectPath = path.join(config.storage.projectsDir, projectId);
+
+    if (!fs.existsSync(projectPath)) {
+      return res.status(404).json({ error: 'Project not found' });
+    }
+
+    const branchMgr = new BranchManagement(projectPath);
+    const result = branchMgr.checkoutBranch(branchName, { createIfMissing, force });
+
+    logger.info('Branch checkout', { projectId, branchName });
+
+    res.json({
+      success: true,
+      projectId,
+      ...result
+    });
+  } catch (error) {
+    logger.error('Checkout branch failed', { error: error.message });
+    res.status(500).json({ error: error.message });
+  }
+});
+
+// Merge branch
+app.post('/api/project/:projectId/git/merge', authenticateToken, async (req, res) => {
+  try {
+    const { projectId } = req.params;
+    const { 
+      sourceBranch, 
+      strategy = 'merge', 
+      noFastForward = true,
+      autoResolveConflicts = false,
+      commitMessage 
+    } = req.body;
+
+    if (!sourceBranch) {
+      return res.status(400).json({ error: 'sourceBranch is required' });
+    }
+
+    const projectPath = path.join(config.storage.projectsDir, projectId);
+
+    if (!fs.existsSync(projectPath)) {
+      return res.status(404).json({ error: 'Project not found' });
+    }
+
+    const branchMgr = new BranchManagement(projectPath);
+    const result = branchMgr.mergeBranch(sourceBranch, {
+      strategy,
+      noFastForward,
+      autoResolveConflicts,
+      commitMessage
+    });
+
+    logger.info('Branch merge', { 
+      projectId, 
+      sourceBranch, 
+      hasConflicts: result.hasConflicts 
+    });
+
+    res.json({
+      success: true,
+      projectId,
+      ...result
+    });
+  } catch (error) {
+    logger.error('Merge branch failed', { error: error.message });
+    res.status(500).json({ error: error.message });
+  }
+});
+
+// Delete branch
+app.delete('/api/project/:projectId/git/branch/:branchName', authenticateToken, async (req, res) => {
+  try {
+    const { projectId, branchName } = req.params;
+    const { force = false, deleteRemote = true } = req.body;
+
+    const projectPath = path.join(config.storage.projectsDir, projectId);
+
+    if (!fs.existsSync(projectPath)) {
+      return res.status(404).json({ error: 'Project not found' });
+    }
+
+    const branchMgr = new BranchManagement(projectPath);
+    const result = branchMgr.deleteBranch(branchName, { force, deleteRemote });
+
+    logger.info('Branch deleted', { projectId, branchName });
+
+    res.json({
+      success: true,
+      projectId,
+      ...result
+    });
+  } catch (error) {
+    logger.error('Delete branch failed', { error: error.message });
+    res.status(500).json({ error: error.message });
+  }
+});
+
+// Get branch info
+app.get('/api/project/:projectId/git/branch/:branchName?', authenticateToken, async (req, res) => {
+  try {
+    const { projectId, branchName } = req.params;
+    const projectPath = path.join(config.storage.projectsDir, projectId);
+
+    if (!fs.existsSync(projectPath)) {
+      return res.status(404).json({ error: 'Project not found' });
+    }
+
+    const branchMgr = new BranchManagement(projectPath);
+    const result = branchMgr.getBranchInfo(branchName || null);
+
+    res.json({
+      success: true,
+      projectId,
+      ...result
+    });
+  } catch (error) {
+    logger.error('Get branch info failed', { error: error.message });
+    res.status(500).json({ error: error.message });
+  }
+});
+
+// Compare two branches
+app.get('/api/project/:projectId/git/compare/:baseBranch/:compareBranch', authenticateToken, async (req, res) => {
+  try {
+    const { projectId, baseBranch, compareBranch } = req.params;
+    const projectPath = path.join(config.storage.projectsDir, projectId);
+
+    if (!fs.existsSync(projectPath)) {
+      return res.status(404).json({ error: 'Project not found' });
+    }
+
+    const branchMgr = new BranchManagement(projectPath);
+    const result = branchMgr.compareBranches(baseBranch, compareBranch);
+
+    res.json({
+      success: true,
+      projectId,
+      ...result
+    });
+  } catch (error) {
+    logger.error('Compare branches failed', { error: error.message });
     res.status(500).json({ error: error.message });
   }
 });
