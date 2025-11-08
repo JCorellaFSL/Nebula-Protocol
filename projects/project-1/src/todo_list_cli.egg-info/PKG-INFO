@@ -1,0 +1,81 @@
+Metadata-Version: 2.4
+Name: todo-list-cli
+Version: 0.0.1
+Summary: A simple command-line todo list application
+Author-email: Nebula Protocol <test@example.com>
+License: MIT
+Project-URL: Homepage, https://github.com/yourusername/todo-list-cli
+Project-URL: Bug Tracker, https://github.com/yourusername/todo-list-cli/issues
+Keywords: todo,cli,task-management,productivity
+Classifier: Development Status :: 3 - Alpha
+Classifier: Intended Audience :: Developers
+Classifier: License :: OSI Approved :: MIT License
+Classifier: Programming Language :: Python :: 3
+Classifier: Programming Language :: Python :: 3.10
+Classifier: Programming Language :: Python :: 3.11
+Classifier: Programming Language :: Python :: 3.12
+Classifier: Programming Language :: Python :: 3.13
+Requires-Python: >=3.10
+Description-Content-Type: text/markdown
+Requires-Dist: colorama>=0.4.6
+Provides-Extra: dev
+Requires-Dist: pytest>=7.4.0; extra == "dev"
+Requires-Dist: pytest-cov>=4.1.0; extra == "dev"
+Requires-Dist: black>=23.0.0; extra == "dev"
+Requires-Dist: flake8>=6.1.0; extra == "dev"
+
+# Todo List CLI
+
+A simple command-line todo list application built with Python.
+
+## Setup
+
+### Prerequisites
+- Python 3.10 or higher
+- Git
+
+### Installation
+
+1. Clone the repository:
+   ```bash
+   git clone <repository-url>
+   cd todo-list-cli
+   ```
+
+2. Create and activate virtual environment:
+   ```bash
+   # Create venv
+   python -m venv venv
+   
+   # Activate (Windows)
+   .\venv\Scripts\Activate.ps1
+   
+   # Activate (Mac/Linux)
+   source venv/bin/activate
+   ```
+
+3. Install dependencies:
+   ```bash
+   pip install -r requirements.txt
+   ```
+
+4. Verify installation:
+   ```bash
+   python verify_env.py
+   ```
+
+## Development
+
+This project uses the Nebula Protocol for structured development.
+See `ROADMAP.md` for the project plan.
+
+## Testing
+
+```bash
+pytest
+```
+
+## License
+
+MIT
+
