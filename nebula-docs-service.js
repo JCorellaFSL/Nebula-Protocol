@@ -14,6 +14,7 @@ export class DocumentationService {
   constructor(redisClient = null) {
     this.redis = redisClient;
     this.cacheTTL = 86400; // 24 hours
+    this.prefetchInProgress = false;
     
     // Official documentation sources
     this.docSources = {

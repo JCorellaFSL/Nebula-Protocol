@@ -9,6 +9,7 @@ import compression from 'compression';
 import NodeCache from 'node-cache';
 import winston from 'winston';
 import morgan from 'morgan';
+import { z } from 'zod';
 import { ProjectMemory } from './project-memory.js';
 import { StarChart } from './star-chart.js';
 import { DocumentationService } from './nebula-docs-service.js';
@@ -71,6 +72,13 @@ if (process.env.REDIS_HOST) {
 
 // Initialize Documentation Service
 const docService = new DocumentationService(redisClient);
+
+// Prefetch common documentation on startup (async, don't block)
+setTimeout(() => {
+  docService.prefetchCommonDocs().catch(err => {
+    logger.error('Documentation prefetch failed', { error: err.message });
+  });
+}, 5000); // Wait 5 seconds after startup
 
 // ============================================================================
 // MIDDLEWARE
@@ -165,6 +173,77 @@ function cacheMiddleware(ttl = 300) {
     };
     
     next();
+  };
+}
+
+// ============================================================================
+// VALIDATION SCHEMAS
+// ============================================================================
+
+const errorSchema = z.object({
+  language: z.string().min(1).max(50),
+  message: z.string().min(1).max(5000),
+  stackTrace: z.string().optional(),
+  constellation: z.string().min(1).max(100).optional(),
+  filePath: z.string().optional(),
+  lineNumber: z.number().int().positive().optional(),
+  errorCode: z.string().optional(),
+  level: z.enum(['ERROR', 'CRITICAL']).default('ERROR')
+});
+
+const solutionSchema = z.object({
+  errorId: z.string().uuid(),
+  description: z.string().min(1).max(5000),
+  codeChanges: z.string().optional(),
+  appliedBy: z.enum(['ai', 'human']).default('ai'),
+  effectiveness: z.number().int().min(1).max(5).optional(),
+  notes: z.string().optional()
+});
+
+const starGateSchema = z.object({
+  constellation: z.string().min(1).max(100),
+  constellationNumber: z.number().int().positive(),
+  status: z.enum(['passed', 'failed', 'pending', 'skipped']),
+  testsAutomated: z.number().int().min(0).default(0),
+  testsAutomatedPassing: z.number().int().min(0).default(0),
+  testsManual: z.number().int().min(0).default(0),
+  testsManualPassing: z.number().int().min(0).default(0),
+  testsSkipped: z.number().int().min(0).default(0),
+  skipReasons: z.string().optional(),
+  performanceAcceptable: z.boolean().default(true),
+  docsUpdated: z.boolean().default(true),
+  breakingChanges: z.boolean().default(false),
+  notes: z.string().optional()
+});
+
+const batchErrorsSchema = z.object({
+  errors: z.array(errorSchema).min(1).max(100) // Max 100 errors per batch
+});
+
+const batchSolutionsSchema = z.object({
+  solutions: z.array(solutionSchema).min(1).max(100)
+});
+
+// Validation middleware
+function validateRequest(schema) {
+  return (req, res, next) => {
+    try {
+      const validated = schema.parse(req.body);
+      req.body = validated; // Replace with validated data
+      next();
+    } catch (error) {
+      logger.warn('Validation failed', { 
+        path: req.path, 
+        errors: error.errors 
+      });
+      res.status(400).json({
+        error: 'Validation failed',
+        details: error.errors.map(e => ({
+          field: e.path.join('.'),
+          message: e.message
+        }))
+      });
+    }
   };
 }
 
@@ -380,20 +459,28 @@ app.put('/api/project/:projectId/version', authenticateToken, (req, res) => {
   }
 });
 
-// Log error (with automatic doc fetching)
-app.post('/api/project/:projectId/error', authenticateToken, async (req, res) => {
+// Log error (with validation and automatic doc fetching)
+app.post('/api/project/:projectId/error', authenticateToken, validateRequest(errorSchema), async (req, res) => {
   try {
     const { projectId } = req.params;
-    const { language, framework } = req.body;
+    const { language, message, stackTrace, constellation, filePath, lineNumber, errorCode, level } = req.body;
     const projectPath = path.join('/app/projects', projectId);
     
     const memory = new ProjectMemory(projectPath);
-    const result = memory.logError(req.body);
+    const errorId = memory.recordError({
+      phase: constellation || 'unknown',
+      level: level || 'ERROR',
+      message,
+      stackTrace,
+      filePath,
+      lineNumber,
+      errorCode
+    });
     
     // Automatically fetch relevant documentation
     let docSuggestion = null;
-    if (language && req.body.message) {
-      const errorInfo = docService.extractErrorInfo(language, req.body.message);
+    if (language && message) {
+      const errorInfo = docService.extractErrorInfo(language, message);
       if (errorInfo) {
         try {
           const docs = await docService.fetchDocumentation(
@@ -402,8 +489,12 @@ app.post('/api/project/:projectId/error', authenticateToken, async (req, res) =>
             { docType: 'error' }
           );
           docSuggestion = docs.data;
+          logger.info('Documentation fetched for error', { 
+            language, 
+            errorCode: errorInfo.code 
+          });
         } catch (docError) {
-          console.error('Doc fetch error:', docError);
+          logger.error('Doc fetch error:', { error: docError.message });
         }
       }
     }
@@ -412,16 +503,67 @@ app.post('/api/project/:projectId/error', authenticateToken, async (req, res) =>
 
     res.json({
       success: true,
-      ...result,
+      errorId,
       documentation: docSuggestion
     });
   } catch (error) {
+    logger.error('Error logging failed', { error: error.message, projectId: req.params.projectId });
     res.status(500).json({ error: error.message });
   }
 });
 
-// Record solution
-app.post('/api/project/:projectId/solution', authenticateToken, (req, res) => {
+// Batch log errors (NEW - 10-100x faster bulk inserts)
+app.post('/api/project/:projectId/errors/batch', authenticateToken, validateRequest(batchErrorsSchema), async (req, res) => {
+  try {
+    const { projectId } = req.params;
+    const { errors } = req.body;
+    const projectPath = path.join('/app/projects', projectId);
+    
+    const memory = new ProjectMemory(projectPath);
+    const errorIds = [];
+    
+    // Use transaction for bulk insert
+    const insertStmt = memory.db.prepare(`
+      INSERT INTO error_log (id, timestamp, level, phase, constellation, file_path, line_number, error_code, message, stack_trace)
+      VALUES (?, CURRENT_TIMESTAMP, ?, ?, ?, ?, ?, ?, ?, ?)
+    `);
+    
+    const transaction = memory.db.transaction((errors) => {
+      for (const error of errors) {
+        const errorId = crypto.randomUUID();
+        insertStmt.run(
+          errorId,
+          error.level || 'ERROR',
+          error.constellation || 'unknown',
+          error.constellation || 'unknown',
+          error.filePath,
+          error.lineNumber,
+          error.errorCode,
+          error.message,
+          error.stackTrace
+        );
+        errorIds.push(errorId);
+      }
+    });
+    
+    transaction(errors);
+    memory.close();
+
+    logger.info('Batch errors logged', { count: errors.length, projectId });
+    
+    res.json({
+      success: true,
+      count: errors.length,
+      errorIds
+    });
+  } catch (error) {
+    logger.error('Batch error logging failed', { error: error.message, projectId: req.params.projectId });
+    res.status(500).json({ error: error.message });
+  }
+});
+
+// Record solution (with validation)
+app.post('/api/project/:projectId/solution', authenticateToken, validateRequest(solutionSchema), (req, res) => {
   try {
     const { projectId } = req.params;
     const projectPath = path.join('/app/projects', projectId);
@@ -440,6 +582,64 @@ app.post('/api/project/:projectId/solution', authenticateToken, (req, res) => {
       message: 'Solution recorded and version bumped'
     });
   } catch (error) {
+    logger.error('Solution recording failed', { error: error.message, projectId: req.params.projectId });
+    res.status(500).json({ error: error.message });
+  }
+});
+
+// Batch record solutions (NEW - 10-100x faster bulk inserts)
+app.post('/api/project/:projectId/solutions/batch', authenticateToken, validateRequest(batchSolutionsSchema), (req, res) => {
+  try {
+    const { projectId } = req.params;
+    const { solutions } = req.body;
+    const projectPath = path.join('/app/projects', projectId);
+    
+    const memory = new ProjectMemory(projectPath);
+    const solutionIds = [];
+    
+    // Use transaction for bulk insert
+    const insertStmt = memory.db.prepare(`
+      INSERT INTO error_solutions (id, error_id, solution_description, code_changes, applied_by, effectiveness, notes)
+      VALUES (?, ?, ?, ?, ?, ?, ?)
+    `);
+    
+    const updateStmt = memory.db.prepare(`
+      UPDATE error_log SET resolved = 1, resolution_id = ? WHERE id = ?
+    `);
+    
+    const transaction = memory.db.transaction((solutions) => {
+      for (const solution of solutions) {
+        const solutionId = crypto.randomUUID();
+        insertStmt.run(
+          solutionId,
+          solution.errorId,
+          solution.description,
+          solution.codeChanges,
+          solution.appliedBy || 'ai',
+          solution.effectiveness,
+          solution.notes
+        );
+        updateStmt.run(solutionId, solution.errorId);
+        solutionIds.push(solutionId);
+      }
+    });
+    
+    transaction(solutions);
+    
+    // Auto-bump patch version on solution batch
+    const version = memory.bumpVersion('patch', false);
+    memory.close();
+
+    logger.info('Batch solutions recorded', { count: solutions.length, projectId });
+    
+    res.json({
+      success: true,
+      count: solutions.length,
+      solutionIds,
+      version: version.version
+    });
+  } catch (error) {
+    logger.error('Batch solution recording failed', { error: error.message, projectId: req.params.projectId });
     res.status(500).json({ error: error.message });
   }
 });
@@ -505,8 +705,8 @@ app.post('/api/project/:projectId/decision', authenticateToken, (req, res) => {
   }
 });
 
-// Record Star Gate
-app.post('/api/project/:projectId/star-gate', authenticateToken, (req, res) => {
+// Record Star Gate (with validation)
+app.post('/api/project/:projectId/star-gate', authenticateToken, validateRequest(starGateSchema), (req, res) => {
   try {
     const { projectId } = req.params;
     const projectPath = path.join('/app/projects', projectId);
