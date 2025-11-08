@@ -15,9 +15,98 @@ export class DocumentationService {
     this.redis = redisClient;
     this.cacheTTL = 86400; // 24 hours
     this.prefetchInProgress = false;
-    
-    // Official documentation sources
-    this.docSources = {
+  }
+
+  // Prefetch common documentation on startup
+  async prefetchCommonDocs() {
+    if (this.prefetchInProgress) return;
+    this.prefetchInProgress = true;
+
+    console.log('📚 Prefetching common documentation...');
+
+    const commonErrors = [
+      // Rust top errors
+      { language: 'Rust', code: 'E0308' }, // type mismatch
+      { language: 'Rust', code: 'E0382' }, // use of moved value
+      { language: 'Rust', code: 'E0597' }, // borrowed value does not live long enough
+      { language: 'Rust', code: 'E0277' }, // trait not implemented
+      { language: 'Rust', code: 'E0425' }, // cannot find value
+      
+      // Python top errors
+      { language: 'Python', code: 'TypeError' },
+      { language: 'Python', code: 'AttributeError' },
+      { language: 'Python', code: 'KeyError' },
+      { language: 'Python', code: 'IndexError' },
+      { language: 'Python', code: 'ValueError' },
+      
+      // JavaScript top errors
+      { language: 'JavaScript', code: 'ReferenceError' },
+      { language: 'JavaScript', code: 'TypeError' },
+      { language: 'JavaScript', code: 'SyntaxError' },
+      { language: 'JavaScript', code: 'RangeError' },
+      
+      // TypeScript top errors
+      { language: 'TypeScript', code: 'TS2304' }, // Cannot find name
+      { language: 'TypeScript', code: 'TS2322' }, // Type not assignable
+      { language: 'TypeScript', code: 'TS2345' }, // Argument type mismatch
+      { language: 'TypeScript', code: 'TS2339' }, // Property does not exist
+      
+      // Java top errors
+      { language: 'Java', code: 'NullPointerException' },
+      { language: 'Java', code: 'ArrayIndexOutOfBoundsException' },
+      { language: 'Java', code: 'ClassCastException' },
+      
+      // C# top errors
+      { language: 'C#', code: 'CS0029' }, // Cannot convert type
+      { language: 'C#', code: 'CS0103' }, // Name does not exist
+      { language: 'C#', code: 'CS1061' }, // Does not contain definition
+    ];
+
+    let successCount = 0;
+    let failCount = 0;
+
+    for (const { language, code } of commonErrors) {
+      try {
+        await this.fetchDocumentation(language, code, { docType: 'error' });
+        successCount++;
+      } catch (error) {
+        failCount++;
+        console.error(`Failed to prefetch ${language} ${code}:`, error.message);
+      }
+    }
+
+    console.log(`✅ Prefetched ${successCount}/${commonErrors.length} common docs (${failCount} failed)`);
+    this.prefetchInProgress = false;
+
+    // Schedule background refresh (1 hour before expiry)
+    this.scheduleBackgroundRefresh();
+  }
+
+  // Background cache refresh
+  scheduleBackgroundRefresh() {
+    if (!this.redis) return;
+
+    setInterval(async () => {
+      try {
+        const keys = await this.redis.keys('doc:*');
+        for (const key of keys) {
+          const ttl = await this.redis.ttl(key);
+          // Refresh if less than 1 hour remaining
+          if (ttl > 0 && ttl < 3600) {
+            const [_, language, code] = key.split(':');
+            console.log(`🔄 Background refresh: ${language} ${code}`);
+            await this.fetchDocumentation(language, code, { docType: 'error' }).catch(() => {});
+          }
+        }
+      } catch (error) {
+        console.error('Background refresh error:', error.message);
+      }
+    }, 3600000); // Check every hour
+  }
+
+  // Official documentation sources (getter)
+  get docSources() {
+    return {
       rust: {
         std: 'https://doc.rust-lang.org/std/',
         book: 'https://doc.rust-lang.org/book/',
@@ -81,6 +170,7 @@ export class DocumentationService {
         docs: 'https://dart.dev/guides/',
       },
     };
+  }
 
     // Error code to documentation mapping
     this.errorMappings = {
