@@ -82,12 +82,17 @@ node nebula-framework-mcp.js
 - **[DOCKER_README.md](./DOCKER_README.md)** - Quick start & architecture (443 lines)
 - **[DYNAMIC_DOCUMENTATION.md](./DYNAMIC_DOCUMENTATION.md)** - Auto-doc fetching feature (557 lines)
 
+### Language & Framework Support
+- **[LANGUAGE_SUPPORT.md](./LANGUAGE_SUPPORT.md)** - Complete language/framework matrix (11 languages)
+
 ### Language Adaptations
 - **[FLUTTER_NEBULA_ADAPTATION.md](./FLUTTER_NEBULA_ADAPTATION.md)** - Flutter/Dart projects
 - **[RUST_NEBULA_ADAPTATION.md](./RUST_NEBULA_ADAPTATION.md)** - Rust projects
 - **[PYTHON_NEBULA_ADAPTATION.md](./PYTHON_NEBULA_ADAPTATION.md)** - Python projects
 - **[TAURI_NEBULA_ADAPTATION.md](./TAURI_NEBULA_ADAPTATION.md)** - Tauri projects
 - **[DIOXUS_NEBULA_ADAPTATION.md](./DIOXUS_NEBULA_ADAPTATION.md)** - Dioxus projects
+
+**Note:** Adaptation files for Java, C#, Go, PHP, Swift, Kotlin coming soon. All languages fully supported by API.
 
 ### Templates
 - **[TEMPLATE_CONSTELLATION.md](./TEMPLATE_CONSTELLATION.md)** - Strategic overview template
@@ -247,9 +252,33 @@ POST /api/project/my-project/error
 }
 ```
 
-**Supported:** Rust, Python, JavaScript/TypeScript, Flutter/Dart
+### Supported Languages (11 total)
+
+**Tier 1 - Production Ready (10 languages):**
+1. ✅ **Rust** - E0xxx errors, docs.rs, Rust Book
+2. ✅ **Python** - Exceptions, PyPI, official docs
+3. ✅ **JavaScript/TypeScript** - MDN, Node.js API, TS compiler errors
+4. ✅ **Java** - Exceptions, JavaDoc, Oracle docs
+5. ✅ **C# / .NET** - CSxxxx errors, Microsoft Learn
+6. ✅ **Go** - Error interface, pkg.go.dev
+7. ✅ **PHP** - Exceptions, php.net manual
+8. ✅ **Swift** - Error protocol, Apple Developer docs
+9. ✅ **Kotlin** - Exceptions, kotlinlang.org
+10. ✅ **Dart/Flutter** - Widget errors, Flutter API
+
+**Tier 2 - Work In Progress (1 language):**
+11. ⚠️  **C++** - WIP, requires clang-tidy/cppcheck for full support
+
+**Popular Frameworks (15+):**
+- Web: React, Next.js, Vue, Angular, Svelte
+- Backend: Django, FastAPI, Spring Boot, ASP.NET Core, Express, NestJS
+- Mobile: Flutter, React Native, SwiftUI
+- Desktop: Tauri, Electron, Dioxus
+
+**See:** [LANGUAGE_SUPPORT.md](./LANGUAGE_SUPPORT.md) for complete details
 
 **Benefits:**
+- ✅ 11 languages supported (10 production + 1 WIP)
 - ✅ Always up-to-date (live from official sources)
 - ✅ Minimal storage (Redis cache, 24h TTL)
 - ✅ Fast (5ms cached, 200ms first fetch)

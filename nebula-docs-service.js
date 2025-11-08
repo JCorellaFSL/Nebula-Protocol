@@ -37,6 +37,39 @@ export class DocumentationService {
         handbook: 'https://www.typescriptlang.org/docs/handbook/',
         reference: 'https://www.typescriptlang.org/docs/',
       },
+      java: {
+        official: 'https://docs.oracle.com/en/java/javase/',
+        api: 'https://docs.oracle.com/en/java/javase/17/docs/api/',
+        tutorial: 'https://docs.oracle.com/javase/tutorial/',
+      },
+      csharp: {
+        docs: 'https://learn.microsoft.com/en-us/dotnet/csharp/',
+        api: 'https://learn.microsoft.com/en-us/dotnet/api/',
+        fundamentals: 'https://learn.microsoft.com/en-us/dotnet/fundamentals/',
+      },
+      cpp: {
+        cppreference: 'https://en.cppreference.com/w/',
+        isocpp: 'https://isocpp.org/',
+        cplusplus: 'https://cplusplus.com/reference/',
+        note: 'WIP - Requires additional tooling for full support',
+      },
+      go: {
+        official: 'https://go.dev/doc/',
+        pkg: 'https://pkg.go.dev/',
+        effective: 'https://go.dev/doc/effective_go',
+      },
+      php: {
+        official: 'https://www.php.net/manual/en/',
+        functions: 'https://www.php.net/manual/en/funcref.php',
+      },
+      swift: {
+        official: 'https://docs.swift.org/swift-book/',
+        api: 'https://developer.apple.com/documentation/swift',
+      },
+      kotlin: {
+        official: 'https://kotlinlang.org/docs/',
+        api: 'https://kotlinlang.org/api/latest/jvm/stdlib/',
+      },
       flutter: {
         api: 'https://api.flutter.dev/flutter/',
         docs: 'https://docs.flutter.dev/',
@@ -51,19 +84,51 @@ export class DocumentationService {
     // Error code to documentation mapping
     this.errorMappings = {
       rust: {
-        // Rust compiler errors (E0xxx)
         pattern: /E\d{4}/,
         getUrl: (code) => `https://doc.rust-lang.org/error_index.html#${code}`,
       },
       python: {
-        // Python exceptions
         pattern: /([\w]+Error|[\w]+Exception)/,
         getUrl: (exception) => `https://docs.python.org/3/library/exceptions.html#${exception}`,
       },
       javascript: {
-        // JS/TS errors
         pattern: /([\w]+Error)/,
         getUrl: (error) => `https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/${error}`,
+      },
+      typescript: {
+        pattern: /TS\d{4}/,
+        getUrl: (code) => `https://typescript.tv/errors/#${code}`,
+      },
+      java: {
+        pattern: /([\w]+Exception|[\w]+Error)/,
+        getUrl: (exception) => `https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/${exception}.html`,
+      },
+      csharp: {
+        pattern: /(CS\d{4}|[\w]+Exception)/,
+        getUrl: (code) => code.startsWith('CS') 
+          ? `https://learn.microsoft.com/en-us/dotnet/csharp/language-reference/compiler-messages/${code.toLowerCase()}`
+          : `https://learn.microsoft.com/en-us/dotnet/api/system.${code.toLowerCase()}`,
+      },
+      cpp: {
+        pattern: /(error C\d{4}|[\w]+_error)/,
+        getUrl: (error) => `https://en.cppreference.com/w/cpp/error`,
+        note: 'C++ error handling is complex - additional tooling recommended',
+      },
+      go: {
+        pattern: /([\w]+Error)/,
+        getUrl: (error) => `https://pkg.go.dev/errors`,
+      },
+      php: {
+        pattern: /([\w]+Error|[\w]+Exception)/,
+        getUrl: (exception) => `https://www.php.net/manual/en/class.${exception.toLowerCase()}.php`,
+      },
+      swift: {
+        pattern: /([\w]+Error)/,
+        getUrl: (error) => `https://developer.apple.com/documentation/swift/error`,
+      },
+      kotlin: {
+        pattern: /([\w]+Exception|[\w]+Error)/,
+        getUrl: (exception) => `https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/${exception.toLowerCase()}.html`,
       },
     };
   }
@@ -136,6 +201,23 @@ export class DocumentationService {
         case 'javascript':
         case 'typescript':
           return await this.fetchJavaScriptDocs(query, docType);
+        case 'java':
+          return await this.fetchJavaDocs(query, docType);
+        case 'csharp':
+        case 'c#':
+          return await this.fetchCSharpDocs(query, docType);
+        case 'cpp':
+        case 'c++':
+          return await this.fetchCppDocs(query, docType);
+        case 'go':
+        case 'golang':
+          return await this.fetchGoDocs(query, docType);
+        case 'php':
+          return await this.fetchPhpDocs(query, docType);
+        case 'swift':
+          return await this.fetchSwiftDocs(query, docType);
+        case 'kotlin':
+          return await this.fetchKotlinDocs(query, docType);
         case 'flutter':
         case 'dart':
           return await this.fetchFlutterDocs(query, docType);
@@ -438,6 +520,226 @@ export class DocumentationService {
   }
 
   /**
+   * Fetch Java-specific documentation
+   */
+  async fetchJavaDocs(query, docType) {
+    if (query.includes('Exception') || query.includes('Error')) {
+      const className = query.split('.').pop();
+      const url = `https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/${className}.html`;
+      
+      return {
+        success: true,
+        data: {
+          exception: query,
+          url,
+          language: 'java',
+          docType: 'error',
+          relatedLinks: [
+            'https://docs.oracle.com/javase/tutorial/essential/exceptions/'
+          ]
+        }
+      };
+    }
+
+    if (docType === 'api') {
+      const url = `https://docs.oracle.com/en/java/javase/17/docs/api/`;
+      return {
+        success: true,
+        data: { query, url, language: 'java', docType: 'api' }
+      };
+    }
+
+    return { success: false, error: 'Could not determine documentation type', query };
+  }
+
+  /**
+   * Fetch C#-specific documentation
+   */
+  async fetchCSharpDocs(query, docType) {
+    if (query.startsWith('CS')) {
+      const url = `https://learn.microsoft.com/en-us/dotnet/csharp/language-reference/compiler-messages/${query.toLowerCase()}`;
+      return {
+        success: true,
+        data: {
+          errorCode: query,
+          url,
+          language: 'csharp',
+          docType: 'error',
+          relatedLinks: [
+            'https://learn.microsoft.com/en-us/dotnet/csharp/'
+          ]
+        }
+      };
+    }
+
+    if (query.includes('Exception')) {
+      const url = `https://learn.microsoft.com/en-us/dotnet/api/system.${query.toLowerCase()}`;
+      return {
+        success: true,
+        data: { exception: query, url, language: 'csharp', docType: 'error' }
+      };
+    }
+
+    if (docType === 'api') {
+      const url = `https://learn.microsoft.com/en-us/dotnet/api/`;
+      return {
+        success: true,
+        data: { query, url, language: 'csharp', docType: 'api' }
+      };
+    }
+
+    return { success: false, error: 'Could not determine documentation type', query };
+  }
+
+  /**
+   * Fetch C++-specific documentation
+   */
+  async fetchCppDocs(query, docType) {
+    const url = `https://en.cppreference.com/w/cpp/error`;
+    
+    return {
+      success: true,
+      data: {
+        query,
+        url,
+        language: 'cpp',
+        docType,
+        warning: '⚠️  C++ SUPPORT IS WIP - Requires additional tooling for full integration',
+        note: 'C++ error handling is complex. Consider using clang-tidy, cpplint, or other static analysis tools.',
+        relatedLinks: [
+          'https://en.cppreference.com/',
+          'https://cplusplus.com/reference/',
+          'https://isocpp.org/'
+        ]
+      }
+    };
+  }
+
+  /**
+   * Fetch Go-specific documentation
+   */
+  async fetchGoDocs(query, docType) {
+    if (query.includes('Error')) {
+      const url = `https://pkg.go.dev/errors`;
+      return {
+        success: true,
+        data: {
+          error: query,
+          url,
+          language: 'go',
+          docType: 'error',
+          relatedLinks: [
+            'https://go.dev/blog/error-handling-and-go'
+          ]
+        }
+      };
+    }
+
+    if (docType === 'api') {
+      const url = `https://pkg.go.dev/${query}`;
+      return {
+        success: true,
+        data: { query, url, language: 'go', docType: 'api' }
+      };
+    }
+
+    return { success: false, error: 'Could not determine documentation type', query };
+  }
+
+  /**
+   * Fetch PHP-specific documentation
+   */
+  async fetchPhpDocs(query, docType) {
+    if (query.includes('Error') || query.includes('Exception')) {
+      const url = `https://www.php.net/manual/en/class.${query.toLowerCase()}.php`;
+      return {
+        success: true,
+        data: {
+          exception: query,
+          url,
+          language: 'php',
+          docType: 'error',
+          relatedLinks: [
+            'https://www.php.net/manual/en/language.exceptions.php'
+          ]
+        }
+      };
+    }
+
+    if (docType === 'api') {
+      const url = `https://www.php.net/manual/en/function.${query.replace('_', '-')}.php`;
+      return {
+        success: true,
+        data: { query, url, language: 'php', docType: 'api' }
+      };
+    }
+
+    return { success: false, error: 'Could not determine documentation type', query };
+  }
+
+  /**
+   * Fetch Swift-specific documentation
+   */
+  async fetchSwiftDocs(query, docType) {
+    if (query.includes('Error')) {
+      const url = `https://developer.apple.com/documentation/swift/error`;
+      return {
+        success: true,
+        data: {
+          error: query,
+          url,
+          language: 'swift',
+          docType: 'error',
+          relatedLinks: [
+            'https://docs.swift.org/swift-book/LanguageGuide/ErrorHandling.html'
+          ]
+        }
+      };
+    }
+
+    if (docType === 'api') {
+      const url = `https://developer.apple.com/documentation/swift/${query.toLowerCase()}`;
+      return {
+        success: true,
+        data: { query, url, language: 'swift', docType: 'api' }
+      };
+    }
+
+    return { success: false, error: 'Could not determine documentation type', query };
+  }
+
+  /**
+   * Fetch Kotlin-specific documentation
+   */
+  async fetchKotlinDocs(query, docType) {
+    if (query.includes('Exception') || query.includes('Error')) {
+      const url = `https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/${query.toLowerCase()}.html`;
+      return {
+        success: true,
+        data: {
+          exception: query,
+          url,
+          language: 'kotlin',
+          docType: 'error',
+          relatedLinks: [
+            'https://kotlinlang.org/docs/exceptions.html'
+          ]
+        }
+      };
+    }
+
+    if (docType === 'api') {
+      const url = `https://kotlinlang.org/api/latest/jvm/stdlib/`;
+      return {
+        success: true,
+        data: { query, url, language: 'kotlin', docType: 'api' }
+      };
+    }
+
+    return { success: false, error: 'Could not determine documentation type', query };
+  }
+
+  /**
    * Get related documentation based on error pattern
    */
   async getRelatedDocs(language, errorPattern, errorCategory) {
@@ -465,6 +767,33 @@ export class DocumentationService {
         'import_error': [
           'https://docs.python.org/3/tutorial/modules.html',
           'https://docs.python.org/3/reference/import.html'
+        ]
+      },
+      java: {
+        'null_pointer': [
+          'https://docs.oracle.com/javase/tutorial/essential/exceptions/',
+          'https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/NullPointerException.html'
+        ],
+        'class_not_found': [
+          'https://docs.oracle.com/javase/tutorial/essential/exceptions/definition.html'
+        ]
+      },
+      csharp: {
+        'null_reference': [
+          'https://learn.microsoft.com/en-us/dotnet/api/system.nullreferenceexception'
+        ],
+        'type_error': [
+          'https://learn.microsoft.com/en-us/dotnet/csharp/fundamentals/types/'
+        ]
+      },
+      go: {
+        'nil_pointer': [
+          'https://go.dev/doc/effective_go#errors'
+        ]
+      },
+      php: {
+        'fatal_error': [
+          'https://www.php.net/manual/en/language.exceptions.php'
         ]
       }
     };

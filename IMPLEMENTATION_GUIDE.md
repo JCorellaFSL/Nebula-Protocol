@@ -77,7 +77,7 @@ your-project/
 │   └── ...
 └── docs/
 ```
-**Note:** Simple projects have 1-2 Star Systems per constellation; complex have 3-8.
+**Note:** Simple projects have 1-2 Star Systems per constellation; complex can have many.
 
 ### 4. Initialize Your Project (Automated)
 
