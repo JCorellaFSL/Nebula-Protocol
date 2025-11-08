@@ -97,28 +97,50 @@ flake8 src/ tests/
 
 ## Usage
 
-### Installation (Development Mode)
+### Quick Start (Windows)
+
+From the project directory, use the launcher scripts:
+
+**PowerShell:**
+```powershell
+.\todo.ps1 list
+.\todo.ps1 add "Your task"
+.\todo.ps1 complete <id>
+```
+
+**Command Prompt:**
+```cmd
+todo.bat list
+todo.bat add "Your task"
+todo.bat complete <id>
+```
+
+These scripts automatically handle the virtual environment for you!
+
+### Alternative: Direct Python
 
 ```bash
-pip install -e .
+python -m todo.cli list
+python -m todo.cli add "Your task"
+python -m todo.cli complete <id>
 ```
 
 ### Commands
 
 ```bash
 # Add a todo
-todo add "Buy groceries"
+.\todo.ps1 add "Buy groceries"
 
 # List todos
-todo list                # All todos
-todo list --active       # Active only
-todo list --completed    # Completed only
+.\todo.ps1 list                # All todos
+.\todo.ps1 list --active       # Active only
+.\todo.ps1 list --completed    # Completed only
 
 # Complete a todo (use first 4+ chars of ID shown in list)
-todo complete <id>
+.\todo.ps1 complete <id>
 
 # Delete a todo
-todo delete <id>
+.\todo.ps1 delete <id>
 ```
 
 ## Current Status
