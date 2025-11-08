@@ -33,6 +33,42 @@ function checkGitInstallation() {
   }
 }
 
+// Check and configure Central Knowledge Graph connection
+async function checkCentralKG() {
+  console.log('\n🧠 Checking Central Knowledge Graph connection...');
+  
+  const pool = new Pool({
+    host: 'localhost',
+    port: 5433,
+    database: 'nebula_central_kg',
+    user: 'nebula',
+    password: 'nebula_secure_password',
+    connectionTimeoutMillis: 3000,
+  });
+
+  try {
+    const client = await pool.connect();
+    
+    // Test query
+    const result = await client.query('SELECT COUNT(*) FROM error_patterns');
+    const patternCount = result.rows[0].count;
+    
+    client.release();
+    await pool.end();
+    
+    console.log(`✅ Central KG connected (${patternCount} patterns available)`);
+    return true;
+  } catch (error) {
+    console.log('⚠️  Central KG not available (will use local memory only)');
+    console.log('   To enable Central KG:');
+    console.log('   1. Ensure Docker is running');
+    console.log('   2. Start containers: docker-compose up -d postgres redis');
+    console.log('   3. Check status: docker ps\n');
+    await pool.end();
+    return false;
+  }
+}
+
 // Initialize Git repository
 function initializeGit(projectPath) {
   try {
@@ -606,11 +642,12 @@ async function main() {
     console.log('   ⭐ Constellations - Main development phases');
     console.log('   🪐 Star Systems - Granular breakdowns (add as needed)');
     console.log('   🚪 Star Gates - Mandatory quality checkpoints\n');
-    console.log('🧠 Auto-enabled features:');
-    console.log('   ✅ Project memory tracking (.nebula/project_memory.sqlite)');
-    console.log('   ✅ Error logging (.nebula/logs/)');
-    console.log('   ✅ Star Gate validation logging');
-    console.log('   ✅ Git repository initialized (main branch)\n');
+  console.log('🧠 Auto-enabled features:');
+  console.log('   ✅ Project memory tracking (.nebula/project_memory.sqlite)');
+  console.log('   ✅ Error logging (.nebula/logs/)');
+  console.log('   ✅ Star Gate validation logging');
+  console.log('   ✅ Git repository initialized (main branch)');
+  console.log(`   ${centralKGAvailable ? '✅' : '⚠️ '} Central Knowledge Graph ${centralKGAvailable ? 'connected' : 'offline (local only)'}\n`);
     console.log('💡 TIP: The Nebula Protocol uses Git-first architecture.');
     console.log('   All projects MUST be stored in Git (GitHub, GitLab, etc.)');
     console.log('   This eliminates expensive server storage costs!');

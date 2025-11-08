@@ -41,6 +41,8 @@ services:
   postgres:
     image: postgres:16-alpine
     container_name: nebula-postgres
+    ports:
+      - "5432:5432"  # Expose PostgreSQL for external connections
     environment:
       - POSTGRES_DB=nebula_central_kg
       - POSTGRES_USER=nebula
