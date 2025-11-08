@@ -10,6 +10,7 @@ import NodeCache from 'node-cache';
 import winston from 'winston';
 import morgan from 'morgan';
 import { z } from 'zod';
+import config from './src/config/index.js';
 import { ProjectMemory } from './project-memory.js';
 import { StarChart } from './star-chart.js';
 import { DocumentationService } from './nebula-docs-service.js';
@@ -18,26 +19,35 @@ import path from 'path';
 import { createClient } from 'redis';
 
 const app = express();
-const PORT = process.env.PORT || 3000;
-const JWT_SECRET = process.env.JWT_SECRET || 'change_this_in_production';
+const PORT = config.api.port;
+const JWT_SECRET = config.api.jwtSecret;
 
 // ============================================================================
 // LOGGING CONFIGURATION
 // ============================================================================
 
 const logger = winston.createLogger({
-  level: process.env.LOG_LEVEL || 'info',
+  level: config.logging.level,
   format: winston.format.combine(
     winston.format.timestamp(),
     winston.format.errors({ stack: true }),
     winston.format.json()
   ),
   transports: [
-    new winston.transports.File({ filename: 'logs/error.log', level: 'error' }),
-    new winston.transports.File({ filename: 'logs/combined.log' }),
+    new winston.transports.File({ 
+      filename: config.logging.errorFile, 
+      level: 'error',
+      maxsize: config.logging.maxSize,
+      maxFiles: config.logging.maxFiles
+    }),
+    new winston.transports.File({ 
+      filename: config.logging.combinedFile,
+      maxsize: config.logging.maxSize,
+      maxFiles: config.logging.maxFiles
+    }),
     new winston.transports.Console({
       format: winston.format.combine(
-        winston.format.colorize(),
+        config.logging.colorize ? winston.format.colorize() : winston.format.simple(),
         winston.format.simple()
       )
     })
@@ -49,19 +59,22 @@ const logger = winston.createLogger({
 // ============================================================================
 
 const responseCache = new NodeCache({ 
-  stdTTL: 300, // 5 minutes default
-  checkperiod: 60, // Check for expired keys every 60 seconds
-  useClones: false // Better performance
+  stdTTL: config.cache.defaultTTL,
+  checkperiod: config.cache.checkPeriod,
+  useClones: false,
+  maxKeys: config.cache.maxKeys
 });
 
 // Initialize Redis client for doc caching
 let redisClient = null;
-if (process.env.REDIS_HOST) {
+if (config.database.redis.enabled) {
   redisClient = createClient({
     socket: {
-      host: process.env.REDIS_HOST,
-      port: process.env.REDIS_PORT || 6379
-    }
+      host: config.database.redis.host,
+      port: config.database.redis.port
+    },
+    password: config.database.redis.password,
+    database: config.database.redis.db
   });
   
   redisClient.on('error', (err) => console.error('Redis Client Error', err));
@@ -74,11 +87,13 @@ if (process.env.REDIS_HOST) {
 const docService = new DocumentationService(redisClient);
 
 // Prefetch common documentation on startup (async, don't block)
-setTimeout(() => {
-  docService.prefetchCommonDocs().catch(err => {
-    logger.error('Documentation prefetch failed', { error: err.message });
-  });
-}, 5000); // Wait 5 seconds after startup
+if (config.docs.prefetchEnabled) {
+  setTimeout(() => {
+    docService.prefetchCommonDocs().catch(err => {
+      logger.error('Documentation prefetch failed', { error: err.message });
+    });
+  }, config.docs.prefetchDelay);
+}
 
 // ============================================================================
 // MIDDLEWARE
@@ -115,6 +130,10 @@ app.use(morgan('combined', {
 
 // Rate limiting (user-based when authenticated, IP-based otherwise)
 const createRateLimiter = (maxRequests, windowMinutes) => {
+  if (!config.rateLimit.enabled) {
+    return (req, res, next) => next();
+  }
+  
   return rateLimit({
     windowMs: windowMinutes * 60 * 1000,
     max: maxRequests,
@@ -132,9 +151,9 @@ const createRateLimiter = (maxRequests, windowMinutes) => {
 };
 
 // Different rate limits for different endpoints
-app.use('/api/project', createRateLimiter(100, 15)); // 100 req/15min
-app.use('/api/docs', createRateLimiter(50, 15)); // 50 req/15min (expensive)
-app.use('/api/kg', createRateLimiter(200, 15)); // 200 req/15min (fast queries)
+app.use('/api/project', createRateLimiter(config.rateLimit.project.max, config.rateLimit.project.windowMinutes));
+app.use('/api/docs', createRateLimiter(config.rateLimit.docs.max, config.rateLimit.docs.windowMinutes));
+app.use('/api/kg', createRateLimiter(config.rateLimit.kg.max, config.rateLimit.kg.windowMinutes));
 
 // Performance tracking middleware
 app.use((req, res, next) => {
@@ -182,8 +201,8 @@ function cacheMiddleware(ttl = 300) {
 
 const errorSchema = z.object({
   language: z.string().min(1).max(50),
-  message: z.string().min(1).max(5000),
-  stackTrace: z.string().optional(),
+  message: z.string().min(1).max(config.validation.maxMessageLength),
+  stackTrace: z.string().max(config.validation.maxStackTraceLength).optional(),
   constellation: z.string().min(1).max(100).optional(),
   filePath: z.string().optional(),
   lineNumber: z.number().int().positive().optional(),
@@ -193,11 +212,11 @@ const errorSchema = z.object({
 
 const solutionSchema = z.object({
   errorId: z.string().uuid(),
-  description: z.string().min(1).max(5000),
+  description: z.string().min(1).max(config.validation.maxDescriptionLength),
   codeChanges: z.string().optional(),
   appliedBy: z.enum(['ai', 'human']).default('ai'),
   effectiveness: z.number().int().min(1).max(5).optional(),
-  notes: z.string().optional()
+  notes: z.string().max(config.validation.maxNotesLength).optional()
 });
 
 const starGateSchema = z.object({
@@ -217,11 +236,11 @@ const starGateSchema = z.object({
 });
 
 const batchErrorsSchema = z.object({
-  errors: z.array(errorSchema).min(1).max(100) // Max 100 errors per batch
+  errors: z.array(errorSchema).min(1).max(config.batch.maxErrors)
 });
 
 const batchSolutionsSchema = z.object({
-  solutions: z.array(solutionSchema).min(1).max(100)
+  solutions: z.array(solutionSchema).min(1).max(config.batch.maxSolutions)
 });
 
 // Validation middleware
