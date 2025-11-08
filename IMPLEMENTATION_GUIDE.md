@@ -2,6 +2,24 @@
 
 **⚠️ UPDATED:** November 2024 - Now uses adaptive, flexible approach with cosmic terminology
 
+## ⚠️ MANDATORY REQUIREMENT: Error Logging
+
+**Before proceeding, understand this critical requirement:**
+
+**Every error encountered during development MUST be logged to Project Memory.**
+
+This is NOT optional and CANNOT be waived. Error logging enables:
+- Cross-project learning via Central Knowledge Graph  
+- Automatic error pattern recognition and solutions
+- Measurable progress tracking
+- Sharing fixes across all projects
+
+**Star Gates automatically FAIL if error logging is incomplete.**
+
+See `ERROR_LOGGING_REQUIREMENTS.md` for complete requirements.
+
+---
+
 ## Quick Start
 
 ### 1. Choose Your Framework Version

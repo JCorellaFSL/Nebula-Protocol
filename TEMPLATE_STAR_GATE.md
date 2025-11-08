@@ -109,6 +109,109 @@ Test 2: [Feature/Flow Name]
 
 ---
 
+## Error Logging Compliance ⚠️ MANDATORY
+
+**All errors encountered during this constellation MUST be logged.**
+
+This is not optional and is automatically verified. Star Gate FAILS if incomplete.
+
+### Error Logging Verification
+
+Run this command to verify compliance:
+
+```bash
+cd .nebula/tools
+node -e "const {ProjectMemory} = require('./project-memory.js'); \
+  const pm = new ProjectMemory('../..', 'PROJECT_NAME', 'FRAMEWORK'); \
+  const stats = pm.getStatistics(); \
+  console.log(JSON.stringify(stats, null, 2)); \
+  pm.close();"
+```
+
+### Requirements Checklist
+
+- [ ] **All errors logged:** Every error that blocked progress or required a fix
+- [ ] **All solutions recorded:** Each error has a documented solution
+- [ ] **Effectiveness ratings:** All solutions rated 1-5 for effectiveness
+- [ ] **Pattern creation:** Error patterns created for Central KG matching
+- [ ] **Context provided:** Each error includes what you were trying to do
+- [ ] **Stack traces included:** Full stack traces for debugging
+
+### Minimum Statistics
+
+**If errors were encountered:**
+- `totalErrors` > 0
+- `unresolvedErrors` = 0 (all errors must be resolved)
+- Solutions recorded for all errors
+- Error patterns created
+
+**If NO errors encountered:**
+- [ ] Explicitly documented: "No errors encountered during this constellation"
+- [ ] Constellation was trivial OR extremely well-planned
+- [ ] This is rare and should be verified by reviewer
+
+### Error Types That MUST Be Logged
+
+1. **Implementation Errors**
+   - Syntax errors
+   - Type errors  
+   - Import/dependency errors
+   - Runtime exceptions
+   - Build failures
+
+2. **Platform-Specific Issues**
+   - Windows vs Mac/Linux differences
+   - PowerShell vs bash syntax
+   - Encoding issues (UTF-8, cp1252)
+   - Path separator differences
+
+3. **Tool/Framework Quirks**
+   - Unexpected framework behavior
+   - Package manager issues
+   - Version conflicts
+   - Build tool problems
+
+4. **Workarounds Applied**
+   - Any time you work around a problem instead of fixing it properly
+
+### Retroactive Logging (if needed)
+
+If errors were encountered but not logged in real-time, create a retroactive logging script:
+
+```javascript
+// .nebula/tools/log_constellation_X_errors.mjs
+import { ProjectMemory } from './project-memory.js';
+
+const pm = new ProjectMemory('../..', 'project-name', 'framework');
+
+// Log all forgotten errors
+const error1 = pm.logError({
+  level: 'ERROR',
+  phase: 'Constellation X',
+  constellation: 'ConstellationName',
+  message: 'Error description',
+  stackTrace: 'Full stack trace',
+  context: 'What you were doing'
+});
+
+pm.recordSolution({
+  errorId: error1.errorId,
+  solution: 'How it was fixed',
+  codeChanges: 'What code changed',
+  appliedBy: 'ai',
+  effectiveness: 5,
+  notes: 'Additional context'
+});
+
+pm.close();
+```
+
+**⚠️ CRITICAL:** Without error logging, this Star Gate automatically FAILS.
+
+See `ERROR_LOGGING_REQUIREMENTS.md` for complete details.
+
+---
+
 ## Integration Review
 
 ### Constellation Impact Analysis
@@ -176,6 +279,7 @@ Date: YYYY-MM-DD
 
 ### ✅ PASS Criteria
 All of the following must be true:
+- [ ] **Error logging compliance verified** (MANDATORY - see above section)
 - [ ] All automated tests passing (or skips documented)
 - [ ] Manual verification complete for user-facing features
 - [ ] Integration check passed (no breaking changes to previous work)
@@ -230,11 +334,35 @@ If major architectural issues discovered:
   "tests_manual": 0,
   "tests_skipped": 0,
   "skip_reasons": [],
+  "errors_logged": 0,
+  "errors_resolved": 0,
+  "error_logging_complete": true,
   "duration_minutes": 0,
   "reviewer": "",
   "notes": "",
   "timestamp": ""
 }
+```
+
+**Command to log Star Gate passage:**
+
+```bash
+cd .nebula/tools
+node -e "const {ProjectMemory} = require('./project-memory.js'); \
+  const pm = new ProjectMemory('../..', 'PROJECT_NAME', 'FRAMEWORK'); \
+  const stats = pm.getStatistics(); \
+  pm.recordStarGate({ \
+    constellation: 'CONSTELLATION_[NUMBER]_[NAME]', \
+    status: 'passed', \
+    automatedTests: X, \
+    automatedTestsPassing: X, \
+    manualTests: X, \
+    skippedTests: 0, \
+    errorsLogged: stats.totalErrors, \
+    errorsResolved: stats.totalErrors - stats.unresolvedErrors, \
+    notes: 'Star Gate passed successfully' \
+  }); \
+  pm.close();"
 ```
 
 ---
