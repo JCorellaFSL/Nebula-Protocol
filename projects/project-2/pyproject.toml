@@ -1,0 +1,42 @@
+[build-system]
+requires = ["setuptools>=68.0", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "weather-dashboard"
+version = "0.0.1"
+description = "Command-line weather dashboard using OpenWeatherMap API"
+readme = "README.md"
+requires-python = ">=3.10"
+dependencies = [
+    "requests>=2.31.0",
+    "rich>=13.7.0",
+    "python-dotenv>=1.0.0",
+]
+
+[project.optional-dependencies]
+dev = [
+    "pytest>=7.4.0",
+    "pytest-cov>=4.1.0",
+    "black>=23.12.0",
+    "flake8>=7.0.0",
+]
+
+[project.scripts]
+weather = "weather.cli:main"
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+python_files = ["test_*.py"]
+python_classes = ["Test*"]
+python_functions = ["test_*"]
+addopts = "--cov=weather --cov-report=html --cov-report=term-missing"
+
+[tool.black]
+line-length = 88
+target-version = ["py310"]
+
+[tool.flake8]
+max-line-length = 88
+extend-ignore = ["E203"]
+
