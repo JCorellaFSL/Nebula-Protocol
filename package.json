@@ -25,7 +25,8 @@
     "jsonwebtoken": "^9.0.2",
     "express-rate-limit": "^7.1.5",
     "pg": "^8.11.3",
-    "redis": "^4.6.11"
+    "redis": "^4.6.11",
+    "node-fetch": "^3.3.2"
   },
   "keywords": [
     "mcp",
