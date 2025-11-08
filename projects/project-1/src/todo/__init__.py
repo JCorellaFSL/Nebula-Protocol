@@ -7,7 +7,7 @@ This package provides functionality for managing todos including:
 - Command-line interface for todo management
 """
 
-__version__ = "0.1.2"
+__version__ = "0.1.3"
 __author__ = "Nebula Protocol Test Project"
 
 # Package-level imports

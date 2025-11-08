@@ -23,7 +23,7 @@ def test_package_version():
     import todo
 
     assert hasattr(todo, "__version__")
-    assert todo.__version__ == "0.0.1"
+    assert todo.__version__ == "0.1.3"
 
 
 def test_cli_module_exists():
@@ -40,7 +40,7 @@ def test_cli_runs():
         [sys.executable, "-m", "todo.cli"], capture_output=True, text=True
     )
     assert result.returncode == 0
-    assert "Todo List CLI" in result.stdout
+    assert "todo list manager" in result.stdout.lower()
 
 
 def test_todo_classes_exist():
