@@ -26,7 +26,7 @@ Every error encountered during development MUST be logged to Project Memory. Thi
 
 ## 🌌 What is Nebula Protocol?
 
-Nebula Protocol is a **dynamic, flexible framework** for AI-assisted software development that provides:
+Nebula Protocol is a **dynamic, flexible framework** for LLM-driven software development where **the AI does all the work**. Built for anyone from complete beginners to experienced engineers, it delivers:
 
 - **🏗️ Adaptive Structure:** Constellations → Star Systems → Star Gates (grows with project complexity)
 - **🐳 Docker API:** REST API for remote/team deployment (no IDE dependency)
