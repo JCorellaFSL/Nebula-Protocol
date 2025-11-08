@@ -7,10 +7,10 @@ This package provides functionality for managing todos including:
 - Command-line interface for todo management
 """
 
-__version__ = "0.0.1"
+__version__ = "0.1.1"
 __author__ = "Nebula Protocol Test Project"
 
-# Package-level imports (to be added in Constellation 1)
-# from .todo import Todo, TodoManager
-# from .storage import Storage
-# from .cli import CLI
+# Package-level imports
+from .todo import Todo, TodoManager
+
+__all__ = ["Todo", "TodoManager"]
