@@ -104,16 +104,18 @@ From the project directory, use the launcher scripts:
 **PowerShell:**
 ```powershell
 .\todo.ps1 list
-.\todo.ps1 add "Your task"
+.\todo.ps1 add buy milk and eggs
 .\todo.ps1 complete <id>
 ```
 
 **Command Prompt:**
 ```cmd
 todo.bat list
-todo.bat add "Your task"
+todo.bat add buy milk and eggs
 todo.bat complete <id>
 ```
+
+**Note:** No quotes needed! Just type your todo naturally.
 
 These scripts automatically handle the virtual environment for you!
 
@@ -128,8 +130,10 @@ python -m todo.cli complete <id>
 ### Commands
 
 ```bash
-# Add a todo
-.\todo.ps1 add "Buy groceries"
+# Add a todo (no quotes needed!)
+.\todo.ps1 add Buy groceries
+.\todo.ps1 add Call mom tomorrow
+.\todo.ps1 add Fix the kitchen sink
 
 # List todos
 .\todo.ps1 list                # All todos
