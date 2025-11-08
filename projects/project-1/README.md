@@ -45,16 +45,21 @@ todo-list-cli/
 ├── src/
 │   └── todo/
 │       ├── __init__.py       # Package init
-│       ├── cli.py            # CLI placeholder
-│       ├── todo.py           # Core placeholder
-│       └── storage.py        # Storage placeholder
+│       ├── cli.py            # CLI implementation ✅
+│       ├── todo.py           # Core logic ✅
+│       └── storage.py        # JSON storage ✅
 ├── tests/
 │   ├── __init__.py
-│   └── test_smoke.py         # 6 smoke tests
+│   ├── test_smoke.py         # Smoke tests
+│   ├── test_todo.py          # Todo logic tests (20)
+│   ├── test_storage.py       # Storage tests (13)
+│   ├── test_cli.py           # CLI tests (12)
+│   └── test_integration.py   # Integration tests (2)
 ├── docs/
 │   └── usage.md              # Usage guide
 ├── venv/                     # Virtual environment (not in git)
 ├── .nebula/                  # Nebula Framework tools
+├── todos.json                # Your todo data
 ├── .gitignore
 ├── pyproject.toml            # Project configuration
 ├── pytest.ini                # Test configuration
@@ -90,11 +95,42 @@ black src/ tests/
 flake8 src/ tests/
 ```
 
+## Usage
+
+### Installation (Development Mode)
+
+```bash
+pip install -e .
+```
+
+### Commands
+
+```bash
+# Add a todo
+todo add "Buy groceries"
+
+# List todos
+todo list                # All todos
+todo list --active       # Active only
+todo list --completed    # Completed only
+
+# Complete a todo (use first 4+ chars of ID shown in list)
+todo complete <id>
+
+# Delete a todo
+todo delete <id>
+```
+
 ## Current Status
 
-**Constellation 0: Setup** - Complete  
-**Constellation 1: Core Functionality** - Coming next  
-**Constellation 2: Deployment** - Planned
+✅ **Constellation 0: Setup** - Complete (Star Gate 0 Passed)  
+✅ **Constellation 1: Core Functionality** - Complete (53/53 tests, 79% coverage)
+  - Star System 1.1: Todo Logic ✅
+  - Star System 1.2: JSON Storage ✅
+  - Star System 1.3: CLI Commands ✅
+
+🚪 **Star Gate 1: Core Validation** - Ready for testing  
+⏳ **Constellation 2** - TBD based on user feedback
 
 See ROADMAP.md for full development plan.
 
