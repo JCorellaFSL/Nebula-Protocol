@@ -216,7 +216,7 @@ Examples:
 
     # Add command
     add_parser = subparsers.add_parser("add", help="Add a new todo")
-    add_parser.add_argument("description", help="Todo description")
+    add_parser.add_argument("description", nargs='*', help="Todo description (no quotes needed)")
 
     # List command
     list_parser = subparsers.add_parser("list", help="List todos")
@@ -245,7 +245,8 @@ Examples:
     # Execute command
     try:
         if args.command == "add":
-            cli.add(args.description)
+            description = ' '.join(args.description) if isinstance(args.description, list) else args.description
+            cli.add(description)
         elif args.command == "list":
             if args.active:
                 cli.list("active")
