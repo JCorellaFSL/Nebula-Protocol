@@ -606,6 +606,22 @@ async function initializeProjectMemory() {
 
 // Main execution
 async function main() {
+  console.log('\n🌌 Initializing Nebula Framework for your project...\n');
+
+  // Check Git installation (REQUIRED)
+  if (!checkGitInstallation()) {
+    process.exit(1);
+  }
+
+  // Check Central KG connection (OPTIONAL but recommended)
+  let centralKGAvailable = false;
+  try {
+    centralKGAvailable = await checkCentralKG();
+  } catch (error) {
+    // Central KG check failed - continue without it
+    console.log('⚠️  Central KG check skipped\n');
+  }
+
   try {
     const constellations = getConstellationStructure(projectComplexity);
     
