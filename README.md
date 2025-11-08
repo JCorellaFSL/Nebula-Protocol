@@ -6,6 +6,24 @@
 
 ---
 
+## ⚠️ CRITICAL REQUIREMENT: Mandatory Error Logging
+
+**Error logging is MANDATORY and cannot be waived.**
+
+Every error encountered during development MUST be logged to Project Memory. This is enforced at every Star Gate.
+
+**Why this matters:**
+- 🧠 Cross-project learning via Central Knowledge Graph
+- 🔍 Automatic pattern recognition and solution suggestions
+- 📈 Measurable progress tracking  
+- 🤝 Knowledge sharing across all projects
+
+**Without error logging, Star Gates automatically FAIL.**
+
+📖 **Read:** [`ERROR_LOGGING_REQUIREMENTS.md`](./ERROR_LOGGING_REQUIREMENTS.md)
+
+---
+
 ## 🌌 What is Nebula Protocol?
 
 Nebula Protocol is a **dynamic, flexible framework** for AI-assisted software development that provides:
@@ -17,6 +35,7 @@ Nebula Protocol is a **dynamic, flexible framework** for AI-assisted software de
 - **📊 Semantic Versioning:** Auto-tracking: `CONSTELLATION.STAR_SYSTEM.QUALITY_GATE.PATCH`
 - **🚪 Quality Gates:** Mandatory testing and validation between phases
 - **🔄 Auto-Sync:** Project KG + Central KG synchronization on milestones
+- **⚡ Error Logging:** MANDATORY tracking for all errors and solutions
 
 ---
 
