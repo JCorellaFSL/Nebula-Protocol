@@ -167,6 +167,53 @@ npx init-nebula my-project complex
 
 ---
 
+## 🏗️ Architecture Overview
+
+### System Architecture
+
+```mermaid
+graph TB
+    A[User/IDE] -->|HTTP/REST| B[Nginx Reverse Proxy]
+    B --> C[Nebula API Server]
+    C --> D[PostgreSQL<br/>Central KG]
+    C --> E[Redis<br/>Doc Cache]
+    C --> F[Project Memory<br/>SQLite]
+    C --> G[Documentation Service]
+    G -->|Fetch| H[Official Docs<br/>11 Languages]
+    C --> I[Star Chart<br/>Global KG]
+    
+    style C fill:#4a90e2
+    style D fill:#336791
+    style E fill:#dc382d
+    style F fill:#003b57
+    style G fill:#f39c12
+```
+
+### Data Flow
+
+```mermaid
+sequenceDiagram
+    participant User
+    participant API
+    participant Cache
+    participant ProjectMemory
+    participant DocService
+    participant Redis
+    
+    User->>API: POST /error
+    API->>Cache: Check cache
+    Cache-->>API: Cache miss
+    API->>ProjectMemory: recordError()
+    API->>DocService: fetchDocumentation()
+    DocService->>Redis: Check cache
+    Redis-->>DocService: Cache hit
+    DocService-->>API: Return docs
+    API->>Cache: Store response
+    API-->>User: {error, documentation}
+```
+
+---
+
 ## 🌐 API Architecture
 
 ### REST API Endpoints
@@ -209,6 +256,18 @@ POST /api/docs/extract-error
 ---
 
 ## 📊 Semantic Versioning
+
+### Version Format
+
+```mermaid
+graph LR
+    A[0] -->|Constellation| B[.1] -->|Star System| C[.4] -->|Quality Gate| D[.5]
+    
+    style A fill:#e74c3c
+    style B fill:#3498db
+    style C fill:#2ecc71
+    style D fill:#f39c12
+```
 
 **Format:** `CONSTELLATION.STAR_SYSTEM.QUALITY_GATE.PATCH`
 
