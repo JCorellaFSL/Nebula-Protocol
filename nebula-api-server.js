@@ -11,11 +11,13 @@ import winston from 'winston';
 import morgan from 'morgan';
 import { z } from 'zod';
 import config from './src/config/index.js';
+import { GitIntegration } from './src/git/git-integration.js';
 import { ProjectMemory } from './project-memory.js';
 import { StarChart } from './star-chart.js';
 import { DocumentationService } from './nebula-docs-service.js';
 import fs from 'fs';
 import path from 'path';
+import crypto from 'crypto';
 import { createClient } from 'redis';
 
 const app = express();
@@ -85,6 +87,9 @@ if (config.database.redis.enabled) {
 
 // Initialize Documentation Service
 const docService = new DocumentationService(redisClient);
+
+// Initialize Git Integration Service
+const gitService = new GitIntegration(config);
 
 // Prefetch common documentation on startup (async, don't block)
 if (config.docs.prefetchEnabled) {
@@ -388,30 +393,188 @@ app.post('/api/auth/token', (req, res) => {
 });
 
 // ============================================================================
-// PROJECT MEMORY ENDPOINTS
+// PROJECT MEMORY ENDPOINTS (GIT-FIRST ARCHITECTURE)
 // ============================================================================
 
-// Initialize project memory
-app.post('/api/project/:projectId/init', authenticateToken, (req, res) => {
+// Initialize project with Git (GIT-FIRST ARCHITECTURE)
+app.post('/api/project/:projectId/init', authenticateToken, async (req, res) => {
   try {
     const { projectId } = req.params;
-    const { name, framework } = req.body;
-    
-    const projectPath = path.join('/app/projects', projectId);
-    if (!fs.existsSync(projectPath)) {
-      fs.mkdirSync(projectPath, { recursive: true });
+    const { 
+      name, 
+      framework,
+      gitRemote,
+      gitProvider,
+      gitUsername,
+      gitToken,
+      gitEmail,
+      gitBranch
+    } = req.body;
+
+    // Validate Git remote if required
+    if (config.storage.gitRequired && !gitRemote) {
+      return res.status(400).json({
+        error: 'Git remote is required',
+        message: 'Projects must be connected to a Git repository (GitHub, GitLab, etc.)'
+      });
     }
 
-    const memory = new ProjectMemory(projectPath, name, framework);
+    // Initialize Git repository
+    const gitResult = await gitService.initializeProject(projectId, {
+      name,
+      framework,
+      gitRemote,
+      gitProvider,
+      gitUsername,
+      gitToken,
+      gitEmail,
+      gitBranch
+    });
+
+    // Initialize project memory
+    const memory = new ProjectMemory(gitResult.projectPath, name, framework);
+    
+    // Record Git info in project memory
+    memory.recordDecision({
+      phase: 'SETUP',
+      constellation: 'Git Integration',
+      decisionType: 'infrastructure',
+      question: 'Where is the project stored?',
+      chosenOption: `Git repository: ${gitRemote || 'local only'}`,
+      rationale: 'Git-first architecture for scalable, stateless project storage',
+      madeBy: 'system'
+    });
+    
     memory.close();
+
+    logger.info('Project initialized with Git', { 
+      projectId, 
+      gitRemote: gitResult.gitRemote,
+      gitInitialized: gitResult.gitInitialized
+    });
 
     res.json({
       success: true,
       projectId,
-      message: 'Project memory initialized',
-      path: projectPath
+      message: 'Project initialized with Git',
+      ...gitResult
     });
   } catch (error) {
+    logger.error('Project initialization failed', { error: error.message });
+    res.status(500).json({ error: error.message });
+  }
+});
+
+// Clone existing project from Git
+app.post('/api/project/:projectId/clone', authenticateToken, async (req, res) => {
+  try {
+    const { projectId } = req.params;
+    const { gitUrl, gitToken, gitBranch, shallow } = req.body;
+
+    if (!gitUrl) {
+      return res.status(400).json({ error: 'gitUrl is required' });
+    }
+
+    const result = await gitService.cloneProject(projectId, gitUrl, {
+      gitToken,
+      gitBranch,
+      shallow
+    });
+
+    logger.info('Project cloned from Git', { projectId, gitUrl: result.gitRemote });
+
+    res.json({
+      success: true,
+      message: 'Project cloned successfully',
+      ...result
+    });
+  } catch (error) {
+    logger.error('Project clone failed', { error: error.message });
+    res.status(500).json({ error: error.message });
+  }
+});
+
+// Get Git status for project
+app.get('/api/project/:projectId/git/status', authenticateToken, async (req, res) => {
+  try {
+    const { projectId } = req.params;
+    const projectPath = path.join(config.storage.projectsDir, projectId);
+
+    if (!fs.existsSync(projectPath)) {
+      return res.status(404).json({ error: 'Project not found' });
+    }
+
+    const status = await gitService.getStatus(projectPath);
+
+    res.json({
+      success: true,
+      projectId,
+      ...status
+    });
+  } catch (error) {
+    logger.error('Git status failed', { error: error.message });
+    res.status(500).json({ error: error.message });
+  }
+});
+
+// Manual commit and push
+app.post('/api/project/:projectId/git/commit', authenticateToken, async (req, res) => {
+  try {
+    const { projectId } = req.params;
+    const { message, push = true, addAll = true, force = false } = req.body;
+    
+    if (!message) {
+      return res.status(400).json({ error: 'Commit message is required' });
+    }
+
+    const projectPath = path.join(config.storage.projectsDir, projectId);
+
+    if (!fs.existsSync(projectPath)) {
+      return res.status(404).json({ error: 'Project not found' });
+    }
+
+    const result = await gitService.commitAndPush(projectPath, message, {
+      addAll,
+      push,
+      force
+    });
+
+    logger.info('Git commit completed', { projectId, committed: result.committed, pushed: result.pushed });
+
+    res.json({
+      success: true,
+      projectId,
+      ...result
+    });
+  } catch (error) {
+    logger.error('Git commit failed', { error: error.message });
+    res.status(500).json({ error: error.message });
+  }
+});
+
+// Pull latest changes
+app.post('/api/project/:projectId/git/pull', authenticateToken, async (req, res) => {
+  try {
+    const { projectId } = req.params;
+    const { rebase = false } = req.body;
+
+    const projectPath = path.join(config.storage.projectsDir, projectId);
+
+    if (!fs.existsSync(projectPath)) {
+      return res.status(404).json({ error: 'Project not found' });
+    }
+
+    const result = await gitService.pullChanges(projectPath, { rebase });
+
+    logger.info('Git pull completed', { projectId });
+
+    res.json({
+      success: true,
+      projectId,
+      ...result
+    });
+  } catch (error) {
+    logger.error('Git pull failed', { error: error.message });
     res.status(500).json({ error: error.message });
   }
 });

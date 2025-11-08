@@ -20,6 +20,42 @@ import { execSync } from 'child_process';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 
+// Check if Git is installed
+function checkGitInstallation() {
+  try {
+    execSync('git --version', { stdio: 'pipe' });
+    return true;
+  } catch (error) {
+    console.error('\n⚠️  ERROR: Git is not installed or not in PATH');
+    console.error('Please install Git: https://git-scm.com/downloads');
+    console.error('Git is REQUIRED for the Nebula Protocol (Git-first architecture)\n');
+    return false;
+  }
+}
+
+// Initialize Git repository
+function initializeGit(projectPath) {
+  try {
+    // Check if already a git repository
+    try {
+      execSync('git rev-parse --git-dir', { cwd: projectPath, stdio: 'pipe' });
+      console.log('✅ Git repository already initialized\n');
+      return true;
+    } catch (error) {
+      // Not a git repo, initialize it
+    }
+
+    console.log('🔧 Initializing Git repository...');
+    execSync('git init', { cwd: projectPath, stdio: 'pipe' });
+    execSync('git checkout -b main', { cwd: projectPath, stdio: 'pipe' });
+    console.log('✅ Git repository initialized\n');
+    return true;
+  } catch (error) {
+    console.error('❌ Failed to initialize Git:', error.message);
+    return false;
+  }
+}
+
 // Supported project types
 const PROJECT_TYPES = ['flutter', 'tauri', 'python', 'rust', 'dioxus'];
 
@@ -47,6 +83,11 @@ if (!COMPLEXITY_LEVELS.includes(projectComplexity)) {
   console.log(`⚠️  Unknown complexity level: ${projectComplexity}`);
   console.log(`   Supported: ${COMPLEXITY_LEVELS.join(', ')}`);
   console.log(`   Using default: moderate\n`);
+}
+
+// Check Git installation (REQUIRED)
+if (!checkGitInstallation()) {
+  process.exit(1);
 }
 
 // Create .nebula directory structure

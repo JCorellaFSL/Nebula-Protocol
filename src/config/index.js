@@ -99,7 +99,7 @@ export default {
     colorize: process.env.LOG_COLORIZE !== 'false',
   },
 
-  // Project Storage Configuration
+  // Project Storage Configuration (Git-First)
   storage: {
     projectsDir: process.env.PROJECTS_DIR || '/app/projects',
     maxProjectSize: parseInt(process.env.MAX_PROJECT_SIZE) || 1024 * 1024 * 100, // 100MB
@@ -107,6 +107,21 @@ export default {
     cleanupEnabled: process.env.STORAGE_CLEANUP_ENABLED !== 'false',
     cleanupInterval: parseInt(process.env.STORAGE_CLEANUP_INTERVAL) || 86400000, // 24 hours
     maxAge: parseInt(process.env.PROJECT_MAX_AGE) || 2592000000, // 30 days
+    gitRequired: process.env.GIT_REQUIRED !== 'false', // Require Git for all projects
+  },
+
+  // Git Integration Configuration
+  git: {
+    enabled: process.env.GIT_ENABLED !== 'false',
+    autoCommit: process.env.GIT_AUTO_COMMIT !== 'false',
+    autoPush: process.env.GIT_AUTO_PUSH !== 'false',
+    commitOnStarSystem: process.env.GIT_COMMIT_ON_STAR_SYSTEM !== 'false',
+    commitOnStarGate: process.env.GIT_COMMIT_ON_STAR_GATE !== 'false',
+    commitOnErrorResolution: process.env.GIT_COMMIT_ON_ERROR_RESOLUTION === 'true',
+    defaultBranch: process.env.GIT_DEFAULT_BRANCH || 'main',
+    shallowClone: process.env.GIT_SHALLOW_CLONE === 'true',
+    // Supported providers: github, gitlab, bitbucket, custom
+    defaultProvider: process.env.GIT_DEFAULT_PROVIDER || 'github',
   },
 
   // Batch Operations Configuration
