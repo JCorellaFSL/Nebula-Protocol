@@ -1,9 +1,15 @@
 # Python Nebula Framework Adaptation
 
-**⚠️ UPDATED:** November 2024 - Now uses Constellations, Star Systems, and Star Gates terminology
+**⚠️ UPDATED:** November 2024 - Constellations, Star Systems, Star Gates terminology + Docker API support
 
 ## Overview
 This document adapts the Nebula Context Engineering Protocol specifically for Python development projects, incorporating Python-specific tools, patterns, and best practices for web applications, APIs, data science, and automation projects.
+
+### Integration Options
+- **MCP Server:** Local IDE integration (Cursor, VSCode) via Model Context Protocol
+- **Docker API:** REST API access for remote/centralized deployment
+- **Hybrid:** Use both - MCP for local development, API for team collaboration
+- **Central KG:** Connect to PostgreSQL-backed Knowledge Graph for cross-project learning
 
 ## Python-Specific Constellation Content Structure
 
@@ -101,7 +107,7 @@ This document adapts the Nebula Context Engineering Protocol specifically for Py
   - Project structure creation
   - **Initialize logging (logging module with JSON formatter)**
   - **Create `.nebula/logs/` directory structure**
-  - **Initialize project memory via MCP**
+  - **Initialize project memory (via MCP server or Docker API)**
   - Package management configuration (requirements.txt or pyproject.toml)
   - Development tools setup (linting, formatting)
 

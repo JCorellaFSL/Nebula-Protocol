@@ -1,9 +1,14 @@
 # Flutter Nebula Framework Adaptation
 
-**⚠️ UPDATED:** November 2024 - Now uses Constellations, Star Systems, and Star Gates terminology
+**⚠️ UPDATED:** November 2024 - Constellations, Star Systems, Star Gates terminology + Docker API support
 
 ## Overview
 This document adapts the Nebula Context Engineering Protocol specifically for Flutter development projects, incorporating Flutter-specific tools, patterns, and best practices.
+
+### Integration Options
+- **MCP Server:** Local IDE integration (Cursor, VSCode) via Model Context Protocol
+- **Docker API:** REST API access for remote/centralized deployment
+- **Hybrid:** Use both - MCP for local development, API for team collaboration
 
 ## Flutter-Specific Constellation Content Structure
 
@@ -93,7 +98,7 @@ This document adapts the Nebula Context Engineering Protocol specifically for Fl
   - Project initialization with proper structure
   - **Initialize logging (logger package)**
   - **Create `.nebula/logs/` directory structure**
-  - **Initialize project memory via MCP**
+  - **Initialize project memory (via MCP server or Docker API)**
   - CI/CD pipeline setup
   - Development environment configuration
 - **Exit Condition:** Logging operational, project memory initialized

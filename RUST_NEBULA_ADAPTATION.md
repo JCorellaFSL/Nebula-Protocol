@@ -1,9 +1,15 @@
 # Rust Nebula Framework Adaptation
 
-**⚠️ UPDATED:** November 2024 - Now uses Constellations, Star Systems, and Star Gates terminology
+**⚠️ UPDATED:** November 2024 - Constellations, Star Systems, Star Gates terminology + Docker API support
 
 ## Overview
 This document adapts the Nebula Context Engineering Protocol specifically for pure Rust development projects, incorporating Rust-specific tools, patterns, and best practices for systems programming, CLI tools, backend services, WebAssembly, and high-performance applications.
+
+### Integration Options
+- **MCP Server:** Local IDE integration (Cursor, VSCode) via Model Context Protocol
+- **Docker API:** REST API access for remote/centralized deployment (recommended for Rust projects)
+- **Hybrid:** Use both - MCP for local development, API for CI/CD and team collaboration
+- **Central KG:** Connect to PostgreSQL-backed Knowledge Graph for cross-project learning
 
 ## Rust-Specific Constellation Content Structure
 
@@ -102,7 +108,7 @@ This document adapts the Nebula Context Engineering Protocol specifically for pu
   - Project initialization with cargo new/cargo init
   - **Initialize logging (tracing or env_logger)**
   - **Create `.nebula/logs/` directory structure**
-  - **Initialize project memory via MCP**
+  - **Initialize project memory (via MCP server or Docker API)**
   - Development tools configuration (rust-analyzer, rustfmt, clippy)
   - CI/CD pipeline setup (GitHub Actions, GitLab CI)
 - **Exit Condition:** Logging operational, project memory initialized, basic project compiles
