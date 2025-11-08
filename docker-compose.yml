@@ -1,0 +1,142 @@
+version: '3.8'
+
+services:
+  # Nebula API Server
+  nebula-api:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: nebula-api
+    ports:
+      - "3000:3000"
+    environment:
+      - NODE_ENV=production
+      - PORT=3000
+      - POSTGRES_HOST=postgres
+      - POSTGRES_PORT=5432
+      - POSTGRES_DB=nebula_central_kg
+      - POSTGRES_USER=nebula
+      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD:-nebula_secure_password}
+      - REDIS_HOST=redis
+      - REDIS_PORT=6379
+      - JWT_SECRET=${JWT_SECRET:-change_this_in_production}
+      - CENTRAL_KG_ENABLED=true
+    volumes:
+      - ./projects:/app/projects
+      - nebula-data:/app/data
+    depends_on:
+      - postgres
+      - redis
+    networks:
+      - nebula-network
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:3000/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
+
+  # PostgreSQL for Centralized Knowledge Graph
+  postgres:
+    image: postgres:16-alpine
+    container_name: nebula-postgres
+    environment:
+      - POSTGRES_DB=nebula_central_kg
+      - POSTGRES_USER=nebula
+      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD:-nebula_secure_password}
+    volumes:
+      - postgres-data:/var/lib/postgresql/data
+      - ./db/init.sql:/docker-entrypoint-initdb.d/init.sql
+    networks:
+      - nebula-network
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U nebula"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  # Redis for caching and session management
+  redis:
+    image: redis:7-alpine
+    container_name: nebula-redis
+    command: redis-server --appendonly yes
+    volumes:
+      - redis-data:/data
+    networks:
+      - nebula-network
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  # Nginx reverse proxy with SSL/TLS
+  nginx:
+    image: nginx:alpine
+    container_name: nebula-nginx
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - ./nginx/nginx.conf:/etc/nginx/nginx.conf:ro
+      - ./nginx/ssl:/etc/nginx/ssl:ro
+      - nginx-logs:/var/log/nginx
+    depends_on:
+      - nebula-api
+    networks:
+      - nebula-network
+    restart: unless-stopped
+
+  # Prometheus for monitoring (optional)
+  prometheus:
+    image: prom/prometheus:latest
+    container_name: nebula-prometheus
+    command:
+      - '--config.file=/etc/prometheus/prometheus.yml'
+      - '--storage.tsdb.path=/prometheus'
+    volumes:
+      - ./monitoring/prometheus.yml:/etc/prometheus/prometheus.yml:ro
+      - prometheus-data:/prometheus
+    ports:
+      - "9090:9090"
+    networks:
+      - nebula-network
+    restart: unless-stopped
+    profiles:
+      - monitoring
+
+  # Grafana for visualization (optional)
+  grafana:
+    image: grafana/grafana:latest
+    container_name: nebula-grafana
+    environment:
+      - GF_SECURITY_ADMIN_PASSWORD=${GRAFANA_PASSWORD:-admin}
+      - GF_USERS_ALLOW_SIGN_UP=false
+    volumes:
+      - grafana-data:/var/lib/grafana
+      - ./monitoring/grafana/dashboards:/etc/grafana/provisioning/dashboards:ro
+    ports:
+      - "3001:3000"
+    depends_on:
+      - prometheus
+    networks:
+      - nebula-network
+    restart: unless-stopped
+    profiles:
+      - monitoring
+
+networks:
+  nebula-network:
+    driver: bridge
+
+volumes:
+  nebula-data:
+  postgres-data:
+  redis-data:
+  prometheus-data:
+  grafana-data:
+  nginx-logs:
+

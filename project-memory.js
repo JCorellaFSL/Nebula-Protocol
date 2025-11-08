@@ -36,9 +36,14 @@ export class ProjectMemory {
           name TEXT,
           framework TEXT,
           created_at TEXT DEFAULT CURRENT_TIMESTAMP,
-          current_version TEXT DEFAULT '0.0.1',
+          current_version TEXT DEFAULT '0.0.0.0',
+          version_constellation INTEGER DEFAULT 0,
+          version_star_system INTEGER DEFAULT 0,
+          version_quality_gate INTEGER DEFAULT 0,
+          version_patch INTEGER DEFAULT 0,
           current_phase TEXT,
           current_constellation TEXT,
+          current_star_system TEXT,
           updated_at TEXT DEFAULT CURRENT_TIMESTAMP
         )
       `).run();
@@ -216,15 +221,112 @@ export class ProjectMemory {
   }
 
   updateProjectInfo(updates) {
-    const { version, phase, constellation } = updates;
+    const { version, phase, constellation, starSystem } = updates;
     this.db.prepare(`
       UPDATE project_info
       SET current_version = COALESCE(?, current_version),
           current_phase = COALESCE(?, current_phase),
           current_constellation = COALESCE(?, current_constellation),
+          current_star_system = COALESCE(?, current_star_system),
           updated_at = CURRENT_TIMESTAMP
       WHERE project_id = (SELECT project_id FROM project_info LIMIT 1)
-    `).run(version || null, phase || null, constellation || null);
+    `).run(version || null, phase || null, constellation || null, starSystem || null);
+  }
+
+  // Version management: CONSTELLATION.STAR_SYSTEM.QUALITY_GATE.PATCH
+  getVersion() {
+    const info = this.db.prepare(`
+      SELECT current_version, version_constellation, version_star_system, 
+             version_quality_gate, version_patch
+      FROM project_info LIMIT 1
+    `).get();
+    
+    if (!info) {
+      return { version: '0.0.0.0', constellation: 0, starSystem: 0, qualityGate: 0, patch: 0 };
+    }
+    
+    return {
+      version: info.current_version,
+      constellation: info.version_constellation,
+      starSystem: info.version_star_system,
+      qualityGate: info.version_quality_gate,
+      patch: info.version_patch
+    };
+  }
+
+  bumpVersion(component = 'patch', resetLower = true) {
+    const current = this.getVersion();
+    let { constellation, starSystem, qualityGate, patch } = current;
+
+    switch (component) {
+      case 'constellation':
+        constellation += 1;
+        if (resetLower) {
+          starSystem = 0;
+          qualityGate = 0;
+          patch = 0;
+        }
+        break;
+      case 'star_system':
+        starSystem += 1;
+        if (resetLower) {
+          qualityGate = 0;
+          patch = 0;
+        }
+        break;
+      case 'quality_gate':
+        qualityGate += 1;
+        if (resetLower) {
+          patch = 0;
+        }
+        break;
+      case 'patch':
+        patch += 1;
+        break;
+      default:
+        throw new Error(`Unknown version component: ${component}`);
+    }
+
+    const version = `${constellation}.${starSystem}.${qualityGate}.${patch}`;
+    
+    this.db.prepare(`
+      UPDATE project_info
+      SET current_version = ?,
+          version_constellation = ?,
+          version_star_system = ?,
+          version_quality_gate = ?,
+          version_patch = ?,
+          updated_at = CURRENT_TIMESTAMP
+      WHERE project_id = (SELECT project_id FROM project_info LIMIT 1)
+    `).run(version, constellation, starSystem, qualityGate, patch);
+
+    // Log version bump
+    this.recordDecision({
+      title: `Version bump: ${component}`,
+      decision: `Bumped ${component} version to ${version}`,
+      rationale: `Automated version bump after ${component} completion`,
+      phase: current.constellation.toString(),
+      constellation: current.constellation.toString()
+    });
+
+    return { version, constellation, starSystem, qualityGate, patch };
+  }
+
+  setVersion(constellation, starSystem, qualityGate, patch) {
+    const version = `${constellation}.${starSystem}.${qualityGate}.${patch}`;
+    
+    this.db.prepare(`
+      UPDATE project_info
+      SET current_version = ?,
+          version_constellation = ?,
+          version_star_system = ?,
+          version_quality_gate = ?,
+          version_patch = ?,
+          updated_at = CURRENT_TIMESTAMP
+      WHERE project_id = (SELECT project_id FROM project_info LIMIT 1)
+    `).run(version, constellation, starSystem, qualityGate, patch);
+
+    return { version, constellation, starSystem, qualityGate, patch };
   }
 
   logError({ level, phase, constellation, filePath, lineNumber, errorCode, message, stackTrace, context }) {
