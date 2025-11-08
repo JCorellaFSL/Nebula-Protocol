@@ -5,6 +5,10 @@ import cors from 'cors';
 import helmet from 'helmet';
 import jwt from 'jsonwebtoken';
 import rateLimit from 'express-rate-limit';
+import compression from 'compression';
+import NodeCache from 'node-cache';
+import winston from 'winston';
+import morgan from 'morgan';
 import { ProjectMemory } from './project-memory.js';
 import { StarChart } from './star-chart.js';
 import { DocumentationService } from './nebula-docs-service.js';
@@ -15,6 +19,39 @@ import { createClient } from 'redis';
 const app = express();
 const PORT = process.env.PORT || 3000;
 const JWT_SECRET = process.env.JWT_SECRET || 'change_this_in_production';
+
+// ============================================================================
+// LOGGING CONFIGURATION
+// ============================================================================
+
+const logger = winston.createLogger({
+  level: process.env.LOG_LEVEL || 'info',
+  format: winston.format.combine(
+    winston.format.timestamp(),
+    winston.format.errors({ stack: true }),
+    winston.format.json()
+  ),
+  transports: [
+    new winston.transports.File({ filename: 'logs/error.log', level: 'error' }),
+    new winston.transports.File({ filename: 'logs/combined.log' }),
+    new winston.transports.Console({
+      format: winston.format.combine(
+        winston.format.colorize(),
+        winston.format.simple()
+      )
+    })
+  ]
+});
+
+// ============================================================================
+// RESPONSE CACHING
+// ============================================================================
+
+const responseCache = new NodeCache({ 
+  stdTTL: 300, // 5 minutes default
+  checkperiod: 60, // Check for expired keys every 60 seconds
+  useClones: false // Better performance
+});
 
 // Initialize Redis client for doc caching
 let redisClient = null;
@@ -35,26 +72,101 @@ if (process.env.REDIS_HOST) {
 // Initialize Documentation Service
 const docService = new DocumentationService(redisClient);
 
-// Middleware
+// ============================================================================
+// MIDDLEWARE
+// ============================================================================
+
+// Compression middleware (gzip/deflate)
+app.use(compression({
+  level: 6,
+  threshold: 1024, // Only compress responses > 1KB
+  filter: (req, res) => {
+    if (req.headers['x-no-compression']) {
+      return false;
+    }
+    return compression.filter(req, res);
+  }
+}));
+
+// Security headers
 app.use(helmet());
+
+// CORS
 app.use(cors());
+
+// Body parsing
 app.use(express.json({ limit: '10mb' }));
 app.use(express.urlencoded({ extended: true }));
 
-// Rate limiting
-const limiter = rateLimit({
-  windowMs: 15 * 60 * 1000, // 15 minutes
-  max: 100, // limit each IP to 100 requests per windowMs
-  message: 'Too many requests from this IP, please try again later.'
-});
-app.use('/api/', limiter);
+// HTTP request logging with Morgan
+app.use(morgan('combined', {
+  stream: {
+    write: (message) => logger.info(message.trim())
+  }
+}));
 
-// Request logging
+// Rate limiting (user-based when authenticated, IP-based otherwise)
+const createRateLimiter = (maxRequests, windowMinutes) => {
+  return rateLimit({
+    windowMs: windowMinutes * 60 * 1000,
+    max: maxRequests,
+    keyGenerator: (req) => {
+      return req.user?.id || req.ip;
+    },
+    handler: (req, res) => {
+      logger.warn(`Rate limit exceeded for ${req.user?.id || req.ip}`);
+      res.status(429).json({
+        error: 'Too many requests',
+        retryAfter: res.getHeader('Retry-After')
+      });
+    }
+  });
+};
+
+// Different rate limits for different endpoints
+app.use('/api/project', createRateLimiter(100, 15)); // 100 req/15min
+app.use('/api/docs', createRateLimiter(50, 15)); // 50 req/15min (expensive)
+app.use('/api/kg', createRateLimiter(200, 15)); // 200 req/15min (fast queries)
+
+// Performance tracking middleware
 app.use((req, res, next) => {
-  const timestamp = new Date().toISOString();
-  console.log(`[${timestamp}] ${req.method} ${req.path}`);
+  const start = Date.now();
+  res.on('finish', () => {
+    const duration = Date.now() - start;
+    logger.info({
+      method: req.method,
+      path: req.path,
+      status: res.statusCode,
+      duration: `${duration}ms`,
+      user: req.user?.id
+    });
+  });
   next();
 });
+
+// Cache middleware helper
+function cacheMiddleware(ttl = 300) {
+  return (req, res, next) => {
+    if (req.method !== 'GET') return next();
+    
+    const key = `cache:${req.originalUrl || req.url}`;
+    const cached = responseCache.get(key);
+    
+    if (cached) {
+      logger.debug(`Cache hit: ${key}`);
+      return res.json(cached);
+    }
+    
+    // Override res.json to cache the response
+    const originalJson = res.json.bind(res);
+    res.json = (body) => {
+      responseCache.set(key, body, ttl);
+      return originalJson(body);
+    };
+    
+    next();
+  };
+}
 
 // ============================================================================
 // AUTHENTICATION MIDDLEWARE
@@ -81,17 +193,64 @@ function authenticateToken(req, res, next) {
 // HEALTH CHECK & STATUS
 // ============================================================================
 
-app.get('/health', (req, res) => {
-  res.json({
+app.get('/health', async (req, res) => {
+  const health = {
     status: 'healthy',
     timestamp: new Date().toISOString(),
-    version: '1.0.0',
-    services: {
-      api: 'running',
-      postgres: process.env.POSTGRES_HOST ? 'configured' : 'not_configured',
-      redis: process.env.REDIS_HOST ? 'configured' : 'not_configured'
+    version: '2.0.0',
+    uptime: process.uptime(),
+    memory: {
+      used: Math.round(process.memoryUsage().heapUsed / 1024 / 1024),
+      total: Math.round(process.memoryUsage().heapTotal / 1024 / 1024),
+      unit: 'MB'
+    },
+    checks: {}
+  };
+
+  // Check Redis
+  if (redisClient) {
+    try {
+      await redisClient.ping();
+      health.checks.redis = 'healthy';
+    } catch (error) {
+      health.checks.redis = 'unhealthy';
+      health.status = 'degraded';
+      logger.error('Redis health check failed', { error: error.message });
     }
-  });
+  } else {
+    health.checks.redis = 'not_configured';
+  }
+
+  // Check disk space (basic check)
+  try {
+    const stats = fs.statSync('.');
+    health.checks.diskSpace = 'healthy';
+  } catch (error) {
+    health.checks.diskSpace = 'unknown';
+  }
+
+  // Check cache stats
+  health.checks.cache = {
+    status: 'healthy',
+    keys: responseCache.keys().length,
+    stats: responseCache.getStats()
+  };
+
+  const statusCode = health.status === 'healthy' ? 200 : 503;
+  res.status(statusCode).json(health);
+});
+
+// Kubernetes/Docker Swarm readiness check
+app.get('/ready', async (req, res) => {
+  try {
+    if (redisClient) {
+      await redisClient.ping();
+    }
+    res.status(200).json({ ready: true });
+  } catch (error) {
+    logger.error('Readiness check failed', { error: error.message });
+    res.status(503).json({ ready: false, error: error.message });
+  }
 });
 
 app.get('/api/status', authenticateToken, (req, res) => {
@@ -159,8 +318,8 @@ app.post('/api/project/:projectId/init', authenticateToken, (req, res) => {
   }
 });
 
-// Get project version
-app.get('/api/project/:projectId/version', authenticateToken, (req, res) => {
+// Get project version (cached for 1 min)
+app.get('/api/project/:projectId/version', authenticateToken, cacheMiddleware(60), (req, res) => {
   try {
     const { projectId } = req.params;
     const projectPath = path.join('/app/projects', projectId);
@@ -370,8 +529,8 @@ app.post('/api/project/:projectId/star-gate', authenticateToken, (req, res) => {
   }
 });
 
-// Get project statistics
-app.get('/api/project/:projectId/stats', authenticateToken, (req, res) => {
+// Get project statistics (cached for 5 min)
+app.get('/api/project/:projectId/stats', authenticateToken, cacheMiddleware(300), (req, res) => {
   try {
     const { projectId } = req.params;
     const projectPath = path.join('/app/projects', projectId);

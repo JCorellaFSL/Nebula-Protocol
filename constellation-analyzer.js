@@ -1,324 +1,260 @@
 #!/usr/bin/env node
 
 /**
- * Nebula Framework - Constellation Analyzer
+ * Nebula Framework - Enhanced Constellation Analyzer
  * 
- * Analyzes constellation complexity and recommends structural improvements:
- * - Token count analysis
- * - Task complexity assessment
- * - Star System expansion recommendations
- * - Consolidation opportunities
+ * Analyzes constellation/star system complexity with focus on:
+ * - LLM context window optimization
+ * - Cognitive load management
+ * - Engineering problem decomposition
+ * - Separation of concerns (overview vs. technical)
  * 
- * Usage: node constellation-analyzer.js [constellation-file.md]
+ * Designed for the two-tier documentation system:
+ * - Constellations: Non-technical overview (WHAT/WHY) - should be concise
+ * - Star Systems: Technical details (HOW) - can be more detailed
+ * 
+ * Usage: node constellation-analyzer-enhanced.js [file-or-directory]
  */
 
 import fs from 'fs';
 import path from 'path';
+import { fileURLToPath } from 'url';
 
-// Token estimation (rough): ~4 characters per token
-function estimateTokens(text) {
-  return Math.ceil(text.length / 4);
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+
+// Configuration for complexity thresholds
+// Based on LLM context window optimization and cognitive load management
+const CONFIG = {
+  // Token limits (aligned with LLM context efficiency)
+  OPTIMAL_MIN_TOKENS: 1000,    // Below this = too granular
+  OPTIMAL_MAX_TOKENS: 4000,    // Above this = context overload
+  CRITICAL_MAX_TOKENS: 6000,   // Hard limit - must split
+  
+  // Task limits (aligned with working memory constraints)
+  OPTIMAL_MIN_TASKS: 3,        // Below this = consider merging
+  OPTIMAL_MAX_TASKS: 8,        // Above this = cognitive overload
+  CRITICAL_MAX_TASKS: 12,      // Hard limit - must split
+  
+  // Section limits (document structure)
+  OPTIMAL_MAX_SECTIONS: 12,    // Above this = navigation difficulty
+  CRITICAL_MAX_SECTIONS: 18,   // Hard limit - must reorganize
+  
+  // Task quality metrics
+  MIN_WORDS_PER_TASK: 50,      // Below this = insufficient detail
+  MAX_WORDS_PER_TASK: 500,     // Above this = task too broad
+  
+  // Context efficiency (what percentage of 8k context should we target?)
+  TARGET_CONTEXT_USAGE: 0.5,   // Use ~50% of available context
+  CONTEXT_WINDOW_SIZE: 8000,   // Assume 8k context window for planning
+};
+
+function countTokens(text) {
+  // Simple token count: split by whitespace
+  return text.split(/\s+/).filter(Boolean).length;
 }
 
-// Count tasks in constellation
-function countTasks(content) {
-  // Look for task markers: - [ ], numbered lists, ## headers
-  const taskMarkers = [
-    /^- \[ \]/gm,           // Checkbox tasks
-    /^\d+\.\s/gm,           // Numbered lists
-    /^#{2,3}\s[^#]/gm       // H2/H3 headers as tasks
-  ];
-  
-  let totalTasks = 0;
-  taskMarkers.forEach(marker => {
-    const matches = content.match(marker);
-    if (matches) totalTasks += matches.length;
-  });
-  
-  return totalTasks;
-}
-
-// Extract sections
-function extractSections(content) {
-  const sections = {};
-  const sectionRegex = /^##\s+(.+)$/gm;
-  let match;
-  const sectionNames = [];
-  
-  while ((match = sectionRegex.exec(content)) !== null) {
-    sectionNames.push(match[1]);
-  }
-  
-  return sectionNames;
-}
-
-// Analyze constellation complexity
 function analyzeConstellation(filePath) {
   if (!fs.existsSync(filePath)) {
-    console.error(`❌ File not found: ${filePath}`);
-    process.exit(1);
+    return `Error: File not found at ${filePath}`;
   }
-  
+
   const content = fs.readFileSync(filePath, 'utf8');
-  const fileName = path.basename(filePath);
-  
-  // Extract constellation info
-  const constellationMatch = fileName.match(/CONSTELLATION_(\d+)_([A-Z_]+)\.md/i);
-  const starSystemMatch = fileName.match(/STAR_SYSTEM_(\d+\.\d+)_([A-Z_]+)\.md/i);
-  
-  let type, number, name;
-  if (constellationMatch) {
-    type = 'Constellation';
-    number = constellationMatch[1];
-    name = constellationMatch[2];
-  } else if (starSystemMatch) {
-    type = 'Star System';
-    number = starSystemMatch[1];
-    name = starSystemMatch[2];
-  } else {
-    console.warn(`⚠️  File doesn't match expected naming: ${fileName}`);
-    type = 'Unknown';
-    number = '?';
-    name = fileName.replace('.md', '');
-  }
-  
-  // Metrics
-  const tokens = estimateTokens(content);
-  const tasks = countTasks(content);
-  const sections = extractSections(content);
-  const lines = content.split('\n').length;
-  
-  // Complexity assessment
-  let complexity = 'simple';
-  let issues = [];
-  let recommendations = [];
-  
-  // Token threshold
-  if (tokens > 4000) {
-    complexity = 'complex';
-    issues.push(`Token count ${tokens} exceeds recommended 4000`);
-    recommendations.push('Consider splitting into Star Systems');
-  } else if (tokens > 3000) {
-    complexity = 'moderate';
-    issues.push(`Token count ${tokens} approaching limit`);
-  }
-  
-  // Task threshold
-  if (tasks > 10) {
-    if (complexity === 'simple') complexity = 'moderate';
-    issues.push(`Task count ${tasks} exceeds recommended 8-10`);
-    recommendations.push('Break down into smaller, focused tasks');
-  } else if (tasks > 15) {
-    complexity = 'complex';
-    recommendations.push('Split into multiple Star Systems by feature area');
-  }
-  
-  // Scope assessment (rough heuristic)
-  const codeBlocks = (content.match(/```/g) || []).length / 2;
-  if (codeBlocks > 5) {
-    if (complexity === 'simple') complexity = 'moderate';
-    issues.push(`High code block count (${codeBlocks}) suggests implementation details`);
-    recommendations.push('Move detailed implementation to separate documents');
-  }
-  
-  // Star System opportunities
-  const potentialStarSystems = [];
-  if (type === 'Constellation' && complexity !== 'simple') {
-    // Look for major sections that could become Star Systems
-    sections.forEach(section => {
-      const sectionContent = extractSectionContent(content, section);
-      const sectionTokens = estimateTokens(sectionContent);
-      const sectionTasks = countTasks(sectionContent);
-      
-      if (sectionTokens > 500 || sectionTasks > 3) {
-        potentialStarSystems.push({
-          section,
-          tokens: sectionTokens,
-          tasks: sectionTasks,
-          suggested: `STAR_SYSTEM_${number}.${potentialStarSystems.length + 1}_${toSlug(section).toUpperCase()}.md`
-        });
-      }
-    });
-  }
-  
-  return {
-    file: fileName,
-    type,
-    number,
-    name,
-    metrics: {
-      tokens,
-      tasks,
-      sections: sections.length,
-      lines,
-      codeBlocks
-    },
-    complexity,
-    issues,
-    recommendations,
-    potentialStarSystems
-  };
-}
+  const filename = path.basename(filePath);
 
-// Extract content of a specific section
-function extractSectionContent(content, sectionName) {
-  const regex = new RegExp(`^##\\s+${sectionName.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')}\\s*$`, 'gm');
-  const match = regex.exec(content);
-  
-  if (!match) return '';
-  
-  const startIndex = match.index + match[0].length;
-  const nextSectionRegex = /^##\s+/gm;
-  nextSectionRegex.lastIndex = startIndex;
-  const nextMatch = nextSectionRegex.exec(content);
-  
-  if (nextMatch) {
-    return content.substring(startIndex, nextMatch.index);
-  } else {
-    return content.substring(startIndex);
-  }
-}
+  let report = `\n${'='.repeat(70)}\n`;
+  report += `  CONSTELLATION ANALYSIS: ${filename}\n`;
+  report += `${'='.repeat(70)}\n\n`;
 
-// Convert to slug
-function toSlug(text) {
-  return text
-    .toLowerCase()
-    .replace(/[^a-z0-9]+/g, '-')
-    .replace(/(^-|-$)/g, '');
-}
-
-// Format output
-function printAnalysis(analysis) {
-  console.log('\n🌌 Nebula Framework - Constellation Analysis\n');
-  console.log(`📄 File: ${analysis.file}`);
-  console.log(`📊 Type: ${analysis.type} ${analysis.number} - ${analysis.name}\n`);
+  // === TOKEN ANALYSIS ===
+  const totalTokens = countTokens(content);
+  const contextUsage = (totalTokens / CONFIG.CONTEXT_WINDOW_SIZE) * 100;
   
-  console.log('📈 Metrics:');
-  console.log(`   Tokens: ${analysis.metrics.tokens} / 4000 (${((analysis.metrics.tokens / 4000) * 100).toFixed(1)}%)`);
-  console.log(`   Tasks: ${analysis.metrics.tasks} (recommended: 8-10)`);
-  console.log(`   Sections: ${analysis.metrics.sections}`);
-  console.log(`   Lines: ${analysis.metrics.lines}`);
-  console.log(`   Code Blocks: ${analysis.metrics.codeBlocks}\n`);
+  report += `TOKEN ANALYSIS:\n`;
+  report += `   Total Tokens: ${totalTokens}\n`;
+  report += `   Context Usage: ${contextUsage.toFixed(1)}% of ${CONFIG.CONTEXT_WINDOW_SIZE} token window\n`;
+  report += `   Optimal Range: ${CONFIG.OPTIMAL_MIN_TOKENS}-${CONFIG.OPTIMAL_MAX_TOKENS} tokens\n`;
   
-  console.log(`🎯 Complexity: ${analysis.complexity.toUpperCase()}`);
-  
-  if (analysis.complexity === 'simple') {
-    console.log(`   ✅ Good structure - no changes needed\n`);
-  } else if (analysis.complexity === 'moderate') {
-    console.log(`   ⚠️  Approaching complexity limits\n`);
+  if (totalTokens < CONFIG.OPTIMAL_MIN_TOKENS) {
+    report += `   Status: [YELLOW] TOO GRANULAR - Consider merging\n`;
+  } else if (totalTokens <= CONFIG.OPTIMAL_MAX_TOKENS) {
+    report += `   Status: [GREEN] OPTIMAL - Good context efficiency\n`;
+  } else if (totalTokens <= CONFIG.CRITICAL_MAX_TOKENS) {
+    report += `   Status: [YELLOW] LARGE - Consider splitting\n`;
   } else {
-    console.log(`   ❌ Exceeds recommended complexity\n`);
+    report += `   Status: [RED] CRITICAL - MUST split\n`;
   }
-  
-  if (analysis.issues.length > 0) {
-    console.log('⚠️  Issues Detected:');
-    analysis.issues.forEach(issue => console.log(`   - ${issue}`));
-    console.log();
-  }
-  
-  if (analysis.recommendations.length > 0) {
-    console.log('💡 Recommendations:');
-    analysis.recommendations.forEach(rec => console.log(`   - ${rec}`));
-    console.log();
-  }
-  
-  if (analysis.potentialStarSystems.length > 0) {
-    console.log('🪐 Potential Star System Expansions:');
-    analysis.potentialStarSystems.forEach((ss, index) => {
-      console.log(`\n   ${index + 1}. Section: "${ss.section}"`);
-      console.log(`      Tokens: ${ss.tokens}, Tasks: ${ss.tasks}`);
-      console.log(`      Suggested file: ${ss.suggested}`);
-    });
-    console.log();
-  }
-  
-  // Final verdict
-  if (analysis.complexity === 'complex') {
-    console.log('🔴 ACTION REQUIRED: This constellation should be split into Star Systems\n');
-  } else if (analysis.complexity === 'moderate') {
-    console.log('🟡 WATCH: Monitor this constellation as it grows\n');
-  } else {
-    console.log('🟢 HEALTHY: Constellation is well-structured\n');
-  }
-}
+  report += `\n`;
 
-// Analyze multiple files (directory scan)
-function analyzeDirectory(dirPath) {
-  const files = fs.readdirSync(dirPath)
-    .filter(f => f.match(/CONSTELLATION_\d+_[A-Z_]+\.md/i) || f.match(/STAR_SYSTEM_\d+\.\d+_[A-Z_]+\.md/i));
+  // === TASK ANALYSIS ===
+  const tasks = content.match(/^- \*\*Task [0-9\.]+\:\*\* /gm) || [];
+  const estimatedTasks = tasks.length > 0 ? tasks.length : (content.match(/^- /gm) || []).length;
   
-  if (files.length === 0) {
-    console.log('❌ No constellation or star system files found in directory');
-    return;
+  report += `TASK ANALYSIS:\n`;
+  report += `   Task Count: ${estimatedTasks}\n`;
+  report += `   Optimal Range: ${CONFIG.OPTIMAL_MIN_TASKS}-${CONFIG.OPTIMAL_MAX_TASKS} tasks\n`;
+  
+  if (estimatedTasks < CONFIG.OPTIMAL_MIN_TASKS) {
+    report += `   Status: [YELLOW] TOO FEW - Consider merging\n`;
+  } else if (estimatedTasks <= CONFIG.OPTIMAL_MAX_TASKS) {
+    report += `   Status: [GREEN] OPTIMAL - Manageable\n`;
+  } else if (estimatedTasks <= CONFIG.CRITICAL_MAX_TASKS) {
+    report += `   Status: [YELLOW] MANY - Approaching limit\n`;
+  } else {
+    report += `   Status: [RED] CRITICAL - Too many tasks\n`;
   }
   
-  console.log(`\n📊 Analyzing ${files.length} files in ${dirPath}...\n`);
+  // Task quality analysis
+  const avgWordsPerTask = Math.floor(countTokens(content) / estimatedTasks);
+  report += `   Avg Words/Task: ~${avgWordsPerTask}\n`;
+  if (avgWordsPerTask < CONFIG.MIN_WORDS_PER_TASK) {
+    report += `   Quality: [YELLOW] Tasks may lack detail\n`;
+  } else if (avgWordsPerTask > CONFIG.MAX_WORDS_PER_TASK) {
+    report += `   Quality: [YELLOW] Tasks may be too broad\n`;
+  } else {
+    report += `   Quality: [GREEN] Good granularity\n`;
+  }
+  report += `\n`;
+
+  // === STRUCTURE ANALYSIS ===
+  const sections = content.match(/^### /gm) || [];
+  const subsections = content.match(/^#### /gm) || [];
   
-  const analyses = files.map(f => analyzeConstellation(path.join(dirPath, f)));
+  report += `STRUCTURE ANALYSIS:\n`;
+  report += `   Major Sections: ${sections.length}\n`;
+  report += `   Subsections: ${subsections.length}\n`;
+  report += `   Optimal Max: ${CONFIG.OPTIMAL_MAX_SECTIONS}\n`;
   
-  // Summary
-  console.log('\n═══════════════════════════════════════════════════════════');
-  console.log('                    SUMMARY REPORT');
-  console.log('═══════════════════════════════════════════════════════════\n');
+  if (sections.length <= CONFIG.OPTIMAL_MAX_SECTIONS) {
+    report += `   Status: [GREEN] OPTIMAL - Good structure\n`;
+  } else if (sections.length <= CONFIG.CRITICAL_MAX_SECTIONS) {
+    report += `   Status: [YELLOW] DENSE - Many sections\n`;
+  } else {
+    report += `   Status: [RED] CRITICAL - Too many sections\n`;
+  }
+  report += `\n`;
+
+  // === COMPLEXITY SCORE ===
+  let complexityScore = 0;
+  let maxScore = 0;
   
-  const totalConstellations = analyses.filter(a => a.type === 'Constellation').length;
-  const totalStarSystems = analyses.filter(a => a.type === 'Star System').length;
-  const complexFiles = analyses.filter(a => a.complexity === 'complex').length;
-  const moderateFiles = analyses.filter(a => a.complexity === 'moderate').length;
+  // Token scoring (40% weight)
+  maxScore += 40;
+  if (totalTokens <= CONFIG.OPTIMAL_MAX_TOKENS) complexityScore += 40;
+  else if (totalTokens <= CONFIG.CRITICAL_MAX_TOKENS) complexityScore += 20;
   
-  console.log(`📁 Total Files: ${analyses.length}`);
-  console.log(`   ⭐ Constellations: ${totalConstellations}`);
-  console.log(`   🪐 Star Systems: ${totalStarSystems}\n`);
+  // Task scoring (40% weight)
+  maxScore += 40;
+  if (estimatedTasks <= CONFIG.OPTIMAL_MAX_TASKS) complexityScore += 40;
+  else if (estimatedTasks <= CONFIG.CRITICAL_MAX_TASKS) complexityScore += 20;
   
-  console.log(`🎯 Complexity Distribution:`);
-  console.log(`   🔴 Complex: ${complexFiles} files need splitting`);
-  console.log(`   🟡 Moderate: ${moderateFiles} files approaching limits`);
-  console.log(`   🟢 Simple: ${analyses.length - complexFiles - moderateFiles} files healthy\n`);
+  // Structure scoring (20% weight)
+  maxScore += 20;
+  if (sections.length <= CONFIG.OPTIMAL_MAX_SECTIONS) complexityScore += 20;
+  else if (sections.length <= CONFIG.CRITICAL_MAX_SECTIONS) complexityScore += 10;
   
-  if (complexFiles > 0) {
-    console.log('🚨 Files Requiring Immediate Action:');
-    analyses
-      .filter(a => a.complexity === 'complex')
-      .forEach(a => console.log(`   - ${a.file} (${a.metrics.tokens} tokens, ${a.metrics.tasks} tasks)`));
-    console.log();
+  const complexityPercent = Math.round((complexityScore / maxScore) * 100);
+  
+  report += `OVERALL COMPLEXITY SCORE: ${complexityScore}/${maxScore} (${complexityPercent}%)\n`;
+  if (complexityPercent >= 80) {
+    report += `   Rating: [GREEN] EXCELLENT - Optimal for LLM\n`;
+  } else if (complexityPercent >= 60) {
+    report += `   Rating: [YELLOW] ACCEPTABLE - Usable\n`;
+  } else if (complexityPercent >= 40) {
+    report += `   Rating: [ORANGE] NEEDS WORK - Should refactor\n`;
+  } else {
+    report += `   Rating: [RED] CRITICAL - Must restructure\n`;
+  }
+  report += `\n`;
+
+  // === RECOMMENDATIONS ===
+  report += `${'='.repeat(70)}\n`;
+  report += `RECOMMENDATIONS:\n\n`;
+  
+  // Detect document type
+  const isConstellation = filename.includes('CONSTELLATION');
+  const isStarSystem = filename.includes('STAR_SYSTEM');
+  
+  if (isConstellation && totalTokens > 2000) {
+    report += `[YELLOW] NOTE: This is a CONSTELLATION (overview document)\n`;
+    report += `Constellations should be concise (WHAT/WHY only):\n`;
+    report += `  - Focus on strategic goals and success criteria\n`;
+    report += `  - Avoid technical implementation details\n`;
+    report += `  - Move HOW to Star System documents\n`;
+    report += `  - Target: 1000-2000 tokens for readability\n\n`;
   }
   
-  if (moderateFiles > 0) {
-    console.log('⚠️  Files to Monitor:');
-    analyses
-      .filter(a => a.complexity === 'moderate')
-      .forEach(a => console.log(`   - ${a.file} (${a.metrics.tokens} tokens, ${a.metrics.tasks} tasks)`));
-    console.log();
+  if (isStarSystem && totalTokens < 1500) {
+    report += `[YELLOW] NOTE: This is a STAR SYSTEM (technical document)\n`;
+    report += `Star Systems should provide detailed HOW guidance:\n`;
+    report += `  - Include step-by-step implementation\n`;
+    report += `  - Provide code examples and patterns\n`;
+    report += `  - Specify technical requirements\n`;
+    report += `  - Target: 2000-4000 tokens for completeness\n\n`;
   }
+  
+  const needsSplit = totalTokens > CONFIG.OPTIMAL_MAX_TOKENS || 
+                     estimatedTasks > CONFIG.OPTIMAL_MAX_TASKS || 
+                     sections.length > CONFIG.OPTIMAL_MAX_SECTIONS;
+  
+  const tooSmall = totalTokens < CONFIG.OPTIMAL_MIN_TOKENS || 
+                   estimatedTasks < CONFIG.OPTIMAL_MIN_TASKS;
+
+  if (needsSplit) {
+    report += `[RED] ACTION REQUIRED: Split into Star Systems\n\n`;
+    report += `This exceeds optimal limits for LLM context efficiency.\n`;
+    report += `Breaking it down will:\n`;
+    report += `  + Improve AI code generation quality\n`;
+    report += `  + Reduce context switching\n`;
+    report += `  + Enable parallel development\n`;
+    report += `  + Make testing more focused\n\n`;
+    
+    report += `HOW TO SPLIT:\n`;
+    const match = filename.match(/CONSTELLATION_(\d+)_/);
+    const constellationNum = match ? match[1] : 'X';
+    
+    report += `1. Create Star System files:\n`;
+    report += `   - STAR_SYSTEM_${constellationNum}.1_[COMPONENT_A].md\n`;
+    report += `   - STAR_SYSTEM_${constellationNum}.2_[COMPONENT_B].md\n`;
+    report += `   - STAR_SYSTEM_${constellationNum}.3_[COMPONENT_C].md\n\n`;
+    
+    report += `2. Target 1000-4000 tokens per Star System\n`;
+    report += `3. Move 3-8 related tasks per Star System\n`;
+    report += `4. Update main constellation to reference Star Systems\n\n`;
+    
+  } else if (tooSmall) {
+    report += `[YELLOW] CONSIDERATION: May be too granular\n\n`;
+    report += `This has minimal content. Consider:\n`;
+    report += `  - Merging with related constellation\n`;
+    report += `  - Expanding scope with additional tasks\n`;
+    report += `  - Combining with similar small files\n\n`;
+    report += `However, if truly discrete, small size is acceptable.\n\n`;
+    
+  } else {
+    report += `[GREEN] OPTIMAL: No changes needed\n\n`;
+    report += `This is well-sized for:\n`;
+    report += `  + Efficient LLM context usage (~${contextUsage.toFixed(0)}%)\n`;
+    report += `  + Manageable task count (${estimatedTasks})\n`;
+    report += `  + Clear structure (${sections.length} sections)\n\n`;
+    report += `Continue as-is. Re-analyze if scope expands.\n\n`;
+  }
+
+  report += `${'='.repeat(70)}\n`;
+  report += `ENGINEERING PRINCIPLE:\n`;
+  report += `  "Break complex problems into manageable chunks."\n`;
+  report += `  More well-scoped files = Better engineering\n`;
+  report += `${'='.repeat(70)}\n`;
+  
+  return report;
 }
 
 // Main execution
-const args = process.argv.slice(2);
-
-if (args.length === 0) {
-  console.log('Usage: node constellation-analyzer.js <file-or-directory>');
-  console.log('\nExamples:');
-  console.log('  node constellation-analyzer.js CONSTELLATION_1_CORE.md');
-  console.log('  node constellation-analyzer.js ./project-dir');
+if (process.argv.length < 3) {
+  console.log("Usage: node constellation-analyzer-enhanced.js <file>");
+  console.log("Example: node constellation-analyzer-enhanced.js CONSTELLATION_1_CORE.md");
   process.exit(1);
 }
 
-const target = args[0];
-
-if (!fs.existsSync(target)) {
-  console.error(`❌ Path not found: ${target}`);
-  process.exit(1);
-}
-
-const stats = fs.statSync(target);
-
-if (stats.isDirectory()) {
-  analyzeDirectory(target);
-} else if (stats.isFile()) {
-  const analysis = analyzeConstellation(target);
-  printAnalysis(analysis);
-} else {
-  console.error(`❌ Invalid target: ${target}`);
-  process.exit(1);
-}
+const filePath = process.argv[2];
+console.log(analyzeConstellation(filePath));
 
