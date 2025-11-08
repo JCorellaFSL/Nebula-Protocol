@@ -582,13 +582,26 @@ async function main() {
     createInitialRoadmap();
     createNebulaReadme();
     
+    // Initialize Git repository (Git-First Architecture)
+    console.log('\n🔧 Initializing Git repository (Git-First Architecture)...');
+    if (!initializeGit(process.cwd())) {
+      console.log('⚠️  WARNING: Git initialization failed');
+      console.log('The Nebula Protocol requires Git for project storage.');
+      console.log('Please initialize Git manually: git init\n');
+    }
+    
     console.log('\n✅ Nebula Framework initialization complete!\n');
     console.log('📋 Next Steps:\n');
-    console.log('1. Review ROADMAP.md for your adaptive constellation structure');
-    console.log(`2. Project complexity: ${projectComplexity} (${constellations.filter(c => !c.note).length} initial constellations)`);
-    console.log('3. Create Star Gate documents for quality enforcement');
-    console.log(`4. Reference docs/${projectType.toUpperCase()}_NEBULA_ADAPTATION.md for guidance`);
-    console.log('5. Start Constellation 0: Setup\n');
+    console.log('1. ⚠️  IMPORTANT: Connect to Git remote (REQUIRED):');
+    console.log('   git remote add origin https://github.com/username/project.git');
+    console.log('   git add .');
+    console.log('   git commit -m "Initial commit: Nebula Protocol initialized"');
+    console.log('   git push -u origin main');
+    console.log('2. Review ROADMAP.md for your adaptive constellation structure');
+    console.log(`3. Project complexity: ${projectComplexity} (${constellations.filter(c => !c.note).length} initial constellations)`);
+    console.log('4. Create Star Gate documents for quality enforcement');
+    console.log(`5. Reference docs/${projectType.toUpperCase()}_NEBULA_ADAPTATION.md for guidance`);
+    console.log('6. Start Constellation 0: Setup\n');
     console.log('🌌 Cosmic Framework Active:');
     console.log('   ⭐ Constellations - Main development phases');
     console.log('   🪐 Star Systems - Granular breakdowns (add as needed)');
@@ -596,7 +609,12 @@ async function main() {
     console.log('🧠 Auto-enabled features:');
     console.log('   ✅ Project memory tracking (.nebula/project_memory.sqlite)');
     console.log('   ✅ Error logging (.nebula/logs/)');
-    console.log('   ✅ Star Gate validation logging\n');
+    console.log('   ✅ Star Gate validation logging');
+    console.log('   ✅ Git repository initialized (main branch)\n');
+    console.log('💡 TIP: The Nebula Protocol uses Git-first architecture.');
+    console.log('   All projects MUST be stored in Git (GitHub, GitLab, etc.)');
+    console.log('   This eliminates expensive server storage costs!');
+    console.log('   See GIT_STORAGE.md for details.\n');
     
   } catch (error) {
     console.error('\n❌ Initialization failed:', error.message);
