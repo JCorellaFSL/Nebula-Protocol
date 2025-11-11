@@ -1,6 +1,23 @@
 /**
  * Nebula Protocol - Central Knowledge Graph Sync
  * 
+ * ⚠️ **DEPRECATED** - November 11, 2025
+ * 
+ * This JavaScript implementation has been replaced with a unified Python-based
+ * Local KG system. The new implementation provides:
+ * - Offline-first SQLite storage
+ * - Background sync to Central KG
+ * - Unified architecture across all Nebula projects
+ * 
+ * **New Location:** `local_kg/` directory
+ * **Migration Guide:** See `LOCAL_KG_MIGRATION.md`
+ * **Usage:** See `local_kg/README.md`
+ * 
+ * This file is preserved for reference but should not be used for new code.
+ * 
+ * ---
+ * 
+ * OLD DESCRIPTION:
  * Syncs local project memory to central PostgreSQL KG.
  * Enables cross-project learning and solution sharing.
  */
