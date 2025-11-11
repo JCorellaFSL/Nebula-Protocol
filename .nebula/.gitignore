@@ -1,0 +1,6 @@
+# Local config with secrets - never commit!
+config.json
+
+# Only the example template should be committed
+!config.example.json
+

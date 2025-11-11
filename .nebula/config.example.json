@@ -1,0 +1,19 @@
+{
+  "language": "javascript",
+  "framework": "nodejs",
+  "local_kg_db": "local_kg/nebula_protocol_local.db",
+  "central_kg": {
+    "url": "http://localhost:8080",
+    "instance_id": "your-instance-uuid-here",
+    "api_key": "your-api-key-here",
+    "sync_interval": 3600,
+    "auto_sync": true
+  },
+  "project": {
+    "constellation_id": "your-constellation-uuid",
+    "star_system_id": "your-star-system-uuid",
+    "name": "Nebula Protocol",
+    "description": "Universal protocol for creating scalable, production-ready applications"
+  }
+}
+
