@@ -17,8 +17,8 @@ CREATE TABLE IF NOT EXISTS instances (
     instance_url TEXT,
     api_key VARCHAR(255) UNIQUE,
     capabilities JSONB DEFAULT '[]'::jsonb,
-    registered_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    last_sync_at TIMESTAMP,
+    registered_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
+    last_sync_at TIMESTAMP WITH TIME ZONE,
     total_sync_count INTEGER DEFAULT 0,
     patterns_submitted INTEGER DEFAULT 0,
     solutions_submitted INTEGER DEFAULT 0,
@@ -44,8 +44,8 @@ CREATE TABLE IF NOT EXISTS error_patterns (
     normalized_message TEXT,
     tags TEXT[] DEFAULT '{}'::text[],
     occurrence_count INTEGER DEFAULT 1,
-    first_seen TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    last_seen TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    first_seen TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
+    last_seen TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
     anonymized BOOLEAN DEFAULT true,
     severity VARCHAR(20) CHECK (severity IN ('low', 'medium', 'high', 'critical')),
     metadata JSONB DEFAULT '{}'::jsonb
@@ -78,8 +78,8 @@ CREATE TABLE IF NOT EXISTS solutions (
     votes INTEGER DEFAULT 0,
     helpful_count INTEGER DEFAULT 0,
     unhelpful_count INTEGER DEFAULT 0,
-    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
     created_by_instance UUID REFERENCES instances(instance_id),
     metadata JSONB DEFAULT '{}'::jsonb,
     FOREIGN KEY (pattern_signature) REFERENCES error_patterns(error_signature) ON DELETE CASCADE
@@ -101,7 +101,7 @@ CREATE TABLE IF NOT EXISTS solution_feedback (
     was_helpful BOOLEAN NOT NULL,
     resolution_time_minutes INTEGER,
     comment TEXT,
-    submitted_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    submitted_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
     metadata JSONB DEFAULT '{}'::jsonb
 );
 
@@ -121,7 +121,7 @@ CREATE TABLE IF NOT EXISTS pattern_relationships (
     -- Types: 'similar', 'leads_to', 'caused_by', 'semantic', 'alternative'
     similarity_score DECIMAL(3,2) DEFAULT 0.0 CHECK (similarity_score >= 0 AND similarity_score <= 1),
     strength DECIMAL(3,2) DEFAULT 0.5 CHECK (strength >= 0 AND strength <= 1),
-    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
     metadata JSONB DEFAULT '{}'::jsonb,
     CONSTRAINT no_self_reference CHECK (from_pattern_id != to_pattern_id),
     UNIQUE(from_pattern_id, to_pattern_id, relationship_type)
@@ -189,7 +189,7 @@ CREATE TABLE IF NOT EXISTS sync_history (
     sync_status VARCHAR(20) NOT NULL CHECK (sync_status IN ('success', 'partial', 'failed')),
     error_message TEXT,
     duration_ms INTEGER,
-    synced_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    synced_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
     metadata JSONB DEFAULT '{}'::jsonb
 );
 
@@ -212,7 +212,7 @@ CREATE TABLE IF NOT EXISTS lessons_learned (
     framework VARCHAR(100),
     tags TEXT[] DEFAULT '{}'::text[],
     votes INTEGER DEFAULT 0,
-    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
     created_by_instance UUID REFERENCES instances(instance_id),
     metadata JSONB DEFAULT '{}'::jsonb
 );
@@ -240,7 +240,7 @@ CREATE TABLE IF NOT EXISTS daily_stats (
     top_languages JSONB DEFAULT '{}'::jsonb,
     top_frameworks JSONB DEFAULT '{}'::jsonb,
     top_errors JSONB DEFAULT '{}'::jsonb,
-    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+    created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
 );
 
 CREATE INDEX idx_daily_stats_date ON daily_stats(stat_date DESC);
@@ -255,7 +255,7 @@ RETURNS TRIGGER AS $$
 BEGIN
     UPDATE error_patterns
     SET occurrence_count = occurrence_count + 1,
-        last_seen = CURRENT_TIMESTAMP
+        last_seen = NOW()
     WHERE error_signature = NEW.pattern_signature;
     RETURN NEW;
 END;
@@ -279,7 +279,7 @@ BEGIN
         SELECT COUNT(*) FROM solution_feedback
         WHERE solution_id = NEW.solution_id AND was_helpful = false
     ),
-    updated_at = CURRENT_TIMESTAMP
+    updated_at = NOW()
     WHERE id = NEW.solution_id;
     RETURN NEW;
 END;
@@ -290,7 +290,7 @@ CREATE OR REPLACE FUNCTION update_instance_stats()
 RETURNS TRIGGER AS $$
 BEGIN
     UPDATE instances
-    SET last_sync_at = CURRENT_TIMESTAMP,
+    SET last_sync_at = NOW(),
         total_sync_count = total_sync_count + 1
     WHERE instance_id = NEW.instance_id;
     RETURN NEW;

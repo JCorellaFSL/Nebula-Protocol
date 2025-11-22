@@ -86,10 +86,13 @@
 **Purpose:** [Why this is needed]  
 **Status:** [ ] Not Started | [ ] In Progress | [ ] Complete
 
-#### STAR_SYSTEM_[X.3]_[DESCRIPTOR].md
-**What:** [Brief description of component/feature]  
-**Purpose:** [Why this is needed]  
-**Status:** [ ] Not Started | [ ] In Progress | [ ] Complete
+#### ⚠️ STAR_SYSTEM_0.3_KG_INTEGRATION.md (MANDATORY for Constellation 0)
+**What:** Connect project to Central Knowledge Graph  
+**Purpose:** Enable automatic error tracking and solution reuse  
+**Status:** [ ] Not Started | [ ] In Progress | [ ] Complete  
+**Template:** `TEMPLATE_STAR_SYSTEM_0.3_KG_INTEGRATION.md`
+
+> **Note:** For Constellation 0, Star System 0.3 (KG Integration) is MANDATORY and cannot be skipped. Use the provided template.
 
 ---
 
@@ -98,9 +101,19 @@
 ### Pre-Gate Checklist
 Before attempting the Star Gate for this constellation:
 
+#### ⚠️ MANDATORY: Knowledge Graph Integration (Constellation 0 ONLY)
+**For Constellation 0, these are REQUIRED and non-negotiable:**
+- [ ] **KG Connected:** Project registered in Central KG with valid `project_id` and `api_token`
+- [ ] **Project Memory:** `.nebula/project_memory.db` exists and functional
+- [ ] **First Error Logged:** At least 1 error logged to demonstrate KG functionality
+- [ ] **Connection Verified:** `test_connection()` returns `True`
+- [ ] **Star System 0.3 Complete:** KG Integration Star System fully implemented
+
+**Without these, Star Gate 0 automatically FAILS.**
+
 #### Functional Requirements
 - [ ] All features from this constellation are functional
-- [ ] Integration with previous constellations works
+- [ ] Integration with previous constellations works (if applicable)
 - [ ] User-facing elements are usable (if applicable)
 
 #### Testing Requirements

@@ -15,6 +15,44 @@ export class DocumentationService {
     this.redis = redisClient;
     this.cacheTTL = 86400; // 24 hours
     this.prefetchInProgress = false;
+    
+    // Error code to documentation mapping
+    this.errorMappings = {
+      rust: {
+        pattern: /E\d{4}/,
+        getUrl: (code) => `https://doc.rust-lang.org/error_index.html#${code}`,
+      },
+      python: {
+        pattern: /([\w]+Error|[\w]+Exception)/,
+        getUrl: (exception) => `https://docs.python.org/3/library/exceptions.html#${exception}`,
+      },
+      javascript: {
+        pattern: /([\w]+Error)/,
+        getUrl: (error) => `https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/${error}`,
+      },
+      typescript: {
+        pattern: /TS\d{4}/,
+        getUrl: (code) => `https://typescript.tv/errors/#${code}`,
+      },
+      java: {
+        pattern: /([\w]+Exception|[\w]+Error)/,
+        getUrl: (exception) => `https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/${exception}.html`,
+      },
+      csharp: {
+        pattern: /(CS\d{4}|[\w]+Exception)/,
+        getUrl: (code) => code.startsWith('CS') 
+          ? `https://learn.microsoft.com/en-us/dotnet/csharp/language-reference/compiler-messages/${code.toLowerCase()}`
+          : `https://learn.microsoft.com/en-us/dotnet/api/system.${code.toLowerCase()}`,
+      },
+      go: {
+        pattern: /([\w]+Error)/,
+        getUrl: (error) => `https://pkg.go.dev/builtin#${error}`,
+      },
+      swift: {
+        pattern: /([\w]+Error)/,
+        getUrl: (error) => `https://developer.apple.com/documentation/swift/${error.toLowerCase()}`,
+      },
+    };
   }
 
   // Prefetch common documentation on startup
@@ -168,58 +206,6 @@ export class DocumentationService {
       dart: {
         api: 'https://api.dart.dev/stable/',
         docs: 'https://dart.dev/guides/',
-      },
-    };
-  }
-
-    // Error code to documentation mapping
-    this.errorMappings = {
-      rust: {
-        pattern: /E\d{4}/,
-        getUrl: (code) => `https://doc.rust-lang.org/error_index.html#${code}`,
-      },
-      python: {
-        pattern: /([\w]+Error|[\w]+Exception)/,
-        getUrl: (exception) => `https://docs.python.org/3/library/exceptions.html#${exception}`,
-      },
-      javascript: {
-        pattern: /([\w]+Error)/,
-        getUrl: (error) => `https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/${error}`,
-      },
-      typescript: {
-        pattern: /TS\d{4}/,
-        getUrl: (code) => `https://typescript.tv/errors/#${code}`,
-      },
-      java: {
-        pattern: /([\w]+Exception|[\w]+Error)/,
-        getUrl: (exception) => `https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/${exception}.html`,
-      },
-      csharp: {
-        pattern: /(CS\d{4}|[\w]+Exception)/,
-        getUrl: (code) => code.startsWith('CS') 
-          ? `https://learn.microsoft.com/en-us/dotnet/csharp/language-reference/compiler-messages/${code.toLowerCase()}`
-          : `https://learn.microsoft.com/en-us/dotnet/api/system.${code.toLowerCase()}`,
-      },
-      cpp: {
-        pattern: /(error C\d{4}|[\w]+_error)/,
-        getUrl: (error) => `https://en.cppreference.com/w/cpp/error`,
-        note: 'C++ error handling is complex - additional tooling recommended',
-      },
-      go: {
-        pattern: /([\w]+Error)/,
-        getUrl: (error) => `https://pkg.go.dev/errors`,
-      },
-      php: {
-        pattern: /([\w]+Error|[\w]+Exception)/,
-        getUrl: (exception) => `https://www.php.net/manual/en/class.${exception.toLowerCase()}.php`,
-      },
-      swift: {
-        pattern: /([\w]+Error)/,
-        getUrl: (error) => `https://developer.apple.com/documentation/swift/error`,
-      },
-      kotlin: {
-        pattern: /([\w]+Exception|[\w]+Error)/,
-        getUrl: (exception) => `https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/${exception.toLowerCase()}.html`,
       },
     };
   }

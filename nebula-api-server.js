@@ -13,7 +13,7 @@ import { z } from 'zod';
 import config from './src/config/index.js';
 import { GitIntegration } from './src/git/git-integration.js';
 import { BranchManagement } from './src/git/branch-management.js';
-import { CentralKGSync } from './src/kg/central-kg-sync.js';
+// import { CentralKGSync } from './src/kg/central-kg-sync.js';
 import { ProjectMemory } from './project-memory.js';
 import { StarChart } from './star-chart.js';
 import { DocumentationService } from './nebula-docs-service.js';
@@ -97,7 +97,7 @@ const gitService = new GitIntegration(config);
 
 // Initialize PostgreSQL connection pool for Central KG
 let pgPool = null;
-let centralKGSync = null;
+// let centralKGSync = null;
 
 if (config.database.postgres.enabled) {
   pgPool = new Pool({
@@ -119,8 +119,9 @@ if (config.database.postgres.enabled) {
     logger.info('PostgreSQL connected');
   });
 
-  centralKGSync = new CentralKGSync(pgPool);
-  logger.info('Central Knowledge Graph sync initialized');
+  // Deprecated JS sync disabled in favor of Python Local KG
+  // centralKGSync = new CentralKGSync(pgPool);
+  // logger.info('Central Knowledge Graph sync initialized');
 } else {
   logger.warn('Central Knowledge Graph disabled (PostgreSQL not configured)');
 }

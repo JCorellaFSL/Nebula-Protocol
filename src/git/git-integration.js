@@ -12,11 +12,10 @@
  * - Cleanup temporary files after inactivity
  */
 
-import { execSync, exec } from 'child_process';
+import { exec } from 'child_process';
 import { promisify } from 'util';
 import fs from 'fs';
 import path from 'path';
-import crypto from 'crypto';
 
 const execAsync = promisify(exec);
 
@@ -30,6 +29,18 @@ export class GitIntegration {
     // Start cleanup service
     if (config.storage.cleanupEnabled) {
       this.startCleanupService();
+    }
+  }
+
+  /**
+   * Execute command asynchronously
+   */
+  async execute(command, cwd) {
+    try {
+      const { stdout } = await execAsync(command, { cwd });
+      return stdout.trim();
+    } catch (error) {
+      throw new Error(`Command failed: ${command}. Error: ${error.message}`);
     }
   }
 
@@ -56,21 +67,21 @@ export class GitIntegration {
 
     try {
       // Initialize Git repository
-      execSync('git init', { cwd: projectPath });
-      execSync(`git checkout -b ${gitBranch}`, { cwd: projectPath });
+      await this.execute('git init', projectPath);
+      await this.execute(`git checkout -b ${gitBranch}`, projectPath);
       
       // Configure Git user
       if (gitUsername) {
-        execSync(`git config user.name "${gitUsername}"`, { cwd: projectPath });
+        await this.execute(`git config user.name "${gitUsername}"`, projectPath);
       }
       if (options.gitEmail) {
-        execSync(`git config user.email "${options.gitEmail}"`, { cwd: projectPath });
+        await this.execute(`git config user.email "${options.gitEmail}"`, projectPath);
       }
 
       // Add remote if provided
       if (gitRemote) {
         const remoteUrl = this.buildRemoteUrl(gitRemote, gitProvider, gitUsername, gitToken);
-        execSync(`git remote add origin ${remoteUrl}`, { cwd: projectPath });
+        await this.execute(`git remote add origin ${remoteUrl}`, projectPath);
       }
 
       // Create initial .gitignore
@@ -82,13 +93,13 @@ export class GitIntegration {
       fs.writeFileSync(path.join(projectPath, 'README.md'), readme);
 
       // Initial commit
-      execSync('git add .', { cwd: projectPath });
-      execSync('git commit -m "Initial commit: Nebula Protocol project initialized"', { cwd: projectPath });
+      await this.execute('git add .', projectPath);
+      await this.execute('git commit -m "Initial commit: Nebula Protocol project initialized"', projectPath);
 
       // Push to remote if configured
       if (gitRemote) {
         try {
-          execSync(`git push -u origin ${gitBranch}`, { cwd: projectPath });
+          await this.execute(`git push -u origin ${gitBranch}`, projectPath);
         } catch (error) {
           console.warn('Failed to push to remote:', error.message);
           // Don't fail initialization if push fails
@@ -134,12 +145,12 @@ export class GitIntegration {
         ? `git clone --depth 1 --branch ${gitBranch} ${cloneUrl} ${projectPath}`
         : `git clone --branch ${gitBranch} ${cloneUrl} ${projectPath}`;
       
-      execSync(cloneCmd, { stdio: 'pipe' });
+      await execAsync(cloneCmd); // Clone typically creates the dir, so cwd is parent or default
 
       // Get repository info
-      const remoteUrl = execSync('git remote get-url origin', { cwd: projectPath }).toString().trim();
-      const currentBranch = execSync('git branch --show-current', { cwd: projectPath }).toString().trim();
-      const lastCommit = execSync('git log -1 --format="%H %s"', { cwd: projectPath }).toString().trim();
+      const remoteUrl = await this.execute('git remote get-url origin', projectPath);
+      const currentBranch = await this.execute('git branch --show-current', projectPath);
+      const lastCommit = await this.execute('git log -1 --format="%H %s"', projectPath);
 
       return {
         success: true,
@@ -166,7 +177,12 @@ export class GitIntegration {
 
     try {
       // Check if there are changes
-      const status = execSync('git status --porcelain', { cwd: projectPath }).toString();
+      let status;
+      try {
+        status = await this.execute('git status --porcelain', projectPath);
+      } catch (e) {
+        status = '';
+      }
       
       if (!status && !force) {
         return {
@@ -178,12 +194,12 @@ export class GitIntegration {
 
       // Add files
       if (addAll) {
-        execSync('git add .', { cwd: projectPath });
+        await this.execute('git add .', projectPath);
       }
 
       // Commit
       try {
-        execSync(`git commit -m "${this.escapeCommitMessage(message)}"`, { cwd: projectPath });
+        await this.execute(`git commit -m "${this.escapeCommitMessage(message)}"`, projectPath);
       } catch (error) {
         if (error.message.includes('nothing to commit')) {
           return {
@@ -196,12 +212,12 @@ export class GitIntegration {
       }
 
       // Get commit hash
-      const commitHash = execSync('git rev-parse HEAD', { cwd: projectPath }).toString().trim();
+      const commitHash = await this.execute('git rev-parse HEAD', projectPath);
 
       // Push if requested
       if (push) {
-        const branch = execSync('git branch --show-current', { cwd: projectPath }).toString().trim();
-        execSync(`git push origin ${branch}`, { cwd: projectPath });
+        const branch = await this.execute('git branch --show-current', projectPath);
+        await this.execute(`git push origin ${branch}`, projectPath);
       }
 
       return {
@@ -224,7 +240,7 @@ export class GitIntegration {
 
     try {
       const pullCmd = rebase ? 'git pull --rebase' : 'git pull';
-      const output = execSync(pullCmd, { cwd: projectPath }).toString();
+      const output = await this.execute(pullCmd, projectPath);
 
       return {
         success: true,
@@ -241,24 +257,24 @@ export class GitIntegration {
    */
   async getStatus(projectPath) {
     try {
-      const branch = execSync('git branch --show-current', { cwd: projectPath }).toString().trim();
-      const remote = execSync('git remote get-url origin', { cwd: projectPath }).toString().trim();
-      const lastCommit = execSync('git log -1 --format="%H|%an|%ae|%at|%s"', { cwd: projectPath }).toString().trim();
-      const [hash, author, email, timestamp, message] = lastCommit.split('|');
+      const branch = await this.execute('git branch --show-current', projectPath);
+      const remote = await this.execute('git remote get-url origin', projectPath);
+      const lastCommitRaw = await this.execute('git log -1 --format="%H|%an|%ae|%at|%s"', projectPath);
+      const [hash, author, email, timestamp, message] = lastCommitRaw.split('|');
       
       // Check for uncommitted changes
-      const statusOutput = execSync('git status --porcelain', { cwd: projectPath }).toString();
+      const statusOutput = await this.execute('git status --porcelain', projectPath);
       const hasChanges = statusOutput.length > 0;
       
       // Count commits ahead/behind
       let ahead = 0, behind = 0;
       try {
-        const remoteBranch = execSync(`git rev-parse origin/${branch}`, { cwd: projectPath }).toString().trim();
-        const localBranch = execSync('git rev-parse HEAD', { cwd: projectPath }).toString().trim();
+        const remoteBranch = await this.execute(`git rev-parse origin/${branch}`, projectPath);
+        const localBranch = await this.execute('git rev-parse HEAD', projectPath);
         
         if (remoteBranch !== localBranch) {
-          ahead = parseInt(execSync(`git rev-list --count origin/${branch}..HEAD`, { cwd: projectPath }).toString().trim());
-          behind = parseInt(execSync(`git rev-list --count HEAD..origin/${branch}`, { cwd: projectPath }).toString().trim());
+          ahead = parseInt(await this.execute(`git rev-list --count origin/${branch}..HEAD`, projectPath));
+          behind = parseInt(await this.execute(`git rev-list --count HEAD..origin/${branch}`, projectPath));
         }
       } catch (error) {
         // Remote branch might not exist
@@ -336,7 +352,7 @@ export class GitIntegration {
         if (age > this.maxAge) {
           // Check if there are uncommitted changes
           try {
-            const status = execSync('git status --porcelain', { cwd: projectPath }).toString();
+            const status = await this.execute('git status --porcelain', projectPath);
             if (status) {
               console.warn(`Project ${projectId} has uncommitted changes, skipping cleanup`);
               continue;
@@ -515,4 +531,3 @@ See \`ROADMAP.md\` for the complete project plan and constellation structure.
 `;
   }
 }
-

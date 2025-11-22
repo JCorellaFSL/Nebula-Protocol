@@ -1,11 +1,35 @@
+# Dependencies
 node_modules/
+__pycache__/
+*.egg-info/
 .env
+
+# OS
 .DS_Store
-logs/
-*.log
+Thumbs.db
+nul
+
+# IDE
+.vscode/
+.idea/
+.cursor/
+
+# Database & Logs
 *.sqlite
-*.sqlite-wal
-*.sqlite-shm
-.nebula/
-dist/
-build/
+*.db
+*.log
+logs/
+local_kg/nebula_protocol_local.db
+local_kg/universal_memory.sqlite
+local_kg/universal_memory.backup.sqlite
+
+# Project specific
+projects/*/.nebula/logs/
+projects/*/venv/
+projects/*/node_modules/
+projects/*/*.db
+projects/*/*.sqlite
+
+# Temporary
+archive/
+.claude/

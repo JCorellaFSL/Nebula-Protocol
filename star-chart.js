@@ -237,3 +237,6 @@ export class StarChartStore {
     return this.db.prepare(query).all(...params);
   }
 }
+
+// Export alias for backwards compatibility
+export { StarChartStore as StarChart };

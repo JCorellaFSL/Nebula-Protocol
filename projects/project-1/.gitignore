@@ -1,6 +1,0 @@
-# Nebula Framework - Development Tools (keep out of builds)
-.nebula/logs/
-.nebula/project_memory.sqlite
-.nebula/project_memory.sqlite-shm
-.nebula/project_memory.sqlite-wal
-.nebula/tools/node_modules/

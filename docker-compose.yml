@@ -1,22 +1,22 @@
 version: '3.8'
 
 services:
-  # Nebula API Server
+  # Nebula API Server (Central KG)
   nebula-api:
     build:
       context: .
       dockerfile: Dockerfile
-    container_name: nebula-api
+    container_name: nebula-central-api
     ports:
-      - "3000:3000"
+      - "8080:3000"
     environment:
       - NODE_ENV=production
       - PORT=3000
-      - POSTGRES_HOST=postgres
-      - POSTGRES_PORT=5432
-      - POSTGRES_DB=nebula_central_kg
-      - POSTGRES_USER=nebula
-      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD:-nebula_secure_password}
+      - POSTGRES_HOST=host.docker.internal  # Connect to Nebula-KG database
+      - POSTGRES_PORT=5433                   # Nebula-KG runs on 5433
+      - POSTGRES_DB=central_kg               # Nebula-KG database name
+      - POSTGRES_USER=kg_user                # Nebula-KG user
+      - POSTGRES_PASSWORD=${KG_DB_PASSWORD:-dev_password_123}  # Nebula-KG password
       - REDIS_HOST=redis
       - REDIS_PORT=6379
       - JWT_SECRET=${JWT_SECRET:-change_this_in_production}
@@ -24,8 +24,9 @@ services:
     volumes:
       - ./projects:/app/projects
       - nebula-data:/app/data
+    extra_hosts:
+      - "host.docker.internal:host-gateway"  # Enable connection to host
     depends_on:
-      - postgres
       - redis
     networks:
       - nebula-network
@@ -37,32 +38,12 @@ services:
       retries: 3
       start_period: 40s
 
-  # PostgreSQL for Centralized Knowledge Graph
-  postgres:
-    image: postgres:16-alpine
-    container_name: nebula-postgres
-    ports:
-      - "5432:5432"  # Expose PostgreSQL for external connections
-    environment:
-      - POSTGRES_DB=nebula_central_kg
-      - POSTGRES_USER=nebula
-      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD:-nebula_secure_password}
-    volumes:
-      - postgres-data:/var/lib/postgresql/data
-      - ./db/init.sql:/docker-entrypoint-initdb.d/init.sql
-    networks:
-      - nebula-network
-    restart: unless-stopped
-    healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U nebula"]
-      interval: 10s
-      timeout: 5s
-      retries: 5
+  # PostgreSQL removed - using Nebula-KG's centralized database at host:5433
 
   # Redis for caching and session management
   redis:
     image: redis:7-alpine
-    container_name: nebula-redis
+    container_name: nebula-central-redis
     command: redis-server --appendonly yes
     volumes:
       - redis-data:/data
@@ -78,10 +59,10 @@ services:
   # Nginx reverse proxy with SSL/TLS
   nginx:
     image: nginx:alpine
-    container_name: nebula-nginx
+    container_name: nebula-central-nginx
     ports:
-      - "80:80"
-      - "443:443"
+      - "8081:80"
+      - "8443:443"
     volumes:
       - ./nginx/nginx.conf:/etc/nginx/nginx.conf:ro
       - ./nginx/ssl:/etc/nginx/ssl:ro
@@ -136,7 +117,7 @@ networks:
 
 volumes:
   nebula-data:
-  postgres-data:
+  # postgres-data: removed - using Nebula-KG's centralized database
   redis-data:
   prometheus-data:
   grafana-data:
