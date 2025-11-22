@@ -12,11 +12,11 @@ services:
     environment:
       - NODE_ENV=production
       - PORT=3000
-      - POSTGRES_HOST=host.docker.internal  # Connect to Nebula-KG database
-      - POSTGRES_PORT=5433                   # Nebula-KG runs on 5433
-      - POSTGRES_DB=central_kg               # Nebula-KG database name
-      - POSTGRES_USER=kg_user                # Nebula-KG user
-      - POSTGRES_PASSWORD=${KG_DB_PASSWORD:-dev_password_123}  # Nebula-KG password
+      - POSTGRES_HOST=postgres           # Connect to internal Postgres container
+      - POSTGRES_PORT=5432               # Standard Postgres port
+      - POSTGRES_DB=central_kg
+      - POSTGRES_USER=kg_user
+      - POSTGRES_PASSWORD=${KG_DB_PASSWORD:-dev_password_123}
       - REDIS_HOST=redis
       - REDIS_PORT=6379
       - JWT_SECRET=${JWT_SECRET:-change_this_in_production}
@@ -24,10 +24,9 @@ services:
     volumes:
       - ./projects:/app/projects
       - nebula-data:/app/data
-    extra_hosts:
-      - "host.docker.internal:host-gateway"  # Enable connection to host
     depends_on:
       - redis
+      - postgres
     networks:
       - nebula-network
     restart: unless-stopped
@@ -38,7 +37,27 @@ services:
       retries: 3
       start_period: 40s
 
-  # PostgreSQL removed - using Nebula-KG's centralized database at host:5433
+  # PostgreSQL (Central Knowledge Graph Database)
+  postgres:
+    image: postgres:15-alpine
+    container_name: nebula-postgres
+    ports:
+      - "5432:5432"  # Exposed for local debugging/GUI tools
+    environment:
+      - POSTGRES_DB=central_kg
+      - POSTGRES_USER=kg_user
+      - POSTGRES_PASSWORD=${KG_DB_PASSWORD:-dev_password_123}
+    volumes:
+      - postgres-data:/var/lib/postgresql/data
+      - ./db/init.sql:/docker-entrypoint-initdb.d/init.sql
+    networks:
+      - nebula-network
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U kg_user -d central_kg"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
 
   # Redis for caching and session management
   redis:
@@ -117,9 +136,8 @@ networks:
 
 volumes:
   nebula-data:
-  # postgres-data: removed - using Nebula-KG's centralized database
+  postgres-data:
   redis-data:
   prometheus-data:
   grafana-data:
   nginx-logs:
-

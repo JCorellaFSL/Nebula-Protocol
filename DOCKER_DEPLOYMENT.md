@@ -1,14 +1,14 @@
 # Nebula Protocol Docker Deployment Guide
 
-**Version:** 1.0.0  
-**Date:** November 8, 2025  
-**Architecture:** Dockerized API + PostgreSQL Central KG + Redis Cache
+**Version:** 1.1.0
+**Date:** November 22, 2025
+**Architecture:** Dockerized API + Internal PostgreSQL + Redis Cache (Self-Contained)
 
 ---
 
 ## 🌌 Overview
 
-The Nebula Protocol is now fully dockerized with API access points for IDE integration and centralized Knowledge Graph sharing.
+The Nebula Protocol is fully dockerized with API access points for IDE integration and centralized Knowledge Graph sharing. This deployment is designed for **Docker Desktop** (local development) or single-node production servers.
 
 ### Architecture Diagram
 
@@ -52,7 +52,7 @@ The Nebula Protocol is now fully dockerized with API access points for IDE integ
 ### 1. Clone and Configure
 
 ```bash
-git clone https://github.com/your-org/Nebula-Protocol.git
+git clone https://github.com/JCorellaFSL/Nebula-Protocol.git
 cd Nebula-Protocol
 
 # Copy environment template
@@ -65,7 +65,7 @@ nano .env  # or use your preferred editor
 **Critical .env variables:**
 ```bash
 JWT_SECRET=change_this_to_secure_random_string
-POSTGRES_PASSWORD=change_this_secure_password
+KG_DB_PASSWORD=change_this_secure_password
 ```
 
 ### 2. Start Services
@@ -300,10 +300,10 @@ Content-Type: application/json
 | `NODE_ENV` | production | Environment mode |
 | `PORT` | 3000 | API server port |
 | `JWT_SECRET` | *required* | JWT signing key |
-| `POSTGRES_HOST` | postgres | Database host |
+| `POSTGRES_HOST` | postgres | Database host (internal Docker DNS) |
 | `POSTGRES_PORT` | 5432 | Database port |
-| `POSTGRES_DB` | nebula_central_kg | Database name |
-| `POSTGRES_USER` | nebula | Database user |
+| `POSTGRES_DB` | central_kg | Database name |
+| `POSTGRES_USER` | kg_user | Database user |
 | `POSTGRES_PASSWORD` | *required* | Database password |
 | `REDIS_HOST` | redis | Redis host |
 | `REDIS_PORT` | 6379 | Redis port |
@@ -355,10 +355,10 @@ open http://localhost:3001
 curl http://localhost:3000/health
 
 # PostgreSQL health
-docker exec nebula-postgres pg_isready -U nebula
+docker exec nebula-postgres pg_isready -U kg_user
 
 # Redis health
-docker exec nebula-redis redis-cli ping
+docker exec nebula-central-redis redis-cli ping
 ```
 
 ---
@@ -369,78 +369,24 @@ docker exec nebula-redis redis-cli ping
 
 ```bash
 # Create backup
-docker exec nebula-postgres pg_dump -U nebula nebula_central_kg > backup.sql
+docker exec nebula-postgres pg_dump -U kg_user central_kg > backup.sql
 
 # Or with timestamp
-docker exec nebula-postgres pg_dump -U nebula nebula_central_kg > backup_$(date +%Y%m%d_%H%M%S).sql
+docker exec nebula-postgres pg_dump -U kg_user central_kg > backup_$(date +%Y%m%d_%H%M%S).sql
 ```
 
 ### Restore PostgreSQL
 
 ```bash
 # Restore from backup
-cat backup.sql | docker exec -i nebula-postgres psql -U nebula -d nebula_central_kg
+cat backup.sql | docker exec -i nebula-postgres psql -U kg_user -d central_kg
 ```
 
 ### Backup Project Data
 
 ```bash
 # Backup all project databases (SQLite)
-docker cp nebula-api:/app/projects ./projects_backup
-```
-
----
-
-## 🚀 Production Deployment
-
-### 1. SSL/TLS Certificate
-
-**Using Let's Encrypt:**
-
-```bash
-# Install certbot
-sudo apt-get install certbot
-
-# Generate certificate
-sudo certbot certonly --standalone -d your-domain.com
-
-# Copy to nginx directory
-sudo cp /etc/letsencrypt/live/your-domain.com/fullchain.pem nginx/ssl/cert.pem
-sudo cp /etc/letsencrypt/live/your-domain.com/privkey.pem nginx/ssl/key.pem
-```
-
-### 2. Update Environment
-
-```bash
-# Production .env
-NODE_ENV=production
-JWT_SECRET=$(openssl rand -hex 32)
-POSTGRES_PASSWORD=$(openssl rand -hex 32)
-CENTRAL_KG_URL=https://your-domain.com
-```
-
-### 3. Security Hardening
-
-- Change all default passwords
-- Enable firewall (UFW/iptables)
-- Configure SSL/TLS properly
-- Enable rate limiting
-- Regular security updates
-- Use Docker secrets for sensitive data
-
-### 4. Deploy
-
-```bash
-# Pull latest
-git pull origin main
-
-# Rebuild and restart
-docker-compose down
-docker-compose build --no-cache
-docker-compose up -d
-
-# Check logs
-docker-compose logs -f
+docker cp nebula-central-api:/app/projects ./projects_backup
 ```
 
 ---
@@ -467,10 +413,10 @@ docker-compose restart nebula-api
 docker-compose logs postgres
 
 # Verify connection from API
-docker exec nebula-api ping postgres
+docker exec nebula-central-api ping postgres
 
 # Manual connection test
-docker exec -it nebula-postgres psql -U nebula -d nebula_central_kg
+docker exec -it nebula-postgres psql -U kg_user -d central_kg
 ```
 
 ### Port Already in Use
@@ -508,20 +454,19 @@ docker-compose up -d
 - [API Documentation](./API_REFERENCE.md) - Complete API reference
 - [Central KG Guide](./nebula-kg/CONNECTION_GUIDE.md) - KG integration details
 - [Nebula Protocol](./Nebula_Protocol.md) - Framework specification
-- [GitHub Issues](https://github.com/your-org/Nebula-Protocol/issues) - Report bugs
+- [GitHub Issues](https://github.com/JCorellaFSL/Nebula-Protocol/issues) - Report bugs
 
 ---
 
 ## 🆘 Support
 
 - **Documentation:** [https://docs.nebula-protocol.dev](https://docs.nebula-protocol.dev)
-- **Issues:** [GitHub Issues](https://github.com/your-org/Nebula-Protocol/issues)
-- **Discussions:** [GitHub Discussions](https://github.com/your-org/Nebula-Protocol/discussions)
+- **Issues:** [GitHub Issues](https://github.com/JCorellaFSL/Nebula-Protocol/issues)
+- **Discussions:** [GitHub Discussions](https://github.com/JCorellaFSL/Nebula-Protocol/discussions)
 - **Email:** support@nebula-protocol.dev
 
 ---
 
-**Last Updated:** November 8, 2025  
-**Docker Version:** 20.10+  
+**Last Updated:** November 22, 2025
+**Docker Version:** 20.10+
 **Docker Compose Version:** 2.0+
-

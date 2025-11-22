@@ -22,6 +22,20 @@ See `ERROR_LOGGING_REQUIREMENTS.md` for complete requirements.
 
 **Enforcement:** Star Gates automatically fail if error logging OR usability standards are not met.
 
+### 4. Automated Protocol Verification (NEW)
+**Trust but Verify: The Cosmic Hierarchy must be mechanically validated.**
+To ensure strict adherence to the methodology, every project must pass the automated verification check.
+
+**Tool Usage:**
+```bash
+verify-nebula
+```
+
+**What it Checks:**
+- **Roadmap Existence:** `ROADMAP.md` must exist as the anchor.
+- **Hierarchy Integrity:** Every `STAR_SYSTEM_X.Y` must have a corresponding `CONSTELLATION_X` parent.
+- **Visibility:** Every Constellation must be linked in the Roadmap.
+
 ---
 
 ## Core Concepts
@@ -407,4 +421,4 @@ This framework can be adapted to any technology stack by:
 
 ---
 
-*This protocol provides the foundation for structured project management and context engineering across diverse technology stacks and project scales, optimized for AI-assisted development with cloud-based accessibility.* 
+*This protocol provides the foundation for structured project management and context engineering across diverse technology stacks and project scales, optimized for AI-assisted development with cloud-based accessibility.*

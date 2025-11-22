@@ -7,13 +7,15 @@
   "bin": {
     "nebula-framework-mcp": "./nebula-framework-mcp.js",
     "init-nebula": "./init-nebula-project.js",
-    "analyze-constellation": "./constellation-analyzer.js"
+    "analyze-constellation": "./constellation-analyzer.js",
+    "verify-nebula": "./nebula-protocol-verifier.js"
   },
   "scripts": {
     "start": "node nebula-framework-mcp.js",
     "inspector": "npx @modelcontextprotocol/inspector node nebula-framework-mcp.js",
     "init": "node init-nebula-project.js",
-    "analyze": "node constellation-analyzer.js"
+    "analyze": "node constellation-analyzer.js",
+    "verify": "node nebula-protocol-verifier.js"
   },
   "dependencies": {
     "@modelcontextprotocol/sdk": "^1.0.0",
