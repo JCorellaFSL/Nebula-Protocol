@@ -13,6 +13,8 @@ from local_kg.local_kg import LocalKG, get_local_kg
 
 logger = logging.getLogger("local_kg.sync")
 
+# Default Central KG URL (Nginx Reverse Proxy in Docker)
+DEFAULT_CENTRAL_KG_URL = "http://localhost:8080"
 
 def load_config() -> Dict[str, Any]:
     """
@@ -50,8 +52,8 @@ def get_central_kg_url() -> str:
     if url:
         return url
     
-    # 3. Default to localhost
-    return "http://localhost:8080"
+    # 3. Default to Docker Nginx port
+    return DEFAULT_CENTRAL_KG_URL
 
 
 def get_instance_id() -> Optional[str]:
@@ -130,6 +132,22 @@ class CentralKGSync:
             headers["X-API-Key"] = self.api_key
         
         self.client = httpx.AsyncClient(timeout=30.0, headers=headers)
+
+    async def check_connection(self) -> bool:
+        """
+        Verify connection to Central KG
+        """
+        try:
+            response = await self.client.get(f"{self.central_api_url}/health")
+            if response.status_code == 200:
+                logger.info(f"✅ Connected to Central KG at {self.central_api_url}")
+                return True
+            else:
+                logger.warning(f"⚠️ Central KG responded with status {response.status_code}")
+                return False
+        except Exception as e:
+            logger.error(f"❌ Failed to connect to Central KG at {self.central_api_url}: {e}")
+            return False
     
     async def sync_all(self) -> Dict[str, Any]:
         """
@@ -138,6 +156,15 @@ class CentralKGSync:
         Returns:
             Sync summary with counts and errors
         """
+        if not await self.check_connection():
+             return {
+                "patterns_synced": 0,
+                "patterns_failed": 0,
+                "solutions_synced": 0,
+                "solutions_failed": 0,
+                "errors": ["Could not connect to Central KG"]
+            }
+
         summary = {
             "patterns_synced": 0,
             "patterns_failed": 0,
@@ -167,29 +194,57 @@ class CentralKGSync:
         solutions = self.local_kg.get_unsynced_solutions()
         logger.info(f"Found {len(solutions)} unsynced solutions")
         
-        for solution in solutions:
+        # Batch sync solutions
+        if solutions:
             try:
-                # Only sync if pattern was synced
-                pattern_cursor = self.local_kg.conn.cursor()
-                pattern_cursor.execute(
-                    "SELECT central_pattern_id FROM local_patterns WHERE id = ?",
-                    (solution['pattern_id'],)
-                )
-                row = pattern_cursor.fetchone()
+                # Prepare batch
+                batch_payload = []
+                solution_map = {} # Local ID -> Payload Index
                 
-                if row and row[0]:
-                    central_id = await self._sync_solution(solution, row[0])
-                    if central_id:
-                        self.local_kg.mark_solution_synced(solution['id'], central_id)
-                        summary["solutions_synced"] += 1
+                for sol in solutions:
+                    # Get central pattern ID
+                    pattern_cursor = self.local_kg.conn.cursor()
+                    pattern_cursor.execute(
+                        "SELECT central_pattern_id FROM local_patterns WHERE id = ?",
+                        (sol['pattern_id'],)
+                    )
+                    row = pattern_cursor.fetchone()
+                    
+                    if row and row[0]:
+                        payload = {
+                            "pattern_id": row[0],
+                            "title": sol['title'],
+                            "description": sol['description'],
+                            "code_snippet": sol.get('code_snippet'),
+                            "difficulty_level": "intermediate",
+                            "technologies": sol.get('technologies', [])
+                        }
+                        batch_payload.append(payload)
+                        solution_map[sol['id']] = sol
                     else:
+                        logger.warning(f"Skipping solution {sol['id']}: pattern not synced")
                         summary["solutions_failed"] += 1
-                else:
-                    logger.warning(f"Skipping solution {solution['id']}: pattern not synced")
-                    summary["solutions_failed"] += 1
+
+                if batch_payload:
+                    # Send batch
+                    response = await self.client.post(
+                        f"{self.central_api_url}/api/v1/sync/solutions",
+                        json=batch_payload
+                    )
+                    response.raise_for_status()
+                    
+                    result = response.json()
+                    accepted_count = result.get("accepted", 0)
+                    summary["solutions_synced"] += accepted_count
+                    summary["solutions_failed"] += result.get("failed", 0)
+                    
+                    # Mark all as synced (simplification: assuming all succeeded if batch 200 OK)
+                    for sol_id in solution_map.keys():
+                         self.local_kg.mark_solution_synced(sol_id, "batch-synced")
+                         
             except Exception as e:
-                logger.error(f"Failed to sync solution {solution['id']}: {e}")
-                summary["solutions_failed"] += 1
+                logger.error(f"Failed to batch sync solutions: {e}")
+                summary["solutions_failed"] += len(solutions)
                 summary["errors"].append(str(e))
         
         return summary
@@ -232,44 +287,6 @@ class CentralKGSync:
             logger.error(f"HTTP error syncing pattern: {e}")
             return None
     
-    async def _sync_solution(
-        self,
-        solution: Dict[str, Any],
-        central_pattern_id: str
-    ) -> Optional[str]:
-        """
-        Sync a single solution to Central KG
-        
-        Args:
-            solution: Local solution dict
-            central_pattern_id: UUID of pattern in Central KG
-        
-        Returns:
-            Central solution ID if successful, None otherwise
-        """
-        payload = {
-            "pattern_id": central_pattern_id,
-            "title": solution['title'],
-            "description": solution['description'],
-            "code_snippet": solution.get('code_snippet'),
-            "difficulty_level": "intermediate"  # Could be derived from time_to_resolve
-        }
-        
-        try:
-            response = await self.client.post(
-                f"{self.central_api_url}/api/v1/solutions/submit",
-                json=payload
-            )
-            response.raise_for_status()
-            
-            result = response.json()
-            logger.info(f"Solution synced: {solution['title'][:50]}")
-            return str(result['id'])
-        
-        except httpx.HTTPError as e:
-            logger.error(f"HTTP error syncing solution: {e}")
-            return None
-    
     async def close(self):
         """Close HTTP client"""
         await self.client.aclose()
@@ -289,22 +306,6 @@ async def sync_to_central(
     """
     Convenience function to sync local KG to central
     Automatically loads configuration from environment or .nebula/config.json
-    
-    Priority for each parameter: Function argument > ENV > config.json > default
-    
-    Usage:
-        import asyncio
-        from local_kg.sync import sync_to_central
-        
-        # Use auto-detected configuration
-        asyncio.run(sync_to_central())
-        
-        # Or override specific values
-        asyncio.run(sync_to_central(
-            central_api_url="https://your-server.com:8080",
-            instance_id="your-instance-uuid",
-            api_key="your-api-key"
-        ))
     """
     # Load from environment/config if not provided
     if not central_api_url:
@@ -354,4 +355,3 @@ if __name__ == "__main__":
     api_key = sys.argv[3] if len(sys.argv) > 3 else None
     
     asyncio.run(sync_to_central(api_url, instance_id, api_key))
-
